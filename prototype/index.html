@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Интеллект Х — Антифрод Ритейл (прототип UI)</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #1a2332;
+      --surface2: #243044;
+      --border: #2d3a4f;
+      --text: #e8edf4;
+      --muted: #8b9cb3;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --success: #22c55e;
+      --sidebar-w: 240px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+    }
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .logo {
+      padding: 20px 16px;
+      border-bottom: 1px solid var(--border);
+      font-weight: 700;
+      font-size: 15px;
+      line-height: 1.3;
+    }
+    .logo span { color: var(--accent); display: block; font-size: 11px; font-weight: 500; margin-top: 4px; }
+    .nav { padding: 12px 8px; flex: 1; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 8px; cursor: pointer;
+      color: var(--muted); font-size: 14px; margin-bottom: 2px;
+      border: none; background: none; width: 100%; text-align: left;
+    }
+    .nav-item:hover { background: var(--surface2); color: var(--text); }
+    .nav-item.active { background: var(--accent); color: #fff; }
+    .nav-icon { width: 18px; text-align: center; opacity: 0.85; }
+    .sidebar-footer {
+      padding: 16px; border-top: 1px solid var(--border);
+      font-size: 12px; color: var(--muted);
+    }
+    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .topbar {
+      height: 56px; background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 16px; }
+    .store-select {
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text); padding: 6px 12px; border-radius: 6px; font-size: 13px;
+    }
+    .badge-live {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--success);
+    }
+    .badge-live::before {
+      content: ""; width: 8px; height: 8px; border-radius: 50%;
+      background: var(--success); animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .avatar {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--accent); display: flex; align-items: center;
+      justify-content: center; font-size: 13px; font-weight: 600;
+    }
+    .content { flex: 1; overflow: auto; padding: 24px; }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+    .subtitle { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+    .kpi-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;
+    }
+    .kpi-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 18px;
+    }
+    .kpi-label { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+    .kpi-value { font-size: 28px; font-weight: 700; }
+    .kpi-delta { font-size: 12px; margin-top: 6px; }
+    .kpi-delta.up { color: var(--danger); }
+    .kpi-delta.down { color: var(--success); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
+    .panel {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden;
+    }
+    .panel-header {
+      padding: 14px 18px; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      font-weight: 600; font-size: 14px;
+    }
+    .panel-body { padding: 0; }
+    .alert-list { list-style: none; }
+    .alert-item {
+      padding: 14px 18px; border-bottom: 1px solid var(--border);
+      cursor: pointer; transition: background 0.15s;
+      display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: start;
+    }
+    .alert-item:hover { background: var(--surface2); }
+    .alert-severity {
+      width: 4px; height: 48px; border-radius: 2px; align-self: center;
+    }
+    .alert-severity.critical { background: var(--danger); }
+    .alert-severity.high { background: var(--warning); }
+    .alert-severity.medium { background: var(--accent); }
+    .alert-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+    .alert-meta { font-size: 12px; color: var(--muted); }
+    .alert-time { font-size: 12px; color: var(--muted); white-space: nowrap; }
+    .tag {
+      display: inline-block; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 500; margin-right: 6px;
+    }
+    .tag-hall { background: #1e3a5f; color: #93c5fd; }
+    .tag-pos { background: #3b2f1e; color: #fcd34d; }
+    .tag-kso { background: #1e3b2f; color: #6ee7b7; }
+    .tag-pos-module { background: #2e1e3b; color: #d8b4fe; }
+    .video-mock {
+      aspect-ratio: 16/9; background: #0a0e14;
+      position: relative; display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 13px;
+    }
+    .video-overlay {
+      position: absolute; top: 12px; left: 12px;
+      background: rgba(0,0,0,0.75); padding: 8px 12px; border-radius: 6px;
+      font-size: 13px; border: 1px solid var(--warning);
+    }
+    .video-overlay .counter { color: var(--warning); font-weight: 700; font-size: 18px; }
+    .video-controls {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.8));
+      padding: 12px 16px; display: flex; gap: 8px; align-items: center;
+    }
+    .timeline {
+      height: 48px; background: var(--surface2); border-radius: 6px;
+      margin: 16px 18px; position: relative; overflow: hidden;
+    }
+    .timeline-bar {
+      position: absolute; top: 50%; left: 0; right: 0; height: 4px;
+      background: var(--border); transform: translateY(-50%);
+    }
+    .timeline-marker {
+      position: absolute; top: 8px; width: 2px; height: 32px;
+      background: var(--accent);
+    }
+    .timeline-marker.pos { background: var(--warning); }
+    .timeline-marker.alert { background: var(--danger); }
+    .pos-events { padding: 0 18px 18px; }
+    .pos-event {
+      display: flex; gap: 12px; padding: 10px 0;
+      border-bottom: 1px solid var(--border); font-size: 13px;
+    }
+    .pos-time { color: var(--muted); width: 70px; flex-shrink: 0; font-family: monospace; }
+    .filters {
+      display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;
+    }
+    .filter-chip {
+      padding: 6px 14px; border-radius: 20px; font-size: 13px;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--muted); cursor: pointer;
+    }
+    .filter-chip.active { border-color: var(--accent); color: var(--accent); background: #1e3a5f; }
+    .btn {
+      padding: 8px 16px; border-radius: 6px; font-size: 13px;
+      border: none; cursor: pointer; font-weight: 500;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+    .search-form {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 20px; margin-bottom: 20px;
+    }
+    .form-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .form-group select, .form-group input {
+      width: 100%; padding: 8px 12px; border-radius: 6px;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text); font-size: 13px;
+    }
+    .saved-templates { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    .template-card {
+      padding: 10px 14px; background: var(--surface2); border-radius: 8px;
+      border: 1px solid var(--border); font-size: 13px; cursor: pointer;
+    }
+    .template-card:hover { border-color: var(--accent); }
+    .constructor {
+      display: grid; grid-template-columns: 220px 1fr 280px; gap: 16px; min-height: 520px;
+    }
+    .block-palette { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+    .block-palette h3 { font-size: 12px; color: var(--muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .palette-item {
+      padding: 10px; background: var(--surface2); border-radius: 6px;
+      margin-bottom: 8px; font-size: 13px; cursor: grab; border: 1px dashed var(--border);
+    }
+    .canvas {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 24px; position: relative;
+    }
+    .scenario-node {
+      background: var(--surface2); border: 2px solid var(--accent);
+      border-radius: 10px; padding: 14px 18px; margin: 0 auto 16px;
+      max-width: 320px; text-align: center; font-size: 13px;
+    }
+    .scenario-connector {
+      text-align: center; color: var(--accent); font-weight: 700; font-size: 18px; margin: 4px 0;
+    }
+    .scenario-props {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px;
+    }
+    .scenario-props h3 { font-size: 14px; margin-bottom: 14px; }
+    .prop-row { margin-bottom: 12px; }
+    .prop-row label { font-size: 12px; color: var(--muted); display: block; margin-bottom: 4px; }
+    .prop-row input { width: 100%; padding: 6px 10px; border-radius: 4px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 500; font-size: 12px; text-transform: uppercase; }
+    tr:hover td { background: var(--surface2); }
+    .rank { font-weight: 700; color: var(--muted); width: 40px; }
+    .rank-1 { color: #fbbf24; }
+    .rank-2 { color: #94a3b8; }
+    .rank-3 { color: #cd7f32; }
+    .bar-cell { display: flex; align-items: center; gap: 10px; }
+    .bar { height: 6px; border-radius: 3px; background: var(--accent); min-width: 20px; }
+    .chart-placeholder {
+      height: 200px; background: var(--surface2); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 13px; margin-top: 16px;
+    }
+    .tabs { display: flex; gap: 4px; margin-bottom: 20px; }
+    .tab {
+      padding: 8px 16px; border-radius: 6px; font-size: 13px;
+      cursor: pointer; color: var(--muted); background: none; border: none;
+    }
+    .tab.active { background: var(--surface2); color: var(--text); }
+    .proto-note {
+      background: #1e293b; border: 1px solid var(--border); border-radius: 8px;
+      padding: 12px 16px; font-size: 12px; color: var(--muted); margin-bottom: 20px;
+    }
+    .proto-note strong { color: var(--accent); }
+    @media (max-width: 1200px) {
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .grid-2, .constructor { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo">
+      Интеллект Х
+      <span>Антифрод · Ритейл</span>
+    </div>
+    <nav class="nav">
+      <button class="nav-item active" data-screen="dashboard">
+        <span class="nav-icon">◉</span> Центр мониторинга
+      </button>
+      <button class="nav-item" data-screen="alerts">
+        <span class="nav-icon">⚠</span> Тревоги
+      </button>
+      <button class="nav-item" data-screen="incident">
+        <span class="nav-icon">▶</span> Расследование
+      </button>
+      <button class="nav-item" data-screen="search">
+        <span class="nav-icon">⌕</span> Поиск по событиям
+      </button>
+      <button class="nav-item" data-screen="constructor">
+        <span class="nav-icon">⚙</span> Конструктор сценариев
+      </button>
+      <button class="nav-item" data-screen="analytics">
+        <span class="nav-icon">▤</span> Аналитика и рейтинги
+      </button>
+      <button class="nav-item" data-screen="archive">
+        <span class="nav-icon">▦</span> Видеоархив
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      Магазинов: 847 · Касс: 3 204<br>
+      POS-модуль: подключён
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <select class="store-select">
+          <option>Вся сеть (847 объектов)</option>
+          <option>Магазин №142 — Москва, ТЦ «Авиапарк»</option>
+          <option>Магазин №089 — СПб, Невский</option>
+        </select>
+        <span class="badge-live">Мониторинг активен</span>
+      </div>
+      <div class="topbar-right">
+        <span style="font-size:13px;color:var(--muted)">Оператор: Иванова А.С.</span>
+        <div class="avatar">ИА</div>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="proto-note">
+        <strong>UI-прототип</strong> по ТЗ «Антифрод-решение для ритейла на базе Интеллект Х».
+        Навигация слева переключает экраны. Это концепт, не финальный дизайн.
+      </div>
+
+      <!-- DASHBOARD -->
+      <section id="screen-dashboard" class="screen active">
+        <h1>Центр мониторинга</h1>
+        <p class="subtitle">Единый интерфейс оператора — торговый зал, кассы, КСО, архив</p>
+
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">Тревоги за смену</div>
+            <div class="kpi-value" style="color:var(--danger)">23</div>
+            <div class="kpi-delta up">↑ 4 к вчера</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Критичные (касса / КСО)</div>
+            <div class="kpi-value">7</div>
+            <div class="kpi-delta up">3 без обработки</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Расхождения КСО (X−Y ≥ 2)</div>
+            <div class="kpi-value" style="color:var(--warning)">5</div>
+            <div class="kpi-delta">активных индикаторов</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Кассиры выше порога</div>
+            <div class="kpi-value">2</div>
+            <div class="kpi-delta">&gt;10 возвратов за смену</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-header">
+              Последние тревоги
+              <button class="btn btn-ghost" style="padding:4px 10px;font-size:12px" onclick="showScreen('alerts')">Все →</button>
+            </div>
+            <ul class="alert-list">
+              <li class="alert-item" onclick="showScreen('incident')">
+                <div class="alert-severity critical"></div>
+                <div>
+                  <div class="alert-title">Неоплата на КСО — товары унесены</div>
+                  <div class="alert-meta">
+                    <span class="tag tag-kso">КСО</span>
+                    Касса 4 · Сценарий 3.2.12 · Чек не закрыт + зона покинута
+                  </div>
+                </div>
+                <div class="alert-time">14:18</div>
+              </li>
+              <li class="alert-item" onclick="showScreen('incident')">
+                <div class="alert-severity high"></div>
+                <div>
+                  <div class="alert-title">Расхождение: на площадке 5, в чеке 1</div>
+                  <div class="alert-meta">
+                    <span class="tag tag-kso">КСО</span>
+                    Сценарий 3.2.10 · Индикатор 5:1
+                  </div>
+                </div>
+                <div class="alert-time">14:12</div>
+              </li>
+              <li class="alert-item" onclick="showScreen('incident')">
+                <div class="alert-severity high"></div>
+                <div>
+                  <div class="alert-title">Отмена чека после оплаты наличными</div>
+                  <div class="alert-meta">
+                    <span class="tag tag-pos">Касса</span>
+                    <span class="tag tag-pos-module">POS</span>
+                    Касса 2 · &lt;10 сек между событиями
+                  </div>
+                </div>
+                <div class="alert-time">13:55</div>
+              </li>
+              <li class="alert-item" onclick="showScreen('incident')">
+                <div class="alert-severity medium"></div>
+                <div>
+                  <div class="alert-title">Подозрение на быстрый набор товара</div>
+                  <div class="alert-meta">
+                    <span class="tag tag-hall">Торговый зал</span>
+                    Детектор «протянутой руки» · 4 движения за 5 сек
+                  </div>
+                </div>
+                <div class="alert-time">13:41</div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">Камеры по зонам</div>
+            <div class="panel-body" style="padding:16px">
+              <div style="font-size:13px;margin-bottom:12px">
+                <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
+                  <span>🟢 Торговый зал</span><span style="color:var(--muted)">24 кам.</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
+                  <span>🟢 Кассовая зона</span><span style="color:var(--muted)">8 кам.</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
+                  <span>🟡 КСО (расхождение)</span><span style="color:var(--warning)">2 актив.</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;padding:8px 0">
+                  <span>🟢 Склад / отгрузка</span><span style="color:var(--muted)">4 кам.</span>
+                </div>
+              </div>
+              <button class="btn btn-primary" style="width:100%" onclick="showScreen('archive')">Открыть архив</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ALERTS -->
+      <section id="screen-alerts" class="screen">
+        <h1>Тревоги</h1>
+        <p class="subtitle">События от составных сценариев: POS + видеоаналитика + пользовательские условия</p>
+
+        <div class="filters">
+          <span class="filter-chip active">Все</span>
+          <span class="filter-chip">Торговый зал</span>
+          <span class="filter-chip">Кассы</span>
+          <span class="filter-chip">КСО</span>
+          <span class="filter-chip">Склад</span>
+          <span class="filter-chip">Критичные</span>
+          <span class="filter-chip">Не обработаны</span>
+        </div>
+
+        <div class="panel">
+          <table>
+            <thead>
+              <tr>
+                <th>Время</th>
+                <th>Сценарий</th>
+                <th>Зона</th>
+                <th>Объект</th>
+                <th>Условия</th>
+                <th>Статус</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="cursor:pointer" onclick="showScreen('incident')">
+                <td>14:18:32</td>
+                <td>Неоплата, товары унесены (3.2.12)</td>
+                <td><span class="tag tag-kso">КСО</span></td>
+                <td>КСО-4</td>
+                <td>Чек открыт · Покидание зоны · Товаров: 0</td>
+                <td style="color:var(--danger)">Новая</td>
+              </tr>
+              <tr style="cursor:pointer" onclick="showScreen('incident')">
+                <td>14:12:05</td>
+                <td>Расхождение по количеству (3.2.10)</td>
+                <td><span class="tag tag-kso">КСО</span></td>
+                <td>КСО-2</td>
+                <td>На площадке: 5 · В чеке: 1</td>
+                <td style="color:var(--warning)">В работе</td>
+              </tr>
+              <tr style="cursor:pointer" onclick="showScreen('incident')">
+                <td>13:55:18</td>
+                <td>Отмена после оплаты наличными (3.2.3)</td>
+                <td><span class="tag tag-pos">Касса</span></td>
+                <td>Касса 2</td>
+                <td>Интервал: 7 сек</td>
+                <td style="color:var(--muted)">Закрыта</td>
+              </tr>
+              <tr>
+                <td>13:48:44</td>
+                <td>Наличные в зоне без POS (3.2.4)</td>
+                <td><span class="tag tag-pos">Касса</span></td>
+                <td>Касса 5</td>
+                <td>Детектор наличных · POS молчит 30 сек</td>
+                <td style="color:var(--muted)">Закрыта</td>
+              </tr>
+              <tr>
+                <td>13:41:02</td>
+                <td>Хаотичный набор товаров (1.2.8)</td>
+                <td><span class="tag tag-hall">Зал</span></td>
+                <td>Кам. 12</td>
+                <td>4 движения руки за 5 сек</td>
+                <td style="color:var(--muted)">Закрыта</td>
+              </tr>
+              <tr>
+                <td>13:22:11</td>
+                <td>Операция без покупателя (3.2.1)</td>
+                <td><span class="tag tag-pos">Касса</span></td>
+                <td>Касса 1</td>
+                <td>Возврат + отсутствие человека</td>
+                <td style="color:var(--danger)">Новая</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- INCIDENT -->
+      <section id="screen-incident" class="screen">
+        <h1>Расследование инцидента</h1>
+        <p class="subtitle">Синхронизация видеоархива с POS-событиями · Сценарий 3.2.10</p>
+
+        <div class="grid-2" style="grid-template-columns:1fr 400px">
+          <div>
+            <div class="panel" style="margin-bottom:16px">
+              <div class="video-mock">
+                <span>[ Видеопоток КСО-2 · Камера над площадкой ]</span>
+                <div class="video-overlay">
+                  <div>На площадке: <span class="counter">5</span> шт.</div>
+                  <div>В чеке: <span class="counter" style="color:var(--danger)">1</span> шт.</div>
+                  <div style="margin-top:4px;font-size:16px">Индикатор: <strong>5:1</strong></div>
+                </div>
+                <div class="video-controls">
+                  <button class="btn btn-ghost" style="padding:4px 10px">⏮</button>
+                  <button class="btn btn-primary" style="padding:4px 14px">▶</button>
+                  <button class="btn btn-ghost" style="padding:4px 10px">⏭</button>
+                  <span style="font-size:12px;color:#ccc;margin-left:8px">14:12:05 / 14:12:45</span>
+                </div>
+              </div>
+              <div class="timeline">
+                <div class="timeline-bar"></div>
+                <div class="timeline-marker" style="left:15%"></div>
+                <div class="timeline-marker pos" style="left:35%" title="POS: сканирование"></div>
+                <div class="timeline-marker pos" style="left:50%" title="POS: оплата"></div>
+                <div class="timeline-marker alert" style="left:72%" title="Тревога"></div>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px">
+              <button class="btn btn-primary">Подтвердить инцидент</button>
+              <button class="btn btn-ghost">Ложное срабатывание</button>
+              <button class="btn btn-ghost">Экспорт клипа</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">POS-события (синхронизация)</div>
+            <div class="pos-events">
+              <div class="pos-event">
+                <span class="pos-time">14:12:05</span>
+                <span><strong>Тревога:</strong> X−Y ≥ 2 (5 на площадке, 1 в чеке)</span>
+              </div>
+              <div class="pos-event">
+                <span class="pos-time">14:11:58</span>
+                <span>Сканирование: Молоко 3.2% 1л</span>
+              </div>
+              <div class="pos-event">
+                <span class="pos-time">14:11:42</span>
+                <span>Сканирование: Хлеб белый</span>
+              </div>
+              <div class="pos-event">
+                <span class="pos-time">14:11:30</span>
+                <span>Начало чека · КСО-2</span>
+              </div>
+            </div>
+            <div class="panel-header" style="border-top:1px solid var(--border)">Состав сценария</div>
+            <div style="padding:16px;font-size:13px;line-height:1.6">
+              <div>① Детектор подсчёта товаров (Perfema) → X = 5</div>
+              <div>② POS: оплаченных позиций → Y = 1</div>
+              <div>③ Условие: X − Y ≥ 2 → <strong style="color:var(--danger)">Тревога</strong></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEARCH -->
+      <section id="screen-search" class="screen">
+        <h1>Поиск по событиям</h1>
+        <p class="subtitle">Интерактивный поиск в архиве · Комбинация параметров · Сохранённые шаблоны (п. 3.1.1)</p>
+
+        <div class="search-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Тип POS-события</label>
+              <select>
+                <option>Все подозрительные</option>
+                <option>Возврат товара</option>
+                <option>Аннуляция чека</option>
+                <option>Отложенный чек</option>
+                <option>Открытие денежного ящика</option>
+                <option>Сканирование вне чека</option>
+                <option>Применение скидки</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Зона / камера</label>
+              <select>
+                <option>Все зоны</option>
+                <option>Торговый зал</option>
+                <option>Кассовая зона</option>
+                <option>КСО</option>
+                <option>Склад / отгрузка</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Период</label>
+              <input type="text" value="26.08.2026 08:00 — 26.08.2026 15:00">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Касса / КСО</label>
+              <select><option>Любая</option><option>Касса 1</option><option>КСО-2</option></select>
+            </div>
+            <div class="form-group">
+              <label>Кассир (ID)</label>
+              <input type="text" placeholder="Не указан">
+            </div>
+            <div class="form-group">
+              <label>Комбинировать с</label>
+              <select>
+                <option>— без доп. условия —</option>
+                <option>И: отсутствие покупателя</option>
+                <option>И: сработал детектор наличных</option>
+                <option>И: расхождение товаров КСО</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center">
+            <button class="btn btn-primary">Найти в архиве</button>
+            <button class="btn btn-ghost">+ Сохранить как шаблон</button>
+          </div>
+          <div class="saved-templates">
+            <span style="font-size:12px;color:var(--muted);align-self:center">Шаблоны:</span>
+            <div class="template-card">🔖 Возвраты без покупателя</div>
+            <div class="template-card">🔖 Аннуляции за смену</div>
+            <div class="template-card">🔖 КСО — неоплата</div>
+            <div class="template-card">🔖 Открытие ящика вне чека</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">Результаты: 47 событий</div>
+          <table>
+            <thead>
+              <tr><th>Время</th><th>Событие</th><th>Касса</th><th>Кассир</th><th>Действие</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>12:34:11</td><td>Аннуляция чека</td><td>Касса 3</td><td>ID 1042</td>
+                <td><button class="btn btn-ghost" style="padding:4px 10px" onclick="showScreen('incident')">▶ Видео</button></td>
+              </tr>
+              <tr>
+                <td>11:08:55</td><td>Возврат товара</td><td>Касса 1</td><td>ID 0871</td>
+                <td><button class="btn btn-ghost" style="padding:4px 10px" onclick="showScreen('incident')">▶ Видео</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- CONSTRUCTOR -->
+      <section id="screen-constructor" class="screen">
+        <h1>Конструктор сценариев</h1>
+        <p class="subtitle">Создание составных тревожных сценариев · POS + видео + условия (п. 3.1.3, 4.1.1)</p>
+
+        <div class="constructor">
+          <div class="block-palette">
+            <h3>POS-события</h3>
+            <div class="palette-item">Возврат товара</div>
+            <div class="palette-item">Аннуляция чека</div>
+            <div class="palette-item">Оплата наличными</div>
+            <div class="palette-item">Открытие ящика</div>
+            <h3 style="margin-top:16px">Видео-детекторы</h3>
+            <div class="palette-item">Присутствие человека</div>
+            <div class="palette-item">Оставленный предмет</div>
+            <div class="palette-item">Наличные в зоне</div>
+            <div class="palette-item">Подсчёт товаров</div>
+            <div class="palette-item">Протянутая рука</div>
+            <h3 style="margin-top:16px">Логика</h3>
+            <div class="palette-item">И (AND)</div>
+            <div class="palette-item">ИЛИ (OR)</div>
+            <div class="palette-item">Задержка (N сек)</div>
+          </div>
+
+          <div class="canvas">
+            <div style="text-align:center;color:var(--muted);font-size:12px;margin-bottom:20px">Пример: «Тревога при отсутствии покупателя» (3.2.1)</div>
+            <div class="scenario-node">POS: Возврат / Аннуляция / Открытие ящика</div>
+            <div class="scenario-connector">И</div>
+            <div class="scenario-node">Детектор «Присутствие человека»<br><small style="color:var(--muted)">не сработал в течение N сек</small></div>
+            <div class="scenario-connector">→</div>
+            <div class="scenario-node" style="border-color:var(--danger)">⚠ Генерация тревоги</div>
+            <div style="margin-top:24px;display:flex;gap:10px;justify-content:center">
+              <button class="btn btn-primary">Сохранить сценарий</button>
+              <button class="btn btn-ghost">Сохранить как шаблон</button>
+              <button class="btn btn-ghost">Тест на архиве</button>
+            </div>
+          </div>
+
+          <div class="scenario-props">
+            <h3>Параметры узла</h3>
+            <div class="prop-row">
+              <label>Таймаут отсутствия покупателя (сек)</label>
+              <input type="number" value="5">
+            </div>
+            <div class="prop-row">
+              <label>Список POS-событий</label>
+              <input type="text" value="Возврат, Аннуляция, Ящик">
+            </div>
+            <div class="prop-row">
+              <label>Зона применения</label>
+              <input type="text" value="Кассовая зона">
+            </div>
+            <div class="prop-row">
+              <label>Название сценария</label>
+              <input type="text" value="Операция без покупателя">
+            </div>
+            <div class="prop-row">
+              <label>Приоритет тревоги</label>
+              <select style="width:100%;padding:6px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:4px">
+                <option>Высокий</option><option>Средний</option><option>Низкий</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ANALYTICS -->
+      <section id="screen-analytics" class="screen">
+        <h1>Аналитика и рейтинги</h1>
+        <p class="subtitle">Менеджер инцидентов · Аномальное поведение кассиров · Бенчмаркинг (п. 3.1.4, 4.1.6)</p>
+
+        <div class="tabs">
+          <button class="tab active">Кассиры</button>
+          <button class="tab">Магазины</button>
+          <button class="tab">Сценарии</button>
+          <button class="tab">Потери</button>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-header">Топ кассиров по тревожным операциям (смена)</div>
+            <table>
+              <thead>
+                <tr><th>#</th><th>Кассир</th><th>Возвраты</th><th>Аннуляции</th><th>Всего</th><th></th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="rank rank-1">1</td>
+                  <td>ID 1042 · Петров С.</td>
+                  <td>12</td><td>4</td>
+                  <td><div class="bar-cell"><div class="bar" style="width:120px;background:var(--danger)"></div>16</div></td>
+                  <td><span style="color:var(--danger);font-size:12px">↑ порог</span></td>
+                </tr>
+                <tr>
+                  <td class="rank rank-2">2</td>
+                  <td>ID 0871 · Сидорова М.</td>
+                  <td>11</td><td>2</td>
+                  <td><div class="bar-cell"><div class="bar" style="width:100px;background:var(--warning)"></div>13</div></td>
+                  <td><span style="color:var(--warning);font-size:12px">↑ порог</span></td>
+                </tr>
+                <tr>
+                  <td class="rank rank-3">3</td>
+                  <td>ID 0234 · Козлов А.</td>
+                  <td>6</td><td>3</td>
+                  <td><div class="bar-cell"><div class="bar" style="width:60px"></div>9</div></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="padding:14px 18px;border-top:1px solid var(--border);font-size:12px;color:var(--muted)">
+              Порог: &gt;10 возвратов за смену → уведомление руководителю
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">Топ-5 магазинов по инцидентам</div>
+            <table>
+              <thead><tr><th>#</th><th>Магазин</th><th>Инциденты</th><th>Тренд</th></tr></thead>
+              <tbody>
+                <tr><td class="rank rank-1">1</td><td>№142 Авиапарк</td><td>34</td><td style="color:var(--danger)">↑ 12%</td></tr>
+                <tr><td class="rank rank-2">2</td><td>№089 Невский</td><td>28</td><td style="color:var(--success)">↓ 3%</td></tr>
+                <tr><td class="rank rank-3">3</td><td>ℹ031 Казань</td><td>22</td><td>—</td></tr>
+              </tbody>
+            </table>
+            <div class="chart-placeholder">📊 Дашборд: динамика потерь по сети</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ARCHIVE -->
+      <section id="screen-archive" class="screen">
+        <h1>Видеоархив</h1>
+        <p class="subtitle">Поиск по титрам POS · Синхронизация с транзакциями</p>
+
+        <div class="search-form" style="margin-bottom:16px">
+          <div class="form-row" style="grid-template-columns:1fr 1fr 1fr auto;align-items:end">
+            <div class="form-group">
+              <label>Камера</label>
+              <select><option>КСО-2 — вид сверху</option><option>Касса 2 — фронт</option></select>
+            </div>
+            <div class="form-group">
+              <label>Дата и время</label>
+              <input type="text" value="26.08.2026 14:12:00">
+            </div>
+            <div class="form-group">
+              <label>POS-титр</label>
+              <select><option>Любой</option><option>Аннуляция</option><option>Сканирование</option></select>
+            </div>
+            <button class="btn btn-primary">Перейти</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="video-mock" style="min-height:360px">
+            <span>[ Архив · Камера КСО-2 · 26.08.2026 14:12:05 ]</span>
+            <div class="video-overlay">
+              POS-титр: «Сканирование: Хлеб белый»<br>
+              <span style="font-size:11px;color:var(--muted)">Синхронизация POS-модуля</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      const screen = document.getElementById('screen-' + id);
+      if (screen) screen.classList.add('active');
+      const nav = document.querySelector('[data-screen="' + id + '"]');
+      if (nav) nav.classList.add('active');
+    }
+    document.querySelectorAll('.nav-item').forEach(btn => {
+      btn.addEventListener('click', () => showScreen(btn.dataset.screen));
+    });
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        chip.parentElement.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
