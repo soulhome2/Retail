@@ -261,9 +261,72 @@
       padding: 12px 16px; font-size: 12px; color: var(--muted); margin-bottom: 20px;
     }
     .proto-note strong { color: var(--accent); }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+    .receipt-layout { display: grid; grid-template-columns: minmax(520px, 1.25fr) minmax(460px, .95fr); gap: 16px; }
+    .receipt-row { cursor: pointer; }
+    .receipt-row.selected td { background: rgba(59,130,246,.14); }
+    .receipt-total { font-size: 22px; font-weight: 700; }
+    .receipt-paper { padding: 18px; font-family: "Cascadia Mono", Consolas, monospace; font-size: 12px; }
+    .receipt-head { text-align: center; padding-bottom: 12px; border-bottom: 1px dashed var(--border); margin-bottom: 8px; }
+    .receipt-line { display: grid; grid-template-columns: 1fr auto; gap: 14px; padding: 8px 4px; border-bottom: 1px dashed var(--border); cursor: pointer; }
+    .receipt-line:hover, .receipt-line.active { background: var(--surface2); color: #fff; }
+    .receipt-line.risk { color: #fca5a5; background: rgba(239,68,68,.08); }
+    .receipt-caption {
+      position: absolute; left: 14px; bottom: 54px; width: min(440px, calc(100% - 28px));
+      padding: 10px 12px; background: rgba(3,7,18,.84); border-left: 3px solid var(--accent);
+      font-family: "Cascadia Mono", Consolas, monospace; font-size: 12px; line-height: 1.45;
+      box-shadow: 0 8px 30px rgba(0,0,0,.35);
+    }
+    .receipt-caption .risk-line { color: #fca5a5; font-weight: 700; }
+    .camera-art {
+      position:absolute; inset:0; overflow:hidden;
+      background: linear-gradient(145deg,#18212d 0%,#0c1118 55%,#151d27 100%);
+    }
+    .camera-art::before {
+      content:""; position:absolute; width:46%; height:38%; left:28%; top:26%;
+      background:#293748; border:12px solid #111923; transform:perspective(450px) rotateX(55deg);
+      box-shadow:0 24px 40px rgba(0,0,0,.45);
+    }
+    .camera-art::after {
+      content:"КАССОВАЯ ЗОНА · ВИД СВЕРХУ"; position:absolute; right:12px; top:12px;
+      font-size:10px; letter-spacing:.08em; color:#a8b5c6; background:rgba(0,0,0,.55); padding:5px 8px;
+    }
+    .video-label { position:relative; z-index:1; color:#9aa9bc; }
+    .split-tabs { display:flex; gap:2px; border-bottom:1px solid var(--border); padding:0 14px; background:var(--surface); }
+    .split-tab { padding:11px 14px; border:0; color:var(--muted); background:none; cursor:pointer; border-bottom:2px solid transparent; }
+    .split-tab.active { color:#fff; border-bottom-color:var(--accent); }
+    .source-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+    .source-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; }
+    .source-top { display:flex; justify-content:space-between; gap:12px; margin-bottom:14px; }
+    .source-name { font-weight:600; font-size:14px; }
+    .source-meta { color:var(--muted); font-size:12px; line-height:1.7; }
+    .health { font-size:11px; border-radius:12px; padding:3px 8px; white-space:nowrap; height:max-content; }
+    .health.ok { color:#86efac; background:rgba(34,197,94,.12); }
+    .health.warn { color:#fcd34d; background:rgba(245,158,11,.12); }
+    .health.err { color:#fca5a5; background:rgba(239,68,68,.12); }
+    .flow { display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; padding:20px; }
+    .flow-node { border:1px solid var(--border); background:var(--surface2); border-radius:8px; padding:10px 13px; font-size:12px; }
+    .flow-arrow { color:var(--accent); }
+    .toast {
+      position:fixed; right:24px; bottom:24px; z-index:20; padding:12px 16px;
+      border:1px solid #35557d; background:#17263a; border-radius:8px; font-size:13px;
+      opacity:0; transform:translateY(8px); pointer-events:none; transition:.2s;
+    }
+    .toast.show { opacity:1; transform:translateY(0); }
     @media (max-width: 1200px) {
       .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-      .grid-2, .constructor { grid-template-columns: 1fr; }
+      .grid-2, .constructor, .receipt-layout { grid-template-columns: 1fr; }
+      .source-grid { grid-template-columns:1fr 1fr; }
+    }
+    @media (max-width: 780px) {
+      .sidebar { width:72px; }
+      .logo { font-size:0; }
+      .logo span { font-size:9px; }
+      .nav-item { font-size:0; justify-content:center; }
+      .nav-icon { font-size:17px; }
+      .sidebar-footer { display:none; }
+      .form-row, .kpi-grid, .source-grid { grid-template-columns:1fr !important; }
+      .content { padding:14px; }
     }
   </style>
 </head>
@@ -280,11 +343,14 @@
       <button class="nav-item" data-screen="alerts">
         <span class="nav-icon">⚠</span> Тревоги
       </button>
+      <button class="nav-item" data-screen="receipts">
+        <span class="nav-icon">▥</span> Чеки
+      </button>
       <button class="nav-item" data-screen="incident">
         <span class="nav-icon">▶</span> Расследование
       </button>
       <button class="nav-item" data-screen="search">
-        <span class="nav-icon">⌕</span> Поиск по событиям
+        <span class="nav-icon">⌕</span> Поиск по титрам
       </button>
       <button class="nav-item" data-screen="constructor">
         <span class="nav-icon">⚙</span> Конструктор сценариев
@@ -294,6 +360,9 @@
       </button>
       <button class="nav-item" data-screen="archive">
         <span class="nav-icon">▦</span> Видеоархив
+      </button>
+      <button class="nav-item" data-screen="sources">
+        <span class="nav-icon">⇄</span> Источники данных
       </button>
     </nav>
     <div class="sidebar-footer">
@@ -320,14 +389,14 @@
 
     <div class="content">
       <div class="proto-note">
-        <strong>UI-прототип</strong> по ТЗ «Антифрод-решение для ритейла на базе Интеллект Х».
-        Навигация слева переключает экраны. Это концепт, не финальный дизайн.
+        <strong>Retail Addon · прототип v2</strong> для «Интеллект X».
+        Чек, POS-события, титры и видео синхронизированы в едином контексте расследования.
       </div>
 
       <!-- DASHBOARD -->
       <section id="screen-dashboard" class="screen active">
         <h1>Центр мониторинга</h1>
-        <p class="subtitle">Единый интерфейс оператора — торговый зал, кассы, КСО, архив</p>
+        <p class="subtitle">Онлайн-контроль касс, КСО, чеков и инцидентов сети</p>
 
         <div class="kpi-grid">
           <div class="kpi-card">
@@ -424,7 +493,7 @@
                   <span>🟢 Склад / отгрузка</span><span style="color:var(--muted)">4 кам.</span>
                 </div>
               </div>
-              <button class="btn btn-primary" style="width:100%" onclick="showScreen('archive')">Открыть архив</button>
+              <button class="btn btn-primary" style="width:100%" onclick="showScreen('receipts')">Открыть чеки</button>
             </div>
           </div>
         </div>
@@ -511,20 +580,99 @@
         </div>
       </section>
 
+      <!-- RECEIPTS -->
+      <section id="screen-receipts" class="screen">
+        <h1>Чеки</h1>
+        <p class="subtitle">Receipt viewer · структурированный чек, кассовые операции и связанное видео</p>
+
+        <div class="search-form">
+          <div class="form-row">
+            <div class="form-group"><label>Период</label><input value="09.09.2026 08:00 — 09.09.2026 15:00"></div>
+            <div class="form-group"><label>Магазин / касса</label><select><option>№142 · Все кассы</option><option>№142 · Касса 2</option><option>№142 · КСО-2</option></select></div>
+            <div class="form-group"><label>Номер / товар / штрихкод</label><input placeholder="Например, 4810153020124"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Кассир</label><select><option>Все кассиры</option><option>ID 1042 · Петров С.</option><option>ID 0871 · Сидорова М.</option></select></div>
+            <div class="form-group"><label>Операция</label><select><option>Все операции</option><option>Аннуляция</option><option>Возврат</option><option>Скидка</option><option>Открытие ящика</option></select></div>
+            <div class="form-group"><label>Статус</label><select><option>Любой</option><option>С тревогой</option><option>Без видео</option><option>Импортирован постфактум</option></select></div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="demoAction('Найдено 186 чеков')">Найти чеки</button>
+            <button class="btn btn-ghost" onclick="demoAction('Шаблон «Контроль отмен» сохранён')">Сохранить запрос</button>
+            <span style="font-size:12px;color:var(--muted)">Шаблоны: <a href="#" style="color:#93c5fd">Возвраты</a> · <a href="#" style="color:#93c5fd">КСО с тревогами</a></span>
+          </div>
+        </div>
+
+        <div class="receipt-layout">
+          <div class="panel">
+            <div class="panel-header"><span>Результаты · 186 чеков</span><span style="color:var(--muted);font-weight:400">Сортировка: новые</span></div>
+            <div style="overflow:auto">
+              <table>
+                <thead><tr><th>Время</th><th>Чек</th><th>Касса</th><th>Кассир</th><th>Сумма</th><th>Состояние</th></tr></thead>
+                <tbody>
+                  <tr class="receipt-row selected" data-receipt="48291">
+                    <td>14:12:41</td><td>№ 48291</td><td>КСО-2</td><td>—</td><td>259,90 ₽</td><td><span class="health err">Тревога</span></td>
+                  </tr>
+                  <tr class="receipt-row" data-receipt="48290">
+                    <td>14:09:18</td><td>№ 48290</td><td>Касса 2</td><td>Петров С.</td><td>1 842,50 ₽</td><td><span class="health ok">Закрыт</span></td>
+                  </tr>
+                  <tr class="receipt-row" data-receipt="48288">
+                    <td>14:03:02</td><td>№ 48288</td><td>Касса 1</td><td>Сидорова М.</td><td>435,00 ₽</td><td><span class="health warn">Отмена</span></td>
+                  </tr>
+                  <tr class="receipt-row" data-receipt="48287">
+                    <td>13:58:44</td><td>№ 48287</td><td>Касса 5</td><td>Козлов А.</td><td>3 105,20 ₽</td><td><span class="health ok">Закрыт</span></td>
+                  </tr>
+                  <tr class="receipt-row" data-receipt="48285">
+                    <td>13:48:10</td><td>№ 48285</td><td>Касса 3</td><td>Петров С.</td><td>719,30 ₽</td><td><span class="health warn">Импорт</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header"><span>Чек № <span id="receipt-number">48291</span></span><button class="btn btn-primary" style="padding:5px 10px" onclick="showScreen('incident')">Открыть расследование</button></div>
+            <div class="video-mock" style="aspect-ratio:16/8">
+              <div class="camera-art"></div>
+              <span class="video-label">КСО-2 · камера над кассой и зоной покупателя</span>
+              <div class="receipt-caption">
+                14:11:58  МОЛОКО 3.2% 1Л&nbsp;&nbsp;&nbsp;89,90<br>
+                <span class="risk-line">14:12:05  РАСХОЖДЕНИЕ X=5 / Y=1</span><br>
+                14:12:41  ИТОГ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;259,90
+              </div>
+              <div class="video-controls"><button class="btn btn-primary" style="padding:4px 12px">▶</button><span style="font-size:12px">14:12:05</span><span style="margin-left:auto;font-size:11px">Титры: ВКЛ · Ракурс: сверху</span></div>
+            </div>
+            <div class="receipt-paper">
+              <div class="receipt-head">МАГАЗИН №142 · КСО-2<br>ЧЕК №48291 · 09.09.2026</div>
+              <div class="receipt-line"><span>Хлеб белый × 1</span><span>74,00</span></div>
+              <div class="receipt-line active"><span>Молоко 3.2% 1л × 1<br><small style="color:var(--muted)">14:11:58 · перейти к видео</small></span><span>89,90</span></div>
+              <div class="receipt-line risk"><span>⚠ Расхождение товаров<br><small>X=5 / Y=1</small></span><span>14:12:05</span></div>
+              <div class="receipt-line"><strong>ИТОГО</strong><strong class="receipt-total">259,90 ₽</strong></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- INCIDENT -->
       <section id="screen-incident" class="screen">
         <h1>Расследование инцидента</h1>
-        <p class="subtitle">Синхронизация видеоархива с POS-событиями · Сценарий 3.2.10</p>
+        <p class="subtitle">INC-2026-09142 · POS-05 «Расхождение количества товаров на КСО» · В работе</p>
 
         <div class="grid-2" style="grid-template-columns:1fr 400px">
           <div>
             <div class="panel" style="margin-bottom:16px">
               <div class="video-mock">
-                <span>[ Видеопоток КСО-2 · Камера над площадкой ]</span>
+                <div class="camera-art"></div>
+                <span class="video-label">КСО-2 · Камера над площадкой и зоной покупателя</span>
                 <div class="video-overlay">
                   <div>На площадке: <span class="counter">5</span> шт.</div>
                   <div>В чеке: <span class="counter" style="color:var(--danger)">1</span> шт.</div>
                   <div style="margin-top:4px;font-size:16px">Индикатор: <strong>5:1</strong></div>
+                </div>
+                <div class="receipt-caption">
+                  ЧЕК №48291 · КСО-2<br>
+                  14:11:58  МОЛОКО 3.2% 1Л&nbsp;&nbsp;&nbsp;89,90<br>
+                  <span class="risk-line">14:12:05  ⚠ X=5 / Y=1</span>
                 </div>
                 <div class="video-controls">
                   <button class="btn btn-ghost" style="padding:4px 10px">⏮</button>
@@ -542,14 +690,14 @@
               </div>
             </div>
             <div style="display:flex;gap:10px">
-              <button class="btn btn-primary">Подтвердить инцидент</button>
-              <button class="btn btn-ghost">Ложное срабатывание</button>
-              <button class="btn btn-ghost">Экспорт клипа</button>
+              <button class="btn btn-primary" onclick="setIncidentStatus('Подтверждён')">Подтвердить</button>
+              <button class="btn btn-ghost" onclick="setIncidentStatus('Ложное срабатывание')">Ложное срабатывание</button>
+              <button class="btn btn-ghost" onclick="demoAction('Видеоклип поставлен в очередь экспорта')">Экспорт клипа</button>
             </div>
           </div>
 
           <div class="panel">
-            <div class="panel-header">POS-события (синхронизация)</div>
+            <div class="panel-header"><span>Чек №48291 · 259,90 ₽</span><span id="incident-status" class="health warn">В работе</span></div>
             <div class="pos-events">
               <div class="pos-event">
                 <span class="pos-time">14:12:05</span>
@@ -574,28 +722,27 @@
               <div>② POS: оплаченных позиций → Y = 1</div>
               <div>③ Условие: X − Y ≥ 2 → <strong style="color:var(--danger)">Тревога</strong></div>
             </div>
+            <div class="panel-header" style="border-top:1px solid var(--border)">Карточка инцидента</div>
+            <div style="padding:16px;font-size:12px;line-height:1.9;color:var(--muted)">
+              Ответственный: <strong style="color:var(--text)">Иванова А.С.</strong><br>
+              Магазин: №142 · КСО-2<br>
+              Источники: POS Gateway + Perfema<br>
+              <button class="btn btn-ghost" style="margin-top:8px" onclick="demoAction('Комментарий добавлен в историю аудита')">+ Комментарий</button>
+            </div>
           </div>
         </div>
       </section>
 
       <!-- SEARCH -->
       <section id="screen-search" class="screen">
-        <h1>Поиск по событиям</h1>
-        <p class="subtitle">Интерактивный поиск в архиве · Комбинация параметров · Сохранённые шаблоны (п. 3.1.1)</p>
+        <h1>Поиск по титрам</h1>
+        <p class="subtitle">Captions search · поиск текста кассового потока с переходом к видео и полному чеку</p>
 
         <div class="search-form">
           <div class="form-row">
             <div class="form-group">
-              <label>Тип POS-события</label>
-              <select>
-                <option>Все подозрительные</option>
-                <option>Возврат товара</option>
-                <option>Аннуляция чека</option>
-                <option>Отложенный чек</option>
-                <option>Открытие денежного ящика</option>
-                <option>Сканирование вне чека</option>
-                <option>Применение скидки</option>
-              </select>
+              <label>Текст или регулярное выражение</label>
+              <input value="(АННУЛЯЦИЯ)|(ВОЗВРАТ)" placeholder="Товар, операция, шаблон">
             </div>
             <div class="form-group">
               <label>Зона / камера</label>
@@ -622,17 +769,16 @@
               <input type="text" placeholder="Не указан">
             </div>
             <div class="form-group">
-              <label>Комбинировать с</label>
+              <label>Режим поиска</label>
               <select>
-                <option>— без доп. условия —</option>
-                <option>И: отсутствие покупателя</option>
-                <option>И: сработал детектор наличных</option>
-                <option>И: расхождение товаров КСО</option>
+                <option>Регулярное выражение</option>
+                <option>Точная фраза</option>
+                <option>Любое из слов</option>
               </select>
             </div>
           </div>
           <div style="display:flex;gap:10px;align-items:center">
-            <button class="btn btn-primary">Найти в архиве</button>
+            <button class="btn btn-primary" onclick="demoAction('Найдено 47 совпадений в титрах')">Найти в видеоархиве</button>
             <button class="btn btn-ghost">+ Сохранить как шаблон</button>
           </div>
           <div class="saved-templates">
@@ -648,16 +794,16 @@
           <div class="panel-header">Результаты: 47 событий</div>
           <table>
             <thead>
-              <tr><th>Время</th><th>Событие</th><th>Касса</th><th>Кассир</th><th>Действие</th></tr>
+              <tr><th>Время</th><th>Совпадение в титрах</th><th>Касса</th><th>Чек</th><th>Действие</th></tr>
             </thead>
             <tbody>
               <tr>
-                <td>12:34:11</td><td>Аннуляция чека</td><td>Касса 3</td><td>ID 1042</td>
-                <td><button class="btn btn-ghost" style="padding:4px 10px" onclick="showScreen('incident')">▶ Видео</button></td>
+                <td>12:34:11</td><td><mark style="background:#854d0e;color:#fef3c7">АННУЛЯЦИЯ</mark> ЧЕКА · 719,30 ₽</td><td>Касса 3</td><td>№48285</td>
+                <td><button class="btn btn-ghost" style="padding:4px 10px" onclick="showScreen('receipts')">▶ Видео + чек</button></td>
               </tr>
               <tr>
-                <td>11:08:55</td><td>Возврат товара</td><td>Касса 1</td><td>ID 0871</td>
-                <td><button class="btn btn-ghost" style="padding:4px 10px" onclick="showScreen('incident')">▶ Видео</button></td>
+                <td>11:08:55</td><td><mark style="background:#854d0e;color:#fef3c7">ВОЗВРАТ</mark> ТОВАРА · 435,00 ₽</td><td>Касса 1</td><td>№48288</td>
+                <td><button class="btn btn-ghost" style="padding:4px 10px" onclick="showScreen('receipts')">▶ Видео + чек</button></td>
               </tr>
             </tbody>
           </table>
@@ -793,6 +939,67 @@
         </div>
       </section>
 
+      <!-- SOURCES -->
+      <section id="screen-sources" class="screen">
+        <h1>Источники данных</h1>
+        <p class="subtitle">POS Gateway, адаптеры касс и постфактум-импорт · контроль доставки и синхронизации</p>
+
+        <div class="source-grid" style="margin-bottom:16px">
+          <div class="source-card">
+            <div class="source-top"><div><div class="source-name">POS Gateway · магазин №142</div><div class="source-meta">Онлайн · JSON/HTTPS</div></div><span class="health ok">Подключён</span></div>
+            <div class="source-meta">Последнее событие: 2 сек назад<br>Касс: 8 · очередь: 0<br>Смещение времени: +0,12 сек</div>
+          </div>
+          <div class="source-card">
+            <div class="source-top"><div><div class="source-name">Adapter Utility · кассы 1–5</div><div class="source-meta">Windows Service · v2.1.4</div></div><span class="health ok">Работает</span></div>
+            <div class="source-meta">Доставлено сегодня: 18 492<br>Ошибок: 0 · повторов: 12<br>Конфигурация: актуальна</div>
+          </div>
+          <div class="source-card">
+            <div class="source-top"><div><div class="source-name">КСО-4 · нативный адаптер</div><div class="source-meta">TCP/XML</div></div><span class="health warn">Буферизация</span></div>
+            <div class="source-meta">Нет связи: 3 мин 18 сек<br>В очереди: 47 событий<br>Автоповтор: через 22 сек</div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-bottom:16px">
+          <div class="panel-header">Поток кассовых данных</div>
+          <div class="flow">
+            <span class="flow-node">Кассовое ПО / POS</span><span class="flow-arrow">→</span>
+            <span class="flow-node">Gateway / Adapter Utility</span><span class="flow-arrow">→</span>
+            <span class="flow-node">Универсальная модель</span><span class="flow-arrow">→</span>
+            <span class="flow-node">Receipt Store</span><span class="flow-arrow">→</span>
+            <span class="flow-node">Титры + правила + инциденты</span>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-header">Импорт постфактум</div>
+            <div style="padding:18px">
+              <div class="form-row" style="grid-template-columns:1fr 1fr">
+                <div class="form-group"><label>Файл кассовой выгрузки</label><input value="receipts_2026-09-08.xml"></div>
+                <div class="form-group"><label>Магазин и часовой пояс</label><select><option>№142 · UTC+3</option></select></div>
+              </div>
+              <div style="padding:12px;background:var(--surface2);border-radius:7px;font-size:12px;color:var(--muted);margin-bottom:14px">
+                Предварительная проверка: 12 480 событий · 1 904 чека · дубликатов 3 · ошибок 0<br>
+                Видеоархив найден за весь период · расчётное смещение +1,4 сек
+              </div>
+              <button class="btn btn-primary" onclick="demoAction('Постфактум-импорт запущен')">Запустить импорт</button>
+              <button class="btn btn-ghost" onclick="demoAction('Сопоставление полей открыто')">Сопоставить поля</button>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">Касса ↔ камеры</div>
+            <table>
+              <thead><tr><th>Касса</th><th>Основная камера</th><th>Ракурсы</th><th>Статус</th></tr></thead>
+              <tbody>
+                <tr><td>КСО-2</td><td>CAM-142-17 · сверху</td><td>2</td><td><span class="health ok">Видео есть</span></td></tr>
+                <tr><td>Касса 2</td><td>CAM-142-09 · фронт</td><td>2</td><td><span class="health ok">Видео есть</span></td></tr>
+                <tr><td>КСО-4</td><td>CAM-142-19 · сверху</td><td>1</td><td><span class="health warn">Дрейф 2,8 сек</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       <!-- ARCHIVE -->
       <section id="screen-archive" class="screen">
         <h1>Видеоархив</h1>
@@ -829,6 +1036,7 @@
     </div>
   </div>
 
+  <div id="toast" class="toast"></div>
   <script>
     function showScreen(id) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -847,6 +1055,34 @@
         chip.classList.add('active');
       });
     });
+    document.querySelectorAll('.receipt-row').forEach(row => {
+      row.addEventListener('click', () => {
+        document.querySelectorAll('.receipt-row').forEach(r => r.classList.remove('selected'));
+        row.classList.add('selected');
+        document.getElementById('receipt-number').textContent = row.dataset.receipt;
+        demoAction('Открыт чек №' + row.dataset.receipt + ' со связанным видео');
+      });
+    });
+    document.querySelectorAll('.receipt-line').forEach(line => {
+      line.addEventListener('click', () => {
+        document.querySelectorAll('.receipt-line').forEach(r => r.classList.remove('active'));
+        line.classList.add('active');
+        demoAction('Видео перемещено к выбранной операции');
+      });
+    });
+    function demoAction(text) {
+      const toast = document.getElementById('toast');
+      toast.textContent = text;
+      toast.classList.add('show');
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+    function setIncidentStatus(status) {
+      const el = document.getElementById('incident-status');
+      el.textContent = status;
+      el.className = 'health ' + (status === 'Подтверждён' ? 'err' : 'ok');
+      demoAction('Статус инцидента: ' + status);
+    }
   </script>
 </body>
 </html>
