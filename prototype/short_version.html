@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Интеллект X — Ритейл · короткая версия</title>
+  <style>
+    :root, html[data-theme="dark"] {
+      --bg: #10151c;
+      --surface: #1a2230;
+      --surface2: #243044;
+      --border: #314057;
+      --text: #e8edf4;
+      --muted: #8b9cb3;
+      --accent: #3b82f6;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --success: #22c55e;
+      --sidebar: 210px;
+      --note-bg: #182433;
+      --note-strong: #93c5fd;
+      --toast-bg: #17263a;
+      --toast-border: #35557d;
+      --video-bg: #0a0e14;
+      --caption-bg: rgba(3,7,18,.88);
+      --cam-tag: #cbd5e1;
+      --prio-high-bg: rgba(239,68,68,.16);
+      --prio-high-border: #ef4444;
+      --prio-high-text: #fecaca;
+      --prio-mid-bg: rgba(245,158,11,.16);
+      --prio-mid-border: #f59e0b;
+      --prio-mid-text: #fde68a;
+      --prio-low-bg: rgba(59,130,246,.16);
+      --prio-low-border: #3b82f6;
+      --prio-low-text: #bfdbfe;
+      --src-pos-bg: #1e3a5f; --src-pos-fg: #93c5fd;
+      --src-file-bg: #3b2f1e; --src-file-fg: #fcd34d;
+      --src-fr-bg: #2e1e3b; --src-fr-fg: #d8b4fe;
+      --src-kso-bg: #1e3b2f; --src-kso-fg: #6ee7b7;
+      --src-ofd-bg: #1e2f3b; --src-ofd-fg: #7dd3fc;
+      --src-scale-bg: #3b1e28; --src-scale-fg: #fda4af;
+      --src-video-bg: #2a2438; --src-video-fg: #c4b5fd;
+    }
+    html[data-theme="light"] {
+      --bg: #f3f5f8;
+      --surface: #ffffff;
+      --surface2: #eef2f7;
+      --border: #d5deea;
+      --text: #1c2430;
+      --muted: #5b6b80;
+      --accent: #2563eb;
+      --danger: #dc2626;
+      --warning: #d97706;
+      --success: #16a34a;
+      --note-bg: #e8f1ff;
+      --note-strong: #1d4ed8;
+      --toast-bg: #ffffff;
+      --toast-border: #bfd0e8;
+      --video-bg: #1a2330;
+      --caption-bg: rgba(15,23,42,.88);
+      --cam-tag: #e2e8f0;
+      --prio-high-bg: #fee2e2;
+      --prio-high-border: #dc2626;
+      --prio-high-text: #991b1b;
+      --prio-mid-bg: #fef3c7;
+      --prio-mid-border: #d97706;
+      --prio-mid-text: #92400e;
+      --prio-low-bg: #dbeafe;
+      --prio-low-border: #2563eb;
+      --prio-low-text: #1e40af;
+      --src-pos-bg: #dbeafe; --src-pos-fg: #1d4ed8;
+      --src-file-bg: #fef3c7; --src-file-fg: #92400e;
+      --src-fr-bg: #ede9fe; --src-fr-fg: #6d28d9;
+      --src-kso-bg: #d1fae5; --src-kso-fg: #047857;
+      --src-ofd-bg: #e0f2fe; --src-ofd-fg: #0369a1;
+      --src-scale-bg: #ffe4e6; --src-scale-fg: #be123c;
+      --src-video-bg: #ede9fe; --src-video-fg: #5b21b6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+    }
+    button, select, input { font: inherit; }
+    .sidebar {
+      width: var(--sidebar);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .logo { padding: 18px 16px; border-bottom: 1px solid var(--border); font-weight: 700; }
+    .logo span { display: block; margin-top: 4px; color: var(--accent); font-size: 11px; font-weight: 500; }
+    .nav { padding: 10px 8px; flex: 1; }
+    .nav-item {
+      width: 100%; display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; margin-bottom: 4px; border: 0; border-radius: 8px;
+      background: none; color: var(--muted); text-align: left; cursor: pointer;
+    }
+    .nav-item:hover { background: var(--surface2); color: var(--text); }
+    .nav-item.active { background: var(--accent); color: #fff; }
+    .sidebar-footer { padding: 14px 16px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); line-height: 1.5; }
+    .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .topbar {
+      height: 52px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between;
+      background: var(--surface); border-bottom: 1px solid var(--border);
+    }
+    .store-select, .field, .btn {
+      background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+      border-radius: 6px; padding: 7px 10px;
+    }
+    .content { flex: 1; overflow: auto; padding: 20px; }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    h1 { font-size: 20px; font-weight: 600; }
+    .subtitle { color: var(--muted); font-size: 13px; margin: 4px 0 16px; }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .theme-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--border); background: var(--surface2);
+      color: var(--warning); display: grid; place-items: center; cursor: pointer;
+    }
+    .theme-btn:hover { border-color: var(--warning); }
+    .theme-btn svg { width: 18px; height: 18px; fill: currentColor; }
+    html[data-theme="light"] .theme-btn { color: #ca8a04; background: #fff7d6; }
+    .note {
+      background: var(--note-bg); border: 1px solid var(--border); border-radius: 8px;
+      padding: 10px 14px; font-size: 12px; color: var(--muted); margin-bottom: 16px;
+    }
+    .note strong { color: var(--note-strong); }
+    .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .panel-h {
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+      padding: 11px 14px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 600;
+    }
+    .mode-switch { display: flex; gap: 4px; margin-bottom: 16px; }
+    .mode-btn {
+      padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--muted); cursor: pointer;
+    }
+    .mode-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .workspace { display: grid; grid-template-columns: 340px 1fr; gap: 16px; }
+    .form-stack { display: grid; gap: 10px; padding: 14px; }
+    .form-group label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 5px; }
+    .field, .store-select { width: 100%; }
+    .btn { cursor: pointer; }
+    .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn-ghost { background: transparent; }
+    .btn-danger { background: transparent; color: #fca5a5; border-color: #7f1d1d; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .video {
+      position: relative; aspect-ratio: 16/8.2; background: var(--video-bg);
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .video-scene { position: absolute; inset: 0; }
+    .video-scene::before, .video-scene::after { content: ""; position: absolute; border-radius: 50% 50% 42% 42%; }
+    .video-scene.cashier { background: linear-gradient(#2a384c, #111827); }
+    .video-scene.cashier::before { width: 90px; height: 140px; left: 38%; bottom: 18%; background: #94a3b8; }
+    .video-scene.cashier::after { width: 46%; height: 18%; left: 27%; bottom: 8%; background: #64748b; border-radius: 8px; }
+    .video-scene.pair { background: linear-gradient(#2a384c, #111827); }
+    .video-scene.pair::before { width: 80px; height: 130px; left: 28%; bottom: 16%; background: #94a3b8; }
+    .video-scene.pair::after { width: 80px; height: 130px; left: 54%; bottom: 16%; background: #fca5a5; }
+    .video-scene.gate { background: linear-gradient(#2a384c, #111827); }
+    .video-scene.gate::before, .video-scene.gate::after { width: 18px; height: 70%; top: 15%; background: #ef4444; border-radius: 4px; }
+    .video-scene.gate::before { left: 22%; }
+    .video-scene.gate::after { right: 22%; }
+    .cam-tag {
+      position: absolute; top: 10px; right: 10px; z-index: 2;
+      font-size: 10px; letter-spacing: .06em; color: var(--cam-tag);
+      background: rgba(0,0,0,.55); padding: 4px 8px; border-radius: 4px;
+    }
+    .caption {
+      position: absolute; left: 12px; bottom: 12px; z-index: 2; width: min(420px, calc(100% - 24px));
+      background: var(--caption-bg); border-left: 3px solid var(--accent); color: #e8edf4;
+      padding: 10px 12px; font-family: Consolas, "Cascadia Mono", monospace;
+      font-size: 13px; line-height: 1.5; white-space: pre-wrap;
+      box-shadow: 0 8px 24px rgba(0,0,0,.4);
+    }
+    .caption .hit { background: #854d0e; color: #fef3c7; }
+    .caption .risk { color: #fca5a5; font-weight: 700; }
+    .source {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; border-radius: 12px; padding: 2px 8px; white-space: nowrap;
+    }
+    .src-pos { background: var(--src-pos-bg); color: var(--src-pos-fg); }
+    .src-file { background: var(--src-file-bg); color: var(--src-file-fg); }
+    .src-fr { background: var(--src-fr-bg); color: var(--src-fr-fg); }
+    .src-kso { background: var(--src-kso-bg); color: var(--src-kso-fg); }
+    .src-ofd { background: var(--src-ofd-bg); color: var(--src-ofd-fg); }
+    .src-scale { background: var(--src-scale-bg); color: var(--src-scale-fg); }
+    .src-video { background: var(--src-video-bg); color: var(--src-video-fg); }
+    .prio-high { background: var(--prio-high-bg); border-left: 4px solid var(--prio-high-border); }
+    .prio-mid { background: var(--prio-mid-bg); border-left: 4px solid var(--prio-mid-border); }
+    .prio-low { background: var(--prio-low-bg); border-left: 4px solid var(--prio-low-border); }
+    .chip.prio-high { background: var(--prio-high-bg); color: var(--prio-high-text); }
+    .chip.prio-mid { background: var(--prio-mid-bg); color: var(--prio-mid-text); }
+    .chip.prio-low { background: var(--prio-low-bg); color: var(--prio-low-text); }
+    .legend { display: flex; gap: 8px; flex-wrap: wrap; margin: -6px 0 16px; }
+    tr.prio-high td, tr.prio-mid td, tr.prio-low td { background: inherit; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 500; }
+    tr.clickable { cursor: pointer; }
+    tr.clickable:hover td, tr.clickable.active td { background: rgba(59,130,246,.12); }
+    .result-item, .alert-item, .scenario-item {
+      padding: 10px 12px; border-bottom: 1px solid var(--border); cursor: pointer;
+    }
+    .result-item:hover, .alert-item:hover, .scenario-item:hover,
+    .result-item.active, .alert-item.active, .scenario-item.active { box-shadow: inset 0 0 0 1px var(--accent); }
+    .scenario-item:hover, .scenario-item.active { background: var(--surface2); }
+    .meta { color: var(--muted); font-size: 11px; margin-top: 3px; }
+    .receipt { padding: 12px 14px; font-family: Consolas, "Cascadia Mono", monospace; font-size: 12px; }
+    .receipt-line { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed var(--border); }
+    .chip { font-size: 11px; padding: 4px 8px; border-radius: 12px; background: var(--surface2); color: var(--muted); }
+    .severity { width: 4px; border-radius: 2px; }
+    .sev-high { background: var(--danger); }
+    .sev-mid { background: var(--warning); }
+    .sev-low { background: var(--accent); }
+    .alert-row { display: grid; grid-template-columns: 4px 1fr auto; gap: 10px; align-items: start; }
+    .grid-2 { display: grid; grid-template-columns: minmax(280px, 1fr) minmax(360px, 1fr); gap: 16px; }
+    .alerts-grid { grid-template-columns: minmax(300px, 420px) minmax(0, 1fr); }
+    .hidden { display: none !important; }
+    .toast {
+      position: fixed; right: 20px; bottom: 20px; z-index: 20;
+      padding: 10px 14px; border-radius: 8px; border: 1px solid var(--toast-border);
+      background: var(--toast-bg); color: var(--text); font-size: 13px; opacity: 0; transform: translateY(8px); transition: .2s;
+    }
+    .toast.show { opacity: 1; transform: none; }
+    @media (max-width: 1100px) {
+      .workspace, .grid-2 { grid-template-columns: 1fr; }
+      .sidebar { width: 64px; }
+      .logo, .nav-item { font-size: 0; }
+      .logo span, .sidebar-footer { display: none; }
+      .nav-item { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo">
+      Интеллект X
+      <span>Ритейл · short</span>
+    </div>
+    <nav class="nav">
+      <button class="nav-item active" data-screen="search">⌕ Поиск</button>
+      <button class="nav-item" data-screen="alerts">⚠ Тревоги</button>
+      <button class="nav-item" data-screen="scenarios">⚙ Мои сценарии</button>
+    </nav>
+    <div class="sidebar-footer">
+      Источники и камеры настраиваются на сервере.<br>
+      Титры всегда поверх видео.
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <select class="store-select" style="width:auto;min-width:280px">
+        <option>Магазин №142 — ТЦ «Авиапарк»</option>
+        <option>Магазин №089 — СПб, Невский</option>
+      </select>
+      <div class="topbar-right">
+        <button class="theme-btn" id="theme-btn" type="button" title="Светлая / тёмная тема" aria-label="Переключить тему">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="4.2"/>
+            <path d="M12 2.2v2.4M12 19.4v2.4M2.2 12h2.4M19.4 12h2.4M5.1 5.1l1.7 1.7M17.2 17.2l1.7 1.7M5.1 18.9l1.7-1.7M17.2 6.8l1.7-1.7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <span style="font-size:13px;color:var(--muted)">Оператор: Иванова А.С.</span>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="note">
+        <strong>Короткая версия прототипа.</strong>
+        Три рабочих места: поиск по титрам/чекам, тревоги и простые сценарии оператора.
+        Полный прототип — в <code>index.html</code>.
+      </div>
+
+      <section id="screen-search" class="screen active">
+        <h1>Поиск</h1>
+        <p class="subtitle">Как в Интеллекте: титры — простой текст поверх камеры; чеки — разбор по полям и отчёты</p>
+
+        <div class="mode-switch">
+          <button class="mode-btn active" data-mode="captions">По титрам</button>
+          <button class="mode-btn" data-mode="receipts">По чекам</button>
+        </div>
+
+        <div class="workspace">
+          <div class="panel">
+            <div class="panel-h">Источник и запрос</div>
+            <div class="form-stack">
+              <div class="form-group">
+                <label>Источник / касса</label>
+                <select id="source-select" class="field"></select>
+              </div>
+              <div class="form-group">
+                <label>Период</label>
+                <input class="field" value="14.09.2026 08:00 — 14.09.2026 16:00">
+              </div>
+
+              <div id="captions-query">
+                <div class="form-group">
+                  <label>Текст в титрах</label>
+                  <input id="caption-q" class="field" value="АННУЛЯЦИЯ">
+                </div>
+                <div class="form-group">
+                  <label>Вывод результатов</label>
+                  <select class="field">
+                    <option>Чеки с заданным текстом</option>
+                    <option>Отдельные титры с заданным текстом</option>
+                  </select>
+                </div>
+                <div class="row">
+                  <button class="btn btn-primary" onclick="runCaptionSearch()">Найти</button>
+                  <span class="chip">запись титров в БД: вкл</span>
+                </div>
+              </div>
+
+              <div id="receipts-query" class="hidden">
+                <div class="form-group">
+                  <label>Тип отчёта</label>
+                  <select id="report-type" class="field">
+                    <option value="all">№01 Список всех чеков</option>
+                    <option value="number">№04 Поиск по номеру чека</option>
+                    <option value="cashier">№06 / №16 По кассиру</option>
+                    <option value="sku">№07 / №15 По артикулу или товару</option>
+                    <option value="and">№13 Список чеков по товарам (и)</option>
+                    <option value="returns">Возвраты и аннуляции</option>
+                    <option value="amount">Чеки по сумме</option>
+                  </select>
+                </div>
+                <div id="report-params"></div>
+                <button class="btn btn-primary" onclick="runReceiptSearch()">Найти</button>
+              </div>
+            </div>
+            <div class="panel-h">Результаты</div>
+            <div id="results"></div>
+          </div>
+
+          <div>
+            <div class="panel" style="margin-bottom:16px">
+              <div class="panel-h">
+                <span id="player-title">Касса 2 · вид на кассира и руки</span>
+                <span id="player-source" class="source src-pos">Кассовое ПО</span>
+              </div>
+              <div class="video">
+                <div id="player-scene" class="video-scene cashier"></div>
+                <div id="player-cam" class="cam-tag">CAM-142-09 · КАССИР / РУКИ</div>
+                <div id="player-caption" class="caption"></div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-h">Разбор чека</div>
+              <div id="receipt-view"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="screen-alerts" class="screen">
+        <h1>Тревоги</h1>
+        <p class="subtitle">События из конструктора сценариев: связка аналитики и чека либо только видео</p>
+        <div class="legend">
+          <span class="chip prio-high">высокая</span>
+          <span class="chip prio-mid">средняя</span>
+          <span class="chip prio-low">низкая</span>
+        </div>
+        <div class="grid-2 alerts-grid">
+          <div class="panel">
+            <div class="panel-h">Очередь · смена</div>
+            <div id="alert-list"></div>
+          </div>
+          <div>
+            <div class="panel" style="margin-bottom:16px">
+              <div class="panel-h">
+                <span id="alert-title">Выберите тревогу</span>
+                <span id="alert-source" class="source src-video">Видео</span>
+              </div>
+              <div class="video">
+                <div id="alert-scene" class="video-scene pair"></div>
+                <div id="alert-cam" class="cam-tag">КАМЕРА</div>
+                <div id="alert-caption" class="caption">Титры появятся, если у события есть кассовый поток</div>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-h">Почему сработало</div>
+              <div id="alert-why" style="padding:14px;font-size:13px;line-height:1.6;color:var(--muted)"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="screen-scenarios" class="screen">
+        <h1>Мои сценарии</h1>
+        <p class="subtitle">Серверные правила уже подключены. Оператор создаёт, правит и удаляет только свои простые сценарии</p>
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-h">Список</div>
+            <div id="scenario-list"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-h" id="scenario-form-title">Новый сценарий</div>
+            <div class="form-stack">
+              <div class="form-group">
+                <label>Название</label>
+                <input id="sc-name" class="field" placeholder="Например, возврат без покупателя">
+              </div>
+              <div class="form-group">
+                <label>Источник</label>
+                <select id="sc-source" class="field"></select>
+              </div>
+              <div class="form-group">
+                <label>Если на видео</label>
+                <select id="sc-video" class="field">
+                  <option value="customer">Есть покупатель в зоне кассы</option>
+                  <option value="no-customer">Нет покупателя в зоне кассы</option>
+                  <option value="hands-up">Поднятые руки в зоне рамок</option>
+                  <option value="scan-move">Движение через зону сканера</option>
+                  <option value="cash">Наличные в зоне кассы</option>
+                  <option value="any">Любое / не учитывать</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>И по чеку</label>
+                <select id="sc-pos" class="field">
+                  <option value="no-receipt">Нет чека / нет оплаты</option>
+                  <option value="any-receipt">Есть чек или кассовая операция</option>
+                  <option value="void">Аннуляция / возврат</option>
+                  <option value="drawer">Открытие денежного ящика</option>
+                  <option value="no-item">Нет добавления товара</option>
+                  <option value="ignore">Не учитывать чек</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Окно, сек</label>
+                <input id="sc-window" class="field" type="number" value="15">
+              </div>
+              <div class="row">
+                <button class="btn btn-primary" onclick="saveScenario()">Сохранить</button>
+                <button class="btn btn-ghost" onclick="resetScenario()">Сбросить</button>
+                <button id="sc-delete" class="btn btn-danger hidden" onclick="deleteScenario()">Удалить</button>
+              </div>
+              <div class="meta">Серверные шаблоны: пронос над рамкой, расхождение КСО, быстрый набор в зале — только для использования, без правки.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const sources = [
+      { id: "pos-2", name: "Касса 2 · Set Retail", kind: "pos", badge: "Кассовое ПО", cls: "src-pos", cam: "CAM-142-09 · КАССИР / РУКИ", scene: "cashier", view: "Касса 2 · вид на кассира и руки" },
+      { id: "file-1c", name: "Касса 1 · выгрузка 1С", kind: "file", badge: "Файл 1С → Gateway", cls: "src-file", cam: "CAM-142-08 · КАССИР / ПОКУПАТЕЛЬ", scene: "pair", view: "Касса 1 · кассир и покупатель" },
+      { id: "fr-5", name: "Касса 5 · ФР / принтер", kind: "fr", badge: "Шина ФР / ESC-POS", cls: "src-fr", cam: "CAM-142-11 · КАССИР / РУКИ", scene: "cashier", view: "Касса 5 · руки кассира и стол" },
+      { id: "kso-2", name: "КСО-2", kind: "kso", badge: "КСО", cls: "src-kso", cam: "CAM-142-17 · СВЕРХУ, КСО + ПОКУПАТЕЛЬ", scene: "pair", view: "КСО-2 · сверху на площадку и покупателя" },
+      { id: "ofd", name: "Сеть · лента ОФД", kind: "ofd", badge: "ОФД", cls: "src-ofd", cam: "CAM-142-09 · КАССИР / РУКИ", scene: "cashier", view: "Касса по ФН из ОФД · кассир и руки" },
+      { id: "scale", name: "Весы у кассы 3", kind: "scale", badge: "Весовой терминал", cls: "src-scale", cam: "CAM-142-10 · КАССИР / ПОКУПАТЕЛЬ", scene: "pair", view: "Касса 3 · весы, кассир и покупатель" }
+    ];
+
+    const receipts = [
+      { id: "48291", time: "14:12:41", source: "kso-2", cashier: "—", total: "259,90", status: "Тревога", sev: "high", text: "МОЛОКО 3.2%\nРАСХОЖДЕНИЕ X=5 / Y=1\nИТОГО 259,90", parsed: [["Хлеб белый ×1", "74,00"], ["Молоко 3.2% ×1", "89,90"], ["Расхождение X=5 / Y=1", "14:12:05"], ["ИТОГО", "259,90 ₽"]], hit: "РАСХОЖДЕНИЕ" },
+      { id: "48290", time: "14:09:18", source: "pos-2", cashier: "Петров С.", total: "1 842,50", status: "Закрыт", text: "СКАНИРОВАНИЕ СЫР 45%\nОПЛАТА КАРТА\nИТОГО 1842,50", parsed: [["Сыр 45% ×1", "420,00"], ["Кофе зерно ×1", "890,00"], ["Оплата карта", "1 842,50"], ["ИТОГО", "1 842,50 ₽"]] },
+      { id: "48288", time: "14:03:02", source: "fr-5", cashier: "Сидорова М.", total: "435,00", status: "Аннуляция", sev: "mid", text: "ВОЗВРАТ ХЛЕБ\nАННУЛЯЦИЯ ЧЕКА\nИТОГО 0,00", parsed: [["Хлеб белый", "74,00"], ["АННУЛЯЦИЯ", "14:03:08"], ["ИТОГО", "0,00 ₽"]], hit: "АННУЛЯЦИЯ" },
+      { id: "48285", time: "13:48:10", source: "file-1c", cashier: "Петров С.", total: "719,30", status: "Импорт 1С", sev: "low", text: "ЧЕК ИЗ ВЫГРУЗКИ 1С\nВОЗВРАТ МОЛОКО\nИТОГО 719,30", parsed: [["Молоко 3.2%", "89,90"], ["Возврат", "13:48:10"], ["ИТОГО", "719,30 ₽"]], hit: "ВОЗВРАТ" },
+      { id: "48280", time: "13:21:44", source: "ofd", cashier: "Козлов А.", total: "3 105,20", status: "ОФД", text: "ФД 118204  ФН 9999\nОПЛАТА НАЛ\nИТОГО 3105,20", parsed: [["Набор продуктов", "3 105,20"], ["Оплата нал", "3 105,20"], ["ИТОГО", "3 105,20 ₽"]] },
+      { id: "W-104", time: "13:10:05", source: "scale", cashier: "Сидорова М.", total: "186,40", status: "Вес", text: "ВЕС 1.240 КГ\nБананы\nСУММА 186,40", parsed: [["Бананы 1,240 кг", "186,40"], ["ИТОГО", "186,40 ₽"]] }
+    ];
+
+    const alerts = [
+      { id: "a1", time: "14:18", title: "Покупатель в зоне без чека", sev: "high", source: "kso-2", kind: "mix", caption: "14:18  ПОКУПАТЕЛЬ В ЗОНЕ\nЧЕК НЕ ОТКРЫТ\nОПЕРАЦИЙ НЕТ", why: "Аналитика: человек стоит у КСО дольше 20 сек. Чек не открыт и не закрыт. Типичный сценарий «обслуживание / набор без подтверждения покупки»." },
+      { id: "a2", time: "14:03", title: "Чек без покупателя", sev: "high", source: "fr-5", kind: "mix", caption: "14:03  АННУЛЯЦИЯ ЧЕКА\nПОКУПАТЕЛЯ НЕТ\nИТОГО 0,00", why: "С шины ФР пришла аннуляция. Детектор присутствия в зоне покупателя не сработал 8 сек. Камера смотрит на кассира и руки — покупателя в кадре нет." },
+      { id: "a3", time: "13:55", title: "Руки над рамкой на выходе", sev: "mid", source: null, cam: "CAM-142-01 · ВХОД / ВЫХОД", scene: "gate", view: "Рамки входа/выхода", kind: "video", why: "Только видеоаналитика. В зоне антикражных рамок человек с поднятыми руками — товар проносят поверх сканирующего контура. Кассового потока нет, титры не накладываются." },
+      { id: "a4", time: "13:41", title: "Пронос мимо сканера", sev: "mid", source: "pos-2", kind: "mix", caption: "13:41  ДВИЖЕНИЕ У СКАНЕРА\nДОБАВЛЕНИЯ ТОВАРА НЕТ\nЧЕК №48290 ОТКРЫТ", why: "Движение товара через зону рук кассира есть, строка «добавление товара» в чеке не появилась за 2 сек." },
+      { id: "a5", time: "13:22", title: "Ящик открыт без оплаты", sev: "mid", source: "pos-2", kind: "mix", caption: "13:22  ОТКРЫТИЕ ЯЩИКА\nОПЛАТЫ НЕТ\nПОКУПАТЕЛЯ НЕТ", why: "POS: открытие денежного ящика. В окне 15 сек нет оплаты наличными и нет покупателя." },
+      { id: "a6", time: "12:58", title: "Быстрый набор у стеллажа", sev: "low", source: null, cam: "CAM-142-12 · ЗАЛ", scene: "pair", view: "Стеллаж молочной зоны", kind: "video", why: "Только аналитика зала: 4 движения руки к полке за 5 сек. Чека нет — событие готовит кражу до кассы." }
+    ];
+
+    let mode = "captions";
+    let selectedReceipt = receipts[2];
+    let editingScenario = null;
+    let scenarios = [
+      { id: 1, name: "Покупатель без чека на КСО", source: "kso-2", video: "customer", pos: "no-receipt", window: 20 },
+      { id: 2, name: "Аннуляция без покупателя", source: "fr-5", video: "no-customer", pos: "void", window: 10 }
+    ];
+
+    function toast(text) {
+      const el = document.getElementById("toast");
+      el.textContent = text;
+      el.classList.add("show");
+      clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => el.classList.remove("show"), 2000);
+    }
+
+    function sourceById(id) { return sources.find(s => s.id === id); }
+
+    function fillSourceSelects() {
+      const opts = sources.map(s => `<option value="${s.id}">${s.name}</option>`).join("");
+      document.getElementById("source-select").innerHTML = opts;
+      document.getElementById("sc-source").innerHTML = `<option value="all">Все источники магазина</option>` + opts;
+    }
+
+    function highlight(text, hit) {
+      if (!hit) return text;
+      return text.replace(hit, `<span class="hit">${hit}</span>`);
+    }
+
+    function renderPlayer(receiptId) {
+      const rec = receipts.find(r => r.id === receiptId) || selectedReceipt;
+      selectedReceipt = rec;
+      const src = sourceById(rec.source);
+      document.getElementById("player-title").textContent = src.view;
+      document.getElementById("player-source").className = "source " + src.cls;
+      document.getElementById("player-source").textContent = src.badge;
+      document.getElementById("player-scene").className = "video-scene " + src.scene;
+      document.getElementById("player-cam").textContent = src.cam;
+      document.getElementById("player-caption").innerHTML = highlight(rec.text, rec.hit);
+      document.getElementById("receipt-view").innerHTML = `
+        <div class="receipt">
+          <div class="receipt-line"><span>Чек №${rec.id}</span><span>${rec.time}</span></div>
+          <div class="receipt-line"><span>Кассир</span><span>${rec.cashier}</span></div>
+          <div class="receipt-line"><span>Источник</span><span class="source ${src.cls}">${src.badge}</span></div>
+          ${rec.parsed.map(([a,b]) => `<div class="receipt-line"><span>${a}</span><span>${b}</span></div>`).join("")}
+        </div>`;
+    }
+
+    function prioClass(sev) { return sev ? "prio-" + sev : ""; }
+
+    function resultHtml(list) {
+      return list.map(r => {
+        const src = sourceById(r.source);
+        return `<div class="result-item ${prioClass(r.sev)} ${r.id === selectedReceipt.id ? "active" : ""}" onclick="renderPlayer('${r.id}'); markResult(this)">
+          <div>${r.time} · чек №${r.id} · ${r.status}${r.sev ? ` <span class="chip ${prioClass(r.sev)}">${r.sev === "high" ? "высокая" : r.sev === "mid" ? "средняя" : "низкая"}</span>` : ""}</div>
+          <div class="meta">${src.name} · <span class="source ${src.cls}">${src.badge}</span></div>
+        </div>`;
+      }).join("");
+    }
+
+    function markResult(el) {
+      el.parentElement.querySelectorAll(".result-item").forEach(i => i.classList.remove("active"));
+      el.classList.add("active");
+      toast("Архив перемотан к титру");
+    }
+
+    function runCaptionSearch() {
+      const q = document.getElementById("caption-q").value.toUpperCase();
+      const srcId = document.getElementById("source-select").value;
+      const found = receipts.filter(r => r.source === srcId && r.text.toUpperCase().includes(q));
+      const list = found.length ? found : receipts.filter(r => r.text.toUpperCase().includes(q));
+      document.getElementById("results").innerHTML = resultHtml(list.length ? list : receipts.slice(0, 3));
+      if (list[0]) renderPlayer(list[0].id);
+      toast("Найдено в титрах: " + (list.length || receipts.length));
+    }
+
+    function reportParams() {
+      const type = document.getElementById("report-type").value;
+      const map = {
+        all: "",
+        number: `<div class="form-group"><label>Номер чека</label><input class="field" value="48288"></div>`,
+        cashier: `<div class="form-group"><label>Кассир</label><input class="field" value="Сидорова М."></div>`,
+        sku: `<div class="form-group"><label>Артикул / товар</label><input class="field" value="МОЛОКО"></div>`,
+        and: `<div class="form-group"><label>Товар 1</label><input class="field" value="Хлеб"></div><div class="form-group"><label>Товар 2</label><input class="field" value="Молоко"></div>`,
+        returns: "",
+        amount: `<div class="form-group"><label>Сумма от</label><input class="field" value="400"></div>`
+      };
+      document.getElementById("report-params").innerHTML = map[type];
+    }
+
+    function runReceiptSearch() {
+      const type = document.getElementById("report-type").value;
+      let list = receipts;
+      if (type === "number") list = receipts.filter(r => r.id === "48288");
+      if (type === "cashier") list = receipts.filter(r => r.cashier.includes("Сидорова"));
+      if (type === "sku") list = receipts.filter(r => /МОЛОКО|Молоко/.test(r.text + r.parsed.join()));
+      if (type === "returns") list = receipts.filter(r => /АННУЛЯЦИЯ|ВОЗВРАТ/.test(r.text));
+      if (type === "and") list = receipts.filter(r => /Хлеб/.test(JSON.stringify(r.parsed)) && /Молоко|МОЛОКО/.test(r.text + JSON.stringify(r.parsed)));
+      document.getElementById("results").innerHTML = `
+        <table>
+          <thead><tr><th>Время</th><th>Чек</th><th>Кассир</th><th>Сумма</th><th>Источник</th></tr></thead>
+          <tbody>${list.map(r => {
+            const src = sourceById(r.source);
+            return `<tr class="clickable ${prioClass(r.sev)} ${r.id === selectedReceipt.id ? "active" : ""}" onclick="renderPlayer('${r.id}')">
+              <td>${r.time}</td><td>№${r.id}</td><td>${r.cashier}</td><td>${r.total}</td>
+              <td><span class="source ${src.cls}">${src.badge}</span>${r.sev ? ` <span class="chip ${prioClass(r.sev)}">${r.sev === "high" ? "высокая" : r.sev === "mid" ? "средняя" : "низкая"}</span>` : ""}</td></tr>`;
+          }).join("")}</tbody>
+        </table>`;
+      if (list[0]) renderPlayer(list[0].id);
+      toast("Отчёт построен: " + list.length + " чек.");
+    }
+
+    function renderAlerts() {
+      document.getElementById("alert-list").innerHTML = alerts.map((a, i) => `
+        <div class="alert-item ${prioClass(a.sev)} ${i === 0 ? "active" : ""}" onclick="openAlert('${a.id}', this)">
+          <div class="alert-row">
+            <div class="severity sev-${a.sev === "high" ? "high" : a.sev === "mid" ? "mid" : "low"}"></div>
+            <div>
+              <div>${a.title}</div>
+              <div class="meta">${a.time} · ${a.kind === "video" ? "только аналитика" : "аналитика + чек"}</div>
+            </div>
+            <span class="chip ${prioClass(a.sev)}">${a.sev === "high" ? "высокая" : a.sev === "mid" ? "средняя" : "низкая"}</span>
+          </div>
+        </div>`).join("");
+      openAlert(alerts[0].id);
+    }
+
+    function openAlert(id, el) {
+      if (el) {
+        document.querySelectorAll(".alert-item").forEach(i => i.classList.remove("active"));
+        el.classList.add("active");
+      }
+      const a = alerts.find(x => x.id === id);
+      const src = a.source ? sourceById(a.source) : null;
+      document.getElementById("alert-title").innerHTML = `${a.title} <span class="chip ${prioClass(a.sev)}">${a.sev === "high" ? "высокая" : a.sev === "mid" ? "средняя" : "низкая"}</span>`;
+      document.getElementById("alert-caption").style.borderLeftColor = a.sev === "high" ? "var(--prio-high-border)" : a.sev === "mid" ? "var(--prio-mid-border)" : "var(--prio-low-border)";
+      document.getElementById("alert-scene").className = "video-scene " + (src ? src.scene : a.scene);
+      document.getElementById("alert-cam").textContent = src ? src.cam : a.cam;
+      const badge = document.getElementById("alert-source");
+      if (src) {
+        badge.className = "source " + src.cls;
+        badge.textContent = src.badge;
+        document.getElementById("alert-caption").innerHTML = a.caption || "Титры источника";
+      } else {
+        badge.className = "source src-video";
+        badge.textContent = "Только видео";
+        document.getElementById("alert-caption").textContent = "Кассового потока нет · титры не пишутся";
+      }
+      document.getElementById("alert-why").textContent = a.why;
+    }
+
+    function renderScenarios() {
+      document.getElementById("scenario-list").innerHTML = scenarios.map(s => `
+        <div class="scenario-item ${editingScenario === s.id ? "active" : ""}" onclick="editScenario(${s.id})">
+          <div>${s.name}</div>
+          <div class="meta">окно ${s.window} сек · ${s.source === "all" ? "все источники" : sourceById(s.source).name}</div>
+        </div>`).join("") || `<div class="result-item"><div class="meta">Пока нет своих сценариев</div></div>`;
+    }
+
+    function editScenario(id) {
+      const s = scenarios.find(x => x.id === id);
+      editingScenario = id;
+      document.getElementById("scenario-form-title").textContent = "Редактирование";
+      document.getElementById("sc-name").value = s.name;
+      document.getElementById("sc-source").value = s.source;
+      document.getElementById("sc-video").value = s.video;
+      document.getElementById("sc-pos").value = s.pos;
+      document.getElementById("sc-window").value = s.window;
+      document.getElementById("sc-delete").classList.remove("hidden");
+      renderScenarios();
+    }
+
+    function resetScenario() {
+      editingScenario = null;
+      document.getElementById("scenario-form-title").textContent = "Новый сценарий";
+      document.getElementById("sc-name").value = "";
+      document.getElementById("sc-window").value = 15;
+      document.getElementById("sc-delete").classList.add("hidden");
+      renderScenarios();
+    }
+
+    function saveScenario() {
+      const name = document.getElementById("sc-name").value.trim();
+      if (!name) return toast("Укажите название");
+      const data = {
+        name,
+        source: document.getElementById("sc-source").value,
+        video: document.getElementById("sc-video").value,
+        pos: document.getElementById("sc-pos").value,
+        window: Number(document.getElementById("sc-window").value)
+      };
+      if (editingScenario) Object.assign(scenarios.find(s => s.id === editingScenario), data);
+      else scenarios.push({ id: Date.now(), ...data });
+      resetScenario();
+      toast("Сценарий сохранён");
+    }
+
+    function deleteScenario() {
+      scenarios = scenarios.filter(s => s.id !== editingScenario);
+      resetScenario();
+      toast("Сценарий удалён");
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+      document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+      document.getElementById("screen-" + id).classList.add("active");
+      document.querySelector(`[data-screen="${id}"]`).classList.add("active");
+    }
+
+    document.querySelectorAll(".nav-item").forEach(btn => {
+      btn.addEventListener("click", () => showScreen(btn.dataset.screen));
+    });
+    document.querySelectorAll(".mode-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        mode = btn.dataset.mode;
+        document.querySelectorAll(".mode-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById("captions-query").classList.toggle("hidden", mode !== "captions");
+        document.getElementById("receipts-query").classList.toggle("hidden", mode !== "receipts");
+        if (mode === "captions") runCaptionSearch();
+        else runReceiptSearch();
+      });
+    });
+    document.getElementById("source-select").addEventListener("change", () => {
+      const rec = receipts.find(r => r.source === document.getElementById("source-select").value);
+      if (rec) renderPlayer(rec.id);
+    });
+    document.getElementById("report-type").addEventListener("change", reportParams);
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute("data-theme", theme);
+      localStorage.setItem("retail-theme", theme);
+    }
+    document.getElementById("theme-btn").addEventListener("click", () => {
+      applyTheme(document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light");
+    });
+    applyTheme(localStorage.getItem("retail-theme") || "dark");
+
+    fillSourceSelects();
+    reportParams();
+    renderPlayer(selectedReceipt.id);
+    runCaptionSearch();
+    renderAlerts();
+    renderScenarios();
+  </script>
+</body>
+</html>
