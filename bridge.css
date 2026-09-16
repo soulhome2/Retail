@@ -1,0 +1,426 @@
+/* ONE PSIM bridge for Retail prototypes (index.html + short_version.html).
+ * Load AFTER the page's own <style>. Markup, JS and layout stay untouched —
+ * only colour, font, radius, focus and control-state ladders.
+ *
+ * Procedure: ../ONE.PSIM.PrototypeKit/docs/RESTYLE-RULES.md (§0–§4).
+ */
+@import url("theme/one-psim.css");
+@import url("theme/native.css");
+
+/* native.css selectors are :where() (specificity 0). Prototype `select { background: … }`
+ * is a shorthand and would wipe the ComboBox arrow. Restore appearance + arrow here. */
+input[type="checkbox"],
+input[type="radio"] { appearance: none; }
+select.field,
+select.store-select,
+select {
+  appearance: none;
+  padding-right: 2rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238C8C8C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1rem;
+}
+
+/* ---- §1 variable mapping ----------------------------------------------------
+ * index.html is dark-only (:root, no data-theme until the html hook).
+ * short_version.html toggles html[data-theme].
+ * Kit puts Light on :root; Dark lives on [data-theme=dark]. Mapping therefore
+ * repeats for :root / [data-theme=dark] so the full prototype stays Dark by default.
+ */
+:root,
+[data-theme="dark"],
+html[data-theme="dark"] {
+  --bg: var(--one-canvas);
+  --surface: var(--one-surface);
+  --surface2: var(--one-surface-muted);
+  --border: var(--one-border);
+  --text: var(--one-fg);
+  --muted: var(--one-fg-muted);
+  --accent: var(--one-accent);
+  --accent-hover: var(--one-primary-hover);
+  --danger: var(--one-danger);
+  --warning: var(--one-warning);
+  --success: var(--one-success-icon);
+
+  --note-bg: var(--one-info-bg);
+  --note-strong: var(--one-info-text);
+  --toast-bg: var(--one-popup);
+  --toast-border: var(--one-border);
+  --video-bg: var(--one-canvas);
+  --caption-bg: color-mix(in srgb, var(--one-canvas) 88%, #000);
+  --cam-tag: var(--one-fg-muted);
+
+  --prio-high-bg: var(--one-danger-bg);
+  --prio-high-border: var(--one-danger-icon);
+  --prio-high-text: var(--one-danger-text);
+  --prio-mid-bg: var(--one-warning-bg);
+  --prio-mid-border: var(--one-warning-icon);
+  --prio-mid-text: var(--one-warning-text);
+  --prio-low-bg: var(--one-info-bg);
+  --prio-low-border: var(--one-info-icon);
+  --prio-low-text: var(--one-info-text);
+
+  /* Category badges: palette tint recipe §2.2a (not feedback triples). Dark = 30% hue. */
+  --src-pos-bg: color-mix(in srgb, var(--one-palette-teal) 30%, var(--one-surface));
+  --src-pos-fg: color-mix(in srgb, var(--one-fg) 50%, var(--one-palette-teal));
+  --src-file-bg: color-mix(in srgb, var(--one-palette-purple) 30%, var(--one-surface));
+  --src-file-fg: color-mix(in srgb, var(--one-fg) 50%, var(--one-palette-purple));
+  --src-fr-bg: color-mix(in srgb, var(--one-palette-magenta) 30%, var(--one-surface));
+  --src-fr-fg: color-mix(in srgb, var(--one-fg) 50%, var(--one-palette-magenta));
+  --src-kso-bg: color-mix(in srgb, var(--one-palette-orange) 30%, var(--one-surface));
+  --src-kso-fg: color-mix(in srgb, var(--one-fg) 50%, var(--one-palette-orange));
+  --src-ofd-bg: color-mix(in srgb, var(--one-palette-teal) 30%, var(--one-surface));
+  --src-ofd-fg: color-mix(in srgb, var(--one-fg) 50%, var(--one-palette-teal));
+  --src-scale-bg: color-mix(in srgb, var(--one-palette-magenta) 30%, var(--one-surface));
+  --src-scale-fg: color-mix(in srgb, var(--one-fg) 50%, var(--one-palette-magenta));
+  --src-video-bg: color-mix(in srgb, var(--one-palette-purple) 30%, var(--one-surface));
+  --src-video-fg: color-mix(in srgb, var(--one-fg) 50%, var(--one-palette-purple));
+}
+
+[data-theme="light"],
+html[data-theme="light"] {
+  --bg: var(--one-canvas);
+  --surface: var(--one-surface);
+  --surface2: var(--one-surface-muted);
+  --border: var(--one-surface-subtle);
+  --text: var(--one-fg);
+  --muted: var(--one-fg-muted);
+  --accent: var(--one-accent);
+  --accent-hover: var(--one-primary-hover);
+  --danger: var(--one-danger);
+  --warning: var(--one-warning);
+  --success: var(--one-success-icon);
+
+  --note-bg: var(--one-info-bg);
+  --note-strong: var(--one-info-text);
+  --toast-bg: var(--one-popup);
+  --toast-border: var(--one-border);
+  --video-bg: var(--one-canvas);
+  --caption-bg: color-mix(in srgb, #0b1017 88%, #000);
+  --cam-tag: var(--one-fg-muted);
+
+  --prio-high-bg: var(--one-danger-bg);
+  --prio-high-border: var(--one-danger-icon);
+  --prio-high-text: var(--one-danger-text);
+  --prio-mid-bg: var(--one-warning-bg);
+  --prio-mid-border: var(--one-warning-icon);
+  --prio-mid-text: var(--one-warning-text);
+  --prio-low-bg: var(--one-info-bg);
+  --prio-low-border: var(--one-info-icon);
+  --prio-low-text: var(--one-info-text);
+
+  --src-pos-bg: color-mix(in srgb, var(--one-palette-teal) 16%, var(--one-surface));
+  --src-pos-fg: color-mix(in srgb, var(--one-fg) 50%, var(--one-palette-teal));
+  --src-file-bg: color-mix(in srgb, var(--one-palette-purple) 16%, var(--one-surface));
+  --src-file-fg: color-mix(in srgb, var(--one-fg) 50%, var(--one-palette-purple));
+  --src-fr-bg: color-mix(in srgb, var(--one-palette-magenta) 16%, var(--one-surface));
+  --src-fr-fg: color-mix(in srgb, var(--one-fg) 50%, var(--one-palette-magenta));
+  --src-kso-bg: color-mix(in srgb, var(--one-palette-orange) 16%, var(--one-surface));
+  --src-kso-fg: color-mix(in srgb, var(--one-fg) 50%, var(--one-palette-orange));
+  --src-ofd-bg: color-mix(in srgb, var(--one-palette-teal) 16%, var(--one-surface));
+  --src-ofd-fg: color-mix(in srgb, var(--one-fg) 50%, var(--one-palette-teal));
+  --src-scale-bg: color-mix(in srgb, var(--one-palette-magenta) 16%, var(--one-surface));
+  --src-scale-fg: color-mix(in srgb, var(--one-fg) 50%, var(--one-palette-magenta));
+  --src-video-bg: color-mix(in srgb, var(--one-palette-purple) 16%, var(--one-surface));
+  --src-video-fg: color-mix(in srgb, var(--one-fg) 50%, var(--one-palette-purple));
+}
+
+body { font-family: var(--one-font-ui); background: var(--one-canvas); color: var(--one-fg); }
+
+/* Region boundaries (D-024): Light surface-subtle, Dark --one-border.
+ * --border on :root is already that pair; Dark index uses --one-border. */
+.sidebar,
+.topbar,
+.panel,
+.panel-header,
+.panel-h,
+.search-form { border-color: var(--border); }
+
+th, td,
+.alert-item, .result-item, .scenario-item, .pos-event, .receipt-line {
+  border-color: var(--one-table-row-divider);
+}
+
+/* ---- §2 rules variables cannot express -------------------------------------- */
+
+/* 2.2b panel titles = heading-sm, not tracked caps */
+.panel-header,
+.panel-h {
+  font: var(--one-type-heading-sm);
+  letter-spacing: var(--one-type-heading-sm-tracking);
+  text-transform: none;
+  color: var(--one-fg);
+}
+
+/* 2.3 selection by background only (list / table / receipt). Nav is the D-031 exception. */
+.receipt-row.selected td,
+.receipt-line.active,
+.receipt-line:hover,
+.result-item.active,
+.alert-item.active,
+.scenario-item.active,
+tr.clickable.active td {
+  background: var(--one-accent-soft);
+  color: var(--one-fg);
+}
+.receipt-line.risk { color: var(--one-danger-text); background: var(--one-danger-bg); }
+
+/* 2.5 control borders 1px */
+.field, .store-select, .btn, .btn-ghost, .btn-primary, .btn-danger,
+.mode-btn, .filter-chip, .theme-btn, input, select { border-width: 1px; }
+
+/* 2.6 focus: ring on buttons/nav/tabs; halo on fields */
+.btn:focus-visible,
+.btn-primary:focus-visible,
+.btn-ghost:focus-visible,
+.btn-danger:focus-visible,
+.nav-item:focus-visible,
+.mode-btn:focus-visible,
+.filter-chip:focus-visible,
+.theme-btn:focus-visible,
+.tab:focus-visible,
+.split-tab:focus-visible {
+  outline: 2px solid var(--one-focus-ring);
+  outline-offset: 2px;
+}
+.field:focus,
+.store-select:focus,
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):focus,
+select:focus,
+textarea:focus {
+  background-color: var(--one-editor-focus);
+  border-color: var(--one-editor-border-focus);
+  box-shadow: 0 0 0 2px var(--one-focus-halo);
+  outline: none;
+}
+
+/* 2.6 field rest / hover / disabled (background-color, keep select arrow) */
+.field, .store-select,
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+select, textarea {
+  background-color: var(--one-editor-bg);
+  border-color: var(--one-editor-border);
+  color: var(--one-fg);
+  border-radius: var(--one-radius-container);
+}
+.field:hover:not(:disabled):not(:focus),
+.store-select:hover:not(:disabled):not(:focus),
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):hover:not(:disabled):not(:focus),
+select:hover:not(:disabled):not(:focus),
+textarea:hover:not(:disabled):not(:focus) {
+  background-color: var(--one-editor-hover);
+  border-color: var(--one-editor-border-hover);
+}
+input:disabled, select:disabled, textarea:disabled, .field:disabled {
+  background-color: var(--one-editor-disabled);
+  color: var(--one-fg-disabled);
+  border-color: var(--one-border);
+  opacity: 1;
+}
+
+.form-group label {
+  font: var(--one-type-label);
+  letter-spacing: var(--one-type-label-tracking);
+  color: var(--one-fg-muted);
+}
+
+/* 2.8 primary */
+.btn-primary {
+  background: var(--one-accent);
+  color: var(--one-accent-on);
+  border: 1px solid var(--one-accent);
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--one-primary-hover);
+  border-color: var(--one-primary-hover);
+  color: var(--one-accent-on);
+}
+.btn-primary:active:not(:disabled) {
+  background: var(--one-primary-pressed);
+  border-color: var(--one-primary-pressed);
+  color: var(--one-accent-on);
+}
+
+/* 2.8 outline / ghost — hover fill only; border and label unchanged */
+.btn-ghost {
+  background: transparent;
+  color: var(--one-fg);
+  border: 1px solid var(--one-border);
+}
+.btn-ghost:hover:not(:disabled) {
+  background: var(--one-control-hover);
+  color: var(--one-fg);
+  border-color: var(--one-border);
+}
+.btn-ghost:active:not(:disabled) {
+  background: var(--one-control-pressed);
+  border-color: var(--one-border);
+  color: var(--one-fg);
+}
+
+/* 2.8 subtle for unmarked .btn */
+.btn {
+  color: var(--one-fg);
+  border-radius: var(--one-radius-container);
+}
+.btn:hover:not(:disabled):not(.btn-primary):not(.btn-danger) {
+  background: var(--one-control-hover);
+  color: var(--one-fg);
+}
+.btn:active:not(:disabled):not(.btn-primary):not(.btn-danger) {
+  background: var(--one-control-pressed);
+}
+
+/* 2.8 ToggleButton: mode switch + filter chips (.active = selected) */
+.mode-btn,
+.filter-chip {
+  background: transparent;
+  color: var(--one-fg);
+  border: 1px solid var(--one-border);
+}
+.mode-btn:hover:not(.active),
+.filter-chip:hover:not(.active) {
+  background: var(--one-control-hover);
+  color: var(--one-fg);
+  border-color: var(--one-border);
+}
+.mode-btn.active,
+.filter-chip.active {
+  background: var(--one-accent);
+  color: var(--one-accent-on);
+  border-color: var(--one-accent);
+}
+.mode-btn.active:hover,
+.filter-chip.active:hover {
+  background: var(--one-primary-hover);
+  color: var(--one-accent-on);
+  border-color: var(--one-primary-hover);
+}
+.mode-btn.active:active,
+.filter-chip.active:active {
+  background: var(--one-primary-pressed);
+  color: var(--one-accent-on);
+}
+
+/* Theme button is a glyph action, not an on/off ToggleButton (same as IM). */
+.theme-btn {
+  background: transparent;
+  color: var(--one-fg-muted);
+  border: 1px solid var(--one-border);
+}
+.theme-btn:hover {
+  background: var(--one-control-hover);
+  color: var(--one-fg);
+  border-color: var(--one-border);
+}
+.theme-btn:active { background: var(--one-control-pressed); color: var(--one-fg); }
+html[data-theme="light"] .theme-btn {
+  color: var(--one-fg-muted);
+  background: transparent;
+}
+html[data-theme="light"] .theme-btn:hover {
+  background: var(--one-control-hover);
+  color: var(--one-fg);
+}
+
+/* Side nav + in-page tabs = MuiTab / nav.selected (D-031), not primary fill */
+.nav-item { color: var(--one-fg-muted); }
+.nav-item:hover { background: var(--one-nav-hover); color: var(--one-fg); }
+.nav-item.active,
+.nav-item.active:hover {
+  background: var(--one-nav-selected-hover);
+  color: var(--one-nav-selected-text);
+}
+.tab { color: var(--one-fg-muted); }
+.tab:hover { background: var(--one-nav-hover); color: var(--one-fg); }
+.tab.active,
+.split-tab.active {
+  background: var(--one-nav-selected-hover);
+  color: var(--one-nav-selected-text);
+  border-bottom-color: var(--one-selected-indicator);
+}
+
+/* 2.8 danger has no Button appearance — palette D-012; label colour does not change */
+.btn-danger {
+  background: transparent;
+  color: var(--one-palette-red);
+  border: 1px solid var(--one-palette-red);
+}
+.btn-danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--one-palette-red) 16%, var(--one-surface));
+  color: var(--one-palette-red);
+  border-color: var(--one-palette-red);
+}
+.btn-danger:active:not(:disabled) {
+  background: transparent;
+  color: var(--one-palette-red);
+  border-color: var(--one-palette-red);
+}
+
+/* 2.9 ComboBox options — native.css already; reinforce in case prototype wins */
+@supports (appearance: base-select) {
+  select option { color: var(--one-fg); }
+  select option:is(:hover, :focus) { background: var(--one-control-hover); color: var(--one-fg); }
+  select option:checked { background: var(--one-accent); color: var(--one-accent-on); }
+  select option:checked:hover { background: var(--one-primary-hover); color: var(--one-accent-on); }
+}
+
+/* 2.10 half-hover on rows that contain buttons */
+.alert-item:hover,
+.result-item:hover,
+.scenario-item:hover {
+  background: color-mix(in srgb, var(--one-control-hover) 50%, var(--one-surface));
+}
+
+/* 2.14 links — stylesheet cannot beat inline color on two index.html anchors */
+a {
+  color: var(--one-link);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--one-link) 40%, transparent);
+}
+a:hover { text-decoration-color: var(--one-link); }
+a:focus-visible { outline: 2px solid var(--one-focus-ring); outline-offset: 2px; }
+
+/* Status health = feedback triples, not leftover hex */
+.health.ok { color: var(--one-success-text); background: var(--one-success-bg); }
+.health.warn { color: var(--one-warning-text); background: var(--one-warning-bg); }
+.health.err { color: var(--one-danger-text); background: var(--one-danger-bg); }
+
+/* Zone tags in index.html: category palette, not info/success/warning (D-039) */
+.tag-hall {
+  background: color-mix(in srgb, var(--one-palette-purple) 30%, var(--one-surface));
+  color: color-mix(in srgb, var(--one-fg) 50%, var(--one-palette-purple));
+}
+.tag-pos {
+  background: color-mix(in srgb, var(--one-palette-orange) 30%, var(--one-surface));
+  color: color-mix(in srgb, var(--one-fg) 50%, var(--one-palette-orange));
+}
+.tag-kso {
+  background: color-mix(in srgb, var(--one-palette-teal) 30%, var(--one-surface));
+  color: color-mix(in srgb, var(--one-fg) 50%, var(--one-palette-teal));
+}
+.tag-pos-module {
+  background: color-mix(in srgb, var(--one-palette-magenta) 30%, var(--one-surface));
+  color: color-mix(in srgb, var(--one-fg) 50%, var(--one-palette-magenta));
+}
+html[data-theme="light"] .tag-hall { background: color-mix(in srgb, var(--one-palette-purple) 16%, var(--one-surface)); }
+html[data-theme="light"] .tag-pos { background: color-mix(in srgb, var(--one-palette-orange) 16%, var(--one-surface)); }
+html[data-theme="light"] .tag-kso { background: color-mix(in srgb, var(--one-palette-teal) 16%, var(--one-surface)); }
+html[data-theme="light"] .tag-pos-module { background: color-mix(in srgb, var(--one-palette-magenta) 16%, var(--one-surface)); }
+
+/* Brand subtitle: chrome weight, not accent shout (D-023 family) */
+.logo span { color: var(--one-fg-subtle); }
+
+.panel { border-radius: var(--one-radius-window); }
+.chip { border-radius: var(--one-radius-pill); }
+
+.caption .risk-line,
+.caption .risk { color: var(--one-danger-text); }
+.kpi-delta.up { color: var(--one-danger); }
+.kpi-delta.down { color: var(--one-success-icon); }
+.badge-live { color: var(--one-success-icon); }
+.sev-high { background: var(--one-danger-icon); }
+.sev-mid { background: var(--one-warning-icon); }
+.sev-low { background: var(--one-info-icon); }
