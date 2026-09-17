@@ -276,8 +276,8 @@
 
     <div class="content">
       <div class="note">
-        <strong>Короткая версия прототипа.</strong>
-        Три рабочих места: поиск по титрам/чекам, тревоги и простые сценарии оператора.
+        <strong>Короткая версия прототипа · v3.</strong>
+        Поиск, тревоги и свои сценарии. Новые случаи: возврат без товара, обслуживание без чека, три зоны сканера, отказ от покупки на КСО, весы.
         Полный прототип — в <code>index.html</code>.
       </div>
 
@@ -331,6 +331,7 @@
                     <option value="sku">№07 / №15 По артикулу или товару</option>
                     <option value="and">№13 Список чеков по товарам (и)</option>
                     <option value="returns">Возвраты и аннуляции</option>
+                    <option value="scale">Весовые штрихкоды без оплаты</option>
                     <option value="amount">Чеки по сумме</option>
                   </select>
                 </div>
@@ -419,20 +420,36 @@
                 <select id="sc-video" class="field">
                   <option value="customer">Есть покупатель в зоне кассы</option>
                   <option value="no-customer">Нет покупателя в зоне кассы</option>
+                  <option value="cashier">Есть кассир в зоне кассы</option>
                   <option value="hands-up">Поднятые руки в зоне рамок</option>
                   <option value="scan-move">Движение через зону сканера</option>
+                  <option value="three-zone">Рука: лента → сканер → укладка</option>
                   <option value="cash">Наличные в зоне кассы</option>
                   <option value="any">Любое / не учитывать</option>
                 </select>
               </div>
               <div class="form-group">
+                <label>И также</label>
+                <select id="sc-extra" class="field">
+                  <option value="ignore">Не учитывать</option>
+                  <option value="cashier">Есть кассир</option>
+                  <option value="cash">Наличные в зоне</option>
+                  <option value="x0">Товаров на площадке: 0</option>
+                  <option value="x-left">Товары остались после ухода (X, X−1, X−2)</option>
+                  <option value="three-zone">Три зоны сканера</option>
+                </select>
+              </div>
+              <div class="form-group">
                 <label>И по чеку</label>
                 <select id="sc-pos" class="field">
-                  <option value="no-receipt">Нет чека / нет оплаты</option>
+                  <option value="no-receipt">Нет чека / POS молчит</option>
                   <option value="any-receipt">Есть чек или кассовая операция</option>
-                  <option value="void">Аннуляция / возврат</option>
+                  <option value="return">Возврат товара</option>
+                  <option value="void">Аннуляция</option>
                   <option value="drawer">Открытие денежного ящика</option>
-                  <option value="no-item">Нет добавления товара</option>
+                  <option value="no-item">Нет добавления товара / нет «Честного знака»</option>
+                  <option value="scale-code">Выдан штрихкод с весов</option>
+                  <option value="same-weight">Совпадение веса двух штрихкодов</option>
                   <option value="ignore">Не учитывать чек</option>
                 </select>
               </div>
@@ -445,7 +462,7 @@
                 <button class="btn btn-ghost" onclick="resetScenario()">Сбросить</button>
                 <button id="sc-delete" class="btn btn-danger hidden" onclick="deleteScenario()">Удалить</button>
               </div>
-              <div class="meta">Серверные шаблоны: пронос над рамкой, расхождение КСО, быстрый набор в зале — только для использования, без правки.</div>
+              <div class="meta">Серверные шаблоны: пронос над рамкой, расхождение КСО, быстрый набор, трёхзонный пронос мимо сканера — только для использования, без правки.</div>
             </div>
           </div>
         </div>
@@ -471,24 +488,31 @@
       { id: "48288", time: "14:03:02", source: "fr-5", cashier: "Сидорова М.", total: "435,00", status: "Аннуляция", sev: "mid", text: "ВОЗВРАТ ХЛЕБ\nАННУЛЯЦИЯ ЧЕКА\nИТОГО 0,00", parsed: [["Хлеб белый", "74,00"], ["АННУЛЯЦИЯ", "14:03:08"], ["ИТОГО", "0,00 ₽"]], hit: "АННУЛЯЦИЯ" },
       { id: "48285", time: "13:48:10", source: "file-1c", cashier: "Петров С.", total: "719,30", status: "Импорт 1С", sev: "low", text: "ЧЕК ИЗ ВЫГРУЗКИ 1С\nВОЗВРАТ МОЛОКО\nИТОГО 719,30", parsed: [["Молоко 3.2%", "89,90"], ["Возврат", "13:48:10"], ["ИТОГО", "719,30 ₽"]], hit: "ВОЗВРАТ" },
       { id: "48280", time: "13:21:44", source: "ofd", cashier: "Козлов А.", total: "3 105,20", status: "ОФД", text: "ФД 118204  ФН 9999\nОПЛАТА НАЛ\nИТОГО 3105,20", parsed: [["Набор продуктов", "3 105,20"], ["Оплата нал", "3 105,20"], ["ИТОГО", "3 105,20 ₽"]] },
-      { id: "W-104", time: "13:10:05", source: "scale", cashier: "Сидорова М.", total: "186,40", status: "Вес", text: "ВЕС 1.240 КГ\nБананы\nСУММА 186,40", parsed: [["Бананы 1,240 кг", "186,40"], ["ИТОГО", "186,40 ₽"]] }
+      { id: "W-104", time: "13:10:05", source: "scale", cashier: "Сидорова М.", total: "186,40", status: "Вес", text: "ВЕС 1.240 КГ\nБАНАНЫ\nСУММА 186,40", parsed: [["Бананы 1,240 кг", "186,40"], ["ИТОГО", "186,40 ₽"]] },
+      { id: "W-201", time: "12:44:10", source: "scale", cashier: "—", total: "0,00", status: "Штрихкод без оплаты", sev: "high", text: "ВЕС 1.240 КГ\nБАНАНЫ\nШТРИХКОД ВЫДАН\nОПЛАТЫ НЕТ", parsed: [["Бананы 1,240 кг", "штрихкод"], ["Таймаут 12 мин", "не пробит"], ["ИТОГО", "0,00 ₽"]], hit: "ОПЛАТЫ НЕТ" }
     ];
 
     const alerts = [
-      { id: "a1", time: "14:18", title: "Покупатель в зоне без чека", sev: "high", source: "kso-2", kind: "mix", caption: "14:18  ПОКУПАТЕЛЬ В ЗОНЕ\nЧЕК НЕ ОТКРЫТ\nОПЕРАЦИЙ НЕТ", why: "Аналитика: человек стоит у КСО дольше 20 сек. Чек не открыт и не закрыт. Типичный сценарий «обслуживание / набор без подтверждения покупки»." },
-      { id: "a2", time: "14:03", title: "Чек без покупателя", sev: "high", source: "fr-5", kind: "mix", caption: "14:03  АННУЛЯЦИЯ ЧЕКА\nПОКУПАТЕЛЯ НЕТ\nИТОГО 0,00", why: "С шины ФР пришла аннуляция. Детектор присутствия в зоне покупателя не сработал 8 сек. Камера смотрит на кассира и руки — покупателя в кадре нет." },
-      { id: "a3", time: "13:55", title: "Руки над рамкой на выходе", sev: "mid", source: null, cam: "CAM-142-01 · ВХОД / ВЫХОД", scene: "gate", view: "Рамки входа/выхода", kind: "video", why: "Только видеоаналитика. В зоне антикражных рамок человек с поднятыми руками — товар проносят поверх сканирующего контура. Кассового потока нет, титры не накладываются." },
-      { id: "a4", time: "13:41", title: "Пронос мимо сканера", sev: "mid", source: "pos-2", kind: "mix", caption: "13:41  ДВИЖЕНИЕ У СКАНЕРА\nДОБАВЛЕНИЯ ТОВАРА НЕТ\nЧЕК №48290 ОТКРЫТ", why: "Движение товара через зону рук кассира есть, строка «добавление товара» в чеке не появилась за 2 сек." },
-      { id: "a5", time: "13:22", title: "Ящик открыт без оплаты", sev: "mid", source: "pos-2", kind: "mix", caption: "13:22  ОТКРЫТИЕ ЯЩИКА\nОПЛАТЫ НЕТ\nПОКУПАТЕЛЯ НЕТ", why: "POS: открытие денежного ящика. В окне 15 сек нет оплаты наличными и нет покупателя." },
-      { id: "a6", time: "12:58", title: "Быстрый набор у стеллажа", sev: "low", source: null, cam: "CAM-142-12 · ЗАЛ", scene: "pair", view: "Стеллаж молочной зоны", kind: "video", why: "Только аналитика зала: 4 движения руки к полке за 5 сек. Чека нет — событие готовит кражу до кассы." }
+      { id: "a1", time: "14:26", title: "Обслуживание без чека", sev: "high", source: "pos-2", kind: "mix", caption: "14:26  ПОКУПАТЕЛЬ И КАССИР\nНАЛИЧНЫЕ В ЗОНЕ\nPOS МОЛЧИТ 30 СЕК", why: "3.2.5. Детекторы покупателя и кассира сработали, наличные на столе есть, оплаты в POS нет 30 сек. Подозрение на обслуживание посетителя без чека." },
+      { id: "a2", time: "14:18", title: "Покупатель в зоне без чека", sev: "high", source: "kso-2", kind: "mix", caption: "14:18  ПОКУПАТЕЛЬ В ЗОНЕ\nЧЕК НЕ ОТКРЫТ\nОПЕРАЦИЙ НЕТ", why: "Аналитика: человек стоит у КСО дольше 20 сек. Чек не открыт и не закрыт. Типичный сценарий «обслуживание / набор без подтверждения покупки»." },
+      { id: "a3", time: "14:15", title: "Возврат при покупателе, товаров нет", sev: "high", source: "file-1c", kind: "mix", caption: "14:15  ВОЗВРАТ ТОВАРА\nПОКУПАТЕЛЬ ЕСТЬ\nX=0 НА КАССЕ", why: "3.2.2. POS: возврат. Покупатель в зоне есть, детектор подсчёта показывает 0 товаров. Возврат без товара на кассе." },
+      { id: "a4", time: "14:08", title: "Пронос мимо сканера, 3 зоны", sev: "mid", source: "pos-2", kind: "mix", caption: "14:08  ЛЕНТА → СКАНЕР → УКЛАДКА\nДОБАВЛЕНИЯ ТОВАРА НЕТ\nЧЕСТНЫЙ ЗНАК НЕТ", why: "3.2.6. Рука прошла зону ленты и сканера, в POS нет добавления товара и нет «Честного знака», затем рука в зоне укладки." },
+      { id: "a5", time: "14:03", title: "Чек без покупателя", sev: "high", source: "fr-5", kind: "mix", caption: "14:03  АННУЛЯЦИЯ ЧЕКА\nПОКУПАТЕЛЯ НЕТ\nИТОГО 0,00", why: "С шины ФР пришла аннуляция. Детектор присутствия в зоне покупателя не сработал 8 сек. Камера смотрит на кассира и руки — покупателя в кадре нет." },
+      { id: "a6", time: "13:58", title: "Неоплата весового товара", sev: "high", source: "scale", kind: "mix", caption: "13:58  ВЕС 1.240 КГ\nШТРИХКОД ВЫДАН\nОПЛАТЫ НЕТ 12 МИН", why: "3.2.17. Весы выдали штрихкод. За настроенные 12 минут товар не пробит ни на кассе, ни на КСО." },
+      { id: "a7", time: "13:56", title: "Совпадение веса весовых товаров", sev: "mid", source: "scale", kind: "mix", caption: "13:56  ВЕС 1.240 КГ\nШТРИХКОД 1 И ШТРИХКОД 2\nНАИМЕНОВАНИЯ РАЗНЫЕ", why: "3.2.18. Второй весовой штрихкод выдан с тем же весом 1,240 кг, что и предыдущий дорогой товар." },
+      { id: "a8", time: "13:50", title: "Отказ от покупки на КСО", sev: "mid", source: "kso-2", kind: "mix", caption: "13:50  ЧЕК НЕ ЗАКРЫТ\nУХОД С ЗОНЫ КСО\nX=3 ОСТАЛОСЬ", why: "3.2.13. Чек открыт, покупатель ушёл, на площадке по-прежнему 3 товара (допуск X−1 / X−2). Не путать с уносом (3.2.12), где после ухода X=0." },
+      { id: "a9", time: "13:41", title: "Руки над рамкой на выходе", sev: "mid", source: null, cam: "CAM-142-01 · ВХОД / ВЫХОД", scene: "gate", view: "Рамки входа/выхода", kind: "video", why: "Только видеоаналитика. В зоне антикражных рамок человек с поднятыми руками — товар проносят поверх сканирующего контура. Кассового потока нет, титры не накладываются." },
+      { id: "a10", time: "12:58", title: "Быстрый набор у стеллажа", sev: "low", source: null, cam: "CAM-142-12 · ЗАЛ", scene: "pair", view: "Стеллаж молочной зоны", kind: "video", why: "Только аналитика зала: 4 движения руки к полке за 5 сек. Чека нет — событие готовит кражу до кассы." }
     ];
 
     let mode = "captions";
     let selectedReceipt = receipts[2];
     let editingScenario = null;
     let scenarios = [
-      { id: 1, name: "Покупатель без чека на КСО", source: "kso-2", video: "customer", pos: "no-receipt", window: 20 },
-      { id: 2, name: "Аннуляция без покупателя", source: "fr-5", video: "no-customer", pos: "void", window: 10 }
+      { id: 1, name: "Покупатель без чека на КСО", source: "kso-2", video: "customer", extra: "ignore", pos: "no-receipt", window: 20 },
+      { id: 2, name: "Аннуляция без покупателя", source: "fr-5", video: "no-customer", extra: "ignore", pos: "void", window: 10 },
+      { id: 3, name: "Возврат при X=0", source: "file-1c", video: "customer", extra: "x0", pos: "return", window: 8 },
+      { id: 4, name: "Обслуживание без чека", source: "pos-2", video: "customer", extra: "cash", pos: "no-receipt", window: 30 }
     ];
 
     function toast(text) {
@@ -568,6 +592,7 @@
         sku: `<div class="form-group"><label>Артикул / товар</label><input class="field" value="МОЛОКО"></div>`,
         and: `<div class="form-group"><label>Товар 1</label><input class="field" value="Хлеб"></div><div class="form-group"><label>Товар 2</label><input class="field" value="Молоко"></div>`,
         returns: "",
+        scale: "",
         amount: `<div class="form-group"><label>Сумма от</label><input class="field" value="400"></div>`
       };
       document.getElementById("report-params").innerHTML = map[type];
@@ -580,6 +605,7 @@
       if (type === "cashier") list = receipts.filter(r => r.cashier.includes("Сидорова"));
       if (type === "sku") list = receipts.filter(r => /МОЛОКО|Молоко/.test(r.text + r.parsed.join()));
       if (type === "returns") list = receipts.filter(r => /АННУЛЯЦИЯ|ВОЗВРАТ/.test(r.text));
+      if (type === "scale") list = receipts.filter(r => r.source === "scale");
       if (type === "and") list = receipts.filter(r => /Хлеб/.test(JSON.stringify(r.parsed)) && /Молоко|МОЛОКО/.test(r.text + JSON.stringify(r.parsed)));
       document.getElementById("results").innerHTML = `
         <table>
@@ -649,6 +675,7 @@
       document.getElementById("sc-name").value = s.name;
       document.getElementById("sc-source").value = s.source;
       document.getElementById("sc-video").value = s.video;
+      document.getElementById("sc-extra").value = s.extra || "ignore";
       document.getElementById("sc-pos").value = s.pos;
       document.getElementById("sc-window").value = s.window;
       document.getElementById("sc-delete").classList.remove("hidden");
@@ -671,6 +698,7 @@
         name,
         source: document.getElementById("sc-source").value,
         video: document.getElementById("sc-video").value,
+        extra: document.getElementById("sc-extra").value,
         pos: document.getElementById("sc-pos").value,
         window: Number(document.getElementById("sc-window").value)
       };
