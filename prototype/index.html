@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Интеллект Х — Антифрод Ритейл (прототип UI)</title>
   <style>
-    :root {
+    :root, html[data-theme="dark"] {
       --bg: #0f1419;
       --surface: #1a2332;
       --surface2: #243044;
@@ -18,6 +18,19 @@
       --warning: #f59e0b;
       --success: #22c55e;
       --sidebar-w: 240px;
+    }
+    html[data-theme="light"] {
+      --bg: #f3f5f8;
+      --surface: #ffffff;
+      --surface2: #eef2f7;
+      --border: #d5deea;
+      --text: #1c2430;
+      --muted: #5b6b80;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --danger: #dc2626;
+      --warning: #d97706;
+      --success: #16a34a;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -288,8 +301,8 @@
       background:#293748; border:12px solid #111923; transform:perspective(450px) rotateX(55deg);
       box-shadow:0 24px 40px rgba(0,0,0,.45);
     }
-    .camera-art::after {
-      content:"КАССОВАЯ ЗОНА · ВИД СВЕРХУ"; position:absolute; right:12px; top:12px;
+    .cam-zone-tag {
+      position:absolute; right:12px; top:12px; z-index:1;
       font-size:10px; letter-spacing:.08em; color:#a8b5c6; background:rgba(0,0,0,.55); padding:5px 8px;
     }
     .video-label { position:relative; z-index:1; color:#9aa9bc; }
@@ -384,6 +397,28 @@
         <span class="badge-live">Мониторинг активен</span>
       </div>
       <div class="topbar-right">
+        <div class="chrome-actions">
+          <label class="lang" for="langSelect">
+            <svg class="lang-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+              <ellipse cx="12" cy="12" rx="4" ry="9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+              <path d="M3 12h18" fill="none" stroke="currentColor" stroke-width="1.7"/>
+            </svg>
+            <select id="langSelect" class="lang-select" data-i18n-skip aria-label="Язык интерфейса" title="Язык интерфейса">
+              <option value="ru">Русский</option>
+              <option value="en">English</option>
+            </select>
+          </label>
+          <button type="button" class="theme-btn" id="themeToggle" title="Тёмная тема" aria-label="Тёмная тема">
+            <svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <g stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+                <path d="M12 1.4v2.4M12 20.2v2.4M1.4 12h2.4M20.2 12h2.4M4.4 4.4l1.7 1.7M17.9 17.9l1.7 1.7M19.6 4.4l-1.7 1.7M6.1 17.9l-1.7 1.7"/>
+              </g>
+              <circle cx="12" cy="12" r="5.7" fill="none" stroke="currentColor" stroke-width="1.7"/>
+              <path d="M12 6.3a5.7 5.7 0 0 0 0 11.4z" fill="currentColor"/>
+            </svg>
+          </button>
+        </div>
         <span style="font-size:13px;color:var(--muted)">Оператор: Иванова А.С.</span>
         <div class="avatar">ИА</div>
       </div>
@@ -683,7 +718,7 @@
           <div class="panel">
             <div class="panel-header"><span>Чек № <span id="receipt-number">48291</span></span><button class="btn btn-primary" style="padding:5px 10px" onclick="showScreen('incident')">Открыть расследование</button></div>
             <div class="video-mock" style="aspect-ratio:16/8">
-              <div class="camera-art"></div>
+              <div class="camera-art"><span class="cam-zone-tag">КАССОВАЯ ЗОНА · ВИД СВЕРХУ</span></div>
               <span class="video-label">КСО-2 · камера над кассой и зоной покупателя</span>
               <div class="receipt-caption">
                 14:11:58  МОЛОКО 3.2% 1Л&nbsp;&nbsp;&nbsp;89,90<br>
@@ -712,7 +747,7 @@
           <div>
             <div class="panel" style="margin-bottom:16px">
               <div class="video-mock">
-                <div class="camera-art"></div>
+                <div class="camera-art"><span class="cam-zone-tag">КАССОВАЯ ЗОНА · ВИД СВЕРХУ</span></div>
                 <span class="video-label">КСО-2 · Камера над площадкой и зоной покупателя</span>
                 <div class="video-overlay">
                   <div>На площадке: <span class="counter">5</span> шт.</div>
@@ -1109,6 +1144,7 @@
   </div>
 
   <div id="toast" class="toast"></div>
+  <script src="i18n.js"></script>
   <script>
     function showScreen(id) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -1132,29 +1168,30 @@
         document.querySelectorAll('.receipt-row').forEach(r => r.classList.remove('selected'));
         row.classList.add('selected');
         document.getElementById('receipt-number').textContent = row.dataset.receipt;
-        demoAction('Открыт чек №' + row.dataset.receipt + ' со связанным видео');
+        demoAction(t("Открыт чек №{n} со связанным видео", { n: row.dataset.receipt }));
       });
     });
     document.querySelectorAll('.receipt-line').forEach(line => {
       line.addEventListener('click', () => {
         document.querySelectorAll('.receipt-line').forEach(r => r.classList.remove('active'));
         line.classList.add('active');
-        demoAction('Видео перемещено к выбранной операции');
+        demoAction(t("Видео перемещено к выбранной операции"));
       });
     });
     function demoAction(text) {
       const toast = document.getElementById('toast');
-      toast.textContent = text;
+      toast.textContent = t(text);
       toast.classList.add('show');
       clearTimeout(window.toastTimer);
       window.toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
     }
     function setIncidentStatus(status) {
       const el = document.getElementById('incident-status');
-      el.textContent = status;
+      el.textContent = t(status);
       el.className = 'health ' + (status === 'Подтверждён' ? 'err' : 'ok');
-      demoAction('Статус инцидента: ' + status);
+      demoAction(t("Статус инцидента: {s}", { s: t(status) }));
     }
+    RetailI18n.bindChrome();
   </script>
 </body>
 </html>

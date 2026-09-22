@@ -13,7 +13,7 @@ input[type="checkbox"],
 input[type="radio"] { appearance: none; }
 select.field,
 select.store-select,
-select {
+select:not(.lang-select) {
   appearance: none;
   padding-right: 2rem;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238C8C8C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
@@ -303,18 +303,69 @@ input:disabled, select:disabled, textarea:disabled, .field:disabled {
   color: var(--one-accent-on);
 }
 
+/* Language + theme chrome — same layout as Incident Manager. */
+.chrome-actions { display: flex; align-items: center; gap: 8px; }
+.lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 34px;
+  padding: 0 8px 0 6px;
+  border: 1px solid var(--one-border);
+  border-radius: var(--one-radius-container);
+  background: var(--one-surface-muted);
+  color: var(--one-fg-muted);
+  cursor: pointer;
+}
+.lang:hover { border-color: var(--one-accent); color: var(--one-fg); }
+.lang:focus-within { border-color: var(--one-accent); box-shadow: 0 0 0 2px var(--one-focus-halo); }
+.lang-icon { width: 18px; height: 18px; flex-shrink: 0; }
+.lang select,
+select.lang-select {
+  appearance: auto;
+  border: 0;
+  padding: 0 4px 0 0;
+  height: auto;
+  min-width: 0;
+  background: transparent;
+  background-image: none;
+  color: var(--one-fg);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.lang select:focus,
+select.lang-select:focus { outline: none; box-shadow: none; }
+
 /* Theme button is a glyph action, not an on/off ToggleButton (same as IM). */
 .theme-btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: transparent;
   color: var(--one-fg-muted);
-  border: 1px solid var(--one-border);
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
 }
 .theme-btn:hover {
   background: var(--one-control-hover);
   color: var(--one-fg);
-  border-color: var(--one-border);
+  border-color: transparent;
 }
 .theme-btn:active { background: var(--one-control-pressed); color: var(--one-fg); }
+.theme-btn:hover .theme-icon { color: var(--one-warning); }
+.theme-icon {
+  width: 21px;
+  height: 21px;
+  color: inherit;
+  transition: transform 0.35s ease;
+}
+[data-theme="light"] .theme-icon,
+html[data-theme="light"] .theme-icon { transform: rotate(180deg); }
 html[data-theme="light"] .theme-btn {
   color: var(--one-fg-muted);
   background: transparent;

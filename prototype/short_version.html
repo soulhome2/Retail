@@ -119,14 +119,6 @@
     h1 { font-size: 20px; font-weight: 600; }
     .subtitle { color: var(--muted); font-size: 13px; margin: 4px 0 16px; }
     .topbar-right { display: flex; align-items: center; gap: 12px; }
-    .theme-btn {
-      width: 36px; height: 36px; border-radius: 50%;
-      border: 1px solid var(--border); background: var(--surface2);
-      color: var(--warning); display: grid; place-items: center; cursor: pointer;
-    }
-    .theme-btn:hover { border-color: var(--warning); }
-    .theme-btn svg { width: 18px; height: 18px; fill: currentColor; }
-    html[data-theme="light"] .theme-btn { color: #ca8a04; background: #fff7d6; }
     .note {
       background: var(--note-bg); border: 1px solid var(--border); border-radius: 8px;
       padding: 10px 14px; font-size: 12px; color: var(--muted); margin-bottom: 16px;
@@ -264,12 +256,28 @@
         <option>Магазин №089 — СПб, Невский</option>
       </select>
       <div class="topbar-right">
-        <button class="theme-btn" id="theme-btn" type="button" title="Светлая / тёмная тема" aria-label="Переключить тему">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="12" r="4.2"/>
-            <path d="M12 2.2v2.4M12 19.4v2.4M2.2 12h2.4M19.4 12h2.4M5.1 5.1l1.7 1.7M17.2 17.2l1.7 1.7M5.1 18.9l1.7-1.7M17.2 6.8l1.7-1.7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          </svg>
-        </button>
+        <div class="chrome-actions">
+          <label class="lang" for="langSelect">
+            <svg class="lang-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+              <ellipse cx="12" cy="12" rx="4" ry="9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+              <path d="M3 12h18" fill="none" stroke="currentColor" stroke-width="1.7"/>
+            </svg>
+            <select id="langSelect" class="lang-select" data-i18n-skip aria-label="Язык интерфейса" title="Язык интерфейса">
+              <option value="ru">Русский</option>
+              <option value="en">English</option>
+            </select>
+          </label>
+          <button type="button" class="theme-btn" id="themeToggle" title="Тёмная тема" aria-label="Тёмная тема">
+            <svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <g stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
+                <path d="M12 1.4v2.4M12 20.2v2.4M1.4 12h2.4M20.2 12h2.4M4.4 4.4l1.7 1.7M17.9 17.9l1.7 1.7M19.6 4.4l-1.7 1.7M6.1 17.9l-1.7 1.7"/>
+              </g>
+              <circle cx="12" cy="12" r="5.7" fill="none" stroke="currentColor" stroke-width="1.7"/>
+              <path d="M12 6.3a5.7 5.7 0 0 0 0 11.4z" fill="currentColor"/>
+            </svg>
+          </button>
+        </div>
         <span style="font-size:13px;color:var(--muted)">Оператор: Иванова А.С.</span>
       </div>
     </header>
@@ -472,6 +480,7 @@
 
   <div id="toast" class="toast"></div>
 
+  <script src="i18n.js"></script>
   <script>
     const sources = [
       { id: "pos-2", name: "Касса 2 · Set Retail", kind: "pos", badge: "Кассовое ПО", cls: "src-pos", cam: "CAM-142-09 · КАССИР / РУКИ", scene: "cashier", view: "Касса 2 · вид на кассира и руки" },
@@ -524,34 +533,43 @@
     }
 
     function sourceById(id) { return sources.find(s => s.id === id); }
+    function prioLabel(sev) {
+      return sev === "high" ? t("высокая") : sev === "mid" ? t("средняя") : t("низкая");
+    }
 
     function fillSourceSelects() {
-      const opts = sources.map(s => `<option value="${s.id}">${s.name}</option>`).join("");
+      const srcVal = document.getElementById("source-select").value;
+      const scVal = document.getElementById("sc-source").value;
+      const opts = sources.map(s => `<option value="${s.id}">${t(s.name)}</option>`).join("");
       document.getElementById("source-select").innerHTML = opts;
-      document.getElementById("sc-source").innerHTML = `<option value="all">Все источники магазина</option>` + opts;
+      document.getElementById("sc-source").innerHTML = `<option value="all">${t("Все источники магазина")}</option>` + opts;
+      if (srcVal) document.getElementById("source-select").value = srcVal;
+      if (scVal) document.getElementById("sc-source").value = scVal;
     }
 
     function highlight(text, hit) {
-      if (!hit) return text;
-      return text.replace(hit, `<span class="hit">${hit}</span>`);
+      const translated = tx(text);
+      if (!hit) return translated.replace(/\n/g, "<br>");
+      const hitT = t(hit);
+      return translated.replace(hitT, `<span class="hit">${hitT}</span>`).replace(/\n/g, "<br>");
     }
 
     function renderPlayer(receiptId) {
       const rec = receipts.find(r => r.id === receiptId) || selectedReceipt;
       selectedReceipt = rec;
       const src = sourceById(rec.source);
-      document.getElementById("player-title").textContent = src.view;
+      document.getElementById("player-title").textContent = t(src.view);
       document.getElementById("player-source").className = "source " + src.cls;
-      document.getElementById("player-source").textContent = src.badge;
+      document.getElementById("player-source").textContent = t(src.badge);
       document.getElementById("player-scene").className = "video-scene " + src.scene;
-      document.getElementById("player-cam").textContent = src.cam;
+      document.getElementById("player-cam").textContent = t(src.cam);
       document.getElementById("player-caption").innerHTML = highlight(rec.text, rec.hit);
       document.getElementById("receipt-view").innerHTML = `
         <div class="receipt">
-          <div class="receipt-line"><span>Чек №${rec.id}</span><span>${rec.time}</span></div>
-          <div class="receipt-line"><span>Кассир</span><span>${rec.cashier}</span></div>
-          <div class="receipt-line"><span>Источник</span><span class="source ${src.cls}">${src.badge}</span></div>
-          ${rec.parsed.map(([a,b]) => `<div class="receipt-line"><span>${a}</span><span>${b}</span></div>`).join("")}
+          <div class="receipt-line"><span>${t("Чек №{id}", { id: rec.id })}</span><span>${rec.time}</span></div>
+          <div class="receipt-line"><span>${t("Кассир")}</span><span>${rec.cashier}</span></div>
+          <div class="receipt-line"><span>${t("Источник")}</span><span class="source ${src.cls}">${t(src.badge)}</span></div>
+          ${rec.parsed.map(([a,b]) => `<div class="receipt-line"><span>${t(a)}</span><span>${t(b)}</span></div>`).join("")}
         </div>`;
     }
 
@@ -561,8 +579,8 @@
       return list.map(r => {
         const src = sourceById(r.source);
         return `<div class="result-item ${prioClass(r.sev)} ${r.id === selectedReceipt.id ? "active" : ""}" onclick="renderPlayer('${r.id}'); markResult(this)">
-          <div>${r.time} · чек №${r.id} · ${r.status}${r.sev ? ` <span class="chip ${prioClass(r.sev)}">${r.sev === "high" ? "высокая" : r.sev === "mid" ? "средняя" : "низкая"}</span>` : ""}</div>
-          <div class="meta">${src.name} · <span class="source ${src.cls}">${src.badge}</span></div>
+          <div>${r.time} · ${t("чек №{id}", { id: r.id })} · ${t(r.status)}${r.sev ? ` <span class="chip ${prioClass(r.sev)}">${prioLabel(r.sev)}</span>` : ""}</div>
+          <div class="meta">${t(src.name)} · <span class="source ${src.cls}">${t(src.badge)}</span></div>
         </div>`;
       }).join("");
     }
@@ -570,70 +588,83 @@
     function markResult(el) {
       el.parentElement.querySelectorAll(".result-item").forEach(i => i.classList.remove("active"));
       el.classList.add("active");
-      toast("Архив перемотан к титру");
+      toast(t("Архив перемотан к титру"));
     }
 
-    function runCaptionSearch() {
-      const q = document.getElementById("caption-q").value.toUpperCase();
+    function receiptBlob(r) {
+      return [r.text, tx(r.text), r.hit, t(r.hit || ""), r.parsed.map(p => p[0] + " " + t(p[0])).join(" ")].join("\n").toUpperCase();
+    }
+
+    function runCaptionSearch(quiet) {
+      const raw = document.getElementById("caption-q").value;
+      const q = raw.toUpperCase();
+      const qEn = t(raw).toUpperCase();
       const srcId = document.getElementById("source-select").value;
-      const found = receipts.filter(r => r.source === srcId && r.text.toUpperCase().includes(q));
-      const list = found.length ? found : receipts.filter(r => r.text.toUpperCase().includes(q));
+      const match = (r) => {
+        const blob = receiptBlob(r);
+        return blob.includes(q) || (qEn && blob.includes(qEn));
+      };
+      const found = receipts.filter(r => r.source === srcId && match(r));
+      const list = found.length ? found : receipts.filter(match);
       document.getElementById("results").innerHTML = resultHtml(list.length ? list : receipts.slice(0, 3));
       if (list[0]) renderPlayer(list[0].id);
-      toast("Найдено в титрах: " + (list.length || receipts.length));
+      if (!quiet) toast(t("Найдено в титрах: {n}", { n: list.length || receipts.length }));
     }
 
     function reportParams() {
       const type = document.getElementById("report-type").value;
       const map = {
         all: "",
-        number: `<div class="form-group"><label>Номер чека</label><input class="field" value="48288"></div>`,
-        cashier: `<div class="form-group"><label>Кассир</label><input class="field" value="Сидорова М."></div>`,
-        sku: `<div class="form-group"><label>Артикул / товар</label><input class="field" value="МОЛОКО"></div>`,
-        and: `<div class="form-group"><label>Товар 1</label><input class="field" value="Хлеб"></div><div class="form-group"><label>Товар 2</label><input class="field" value="Молоко"></div>`,
+        number: `<div class="form-group"><label>${t("Номер чека")}</label><input class="field" value="48288"></div>`,
+        cashier: `<div class="form-group"><label>${t("Кассир")}</label><input class="field" value="Сидорова М."></div>`,
+        sku: `<div class="form-group"><label>${t("Артикул / товар")}</label><input class="field" value="${t("МОЛОКО")}"></div>`,
+        and: `<div class="form-group"><label>${t("Товар 1")}</label><input class="field" value="${t("Хлеб")}"></div><div class="form-group"><label>${t("Товар 2")}</label><input class="field" value="${t("Молоко")}"></div>`,
         returns: "",
         scale: "",
-        amount: `<div class="form-group"><label>Сумма от</label><input class="field" value="400"></div>`
+        amount: `<div class="form-group"><label>${t("Сумма от")}</label><input class="field" value="400"></div>`
       };
       document.getElementById("report-params").innerHTML = map[type];
     }
 
-    function runReceiptSearch() {
+    function runReceiptSearch(quiet) {
       const type = document.getElementById("report-type").value;
       let list = receipts;
       if (type === "number") list = receipts.filter(r => r.id === "48288");
       if (type === "cashier") list = receipts.filter(r => r.cashier.includes("Сидорова"));
-      if (type === "sku") list = receipts.filter(r => /МОЛОКО|Молоко/.test(r.text + r.parsed.join()));
-      if (type === "returns") list = receipts.filter(r => /АННУЛЯЦИЯ|ВОЗВРАТ/.test(r.text));
+      if (type === "sku") list = receipts.filter(r => /МОЛОКО|MILK/.test(receiptBlob(r)));
+      if (type === "returns") list = receipts.filter(r => /АННУЛЯЦИЯ|ВОЗВРАТ|VOID|RETURN/.test(receiptBlob(r)));
       if (type === "scale") list = receipts.filter(r => r.source === "scale");
-      if (type === "and") list = receipts.filter(r => /Хлеб/.test(JSON.stringify(r.parsed)) && /Молоко|МОЛОКО/.test(r.text + JSON.stringify(r.parsed)));
+      if (type === "and") list = receipts.filter(r => /Хлеб|BREAD/.test(receiptBlob(r)) && /Молоко|MILK/.test(receiptBlob(r)));
       document.getElementById("results").innerHTML = `
         <table>
-          <thead><tr><th>Время</th><th>Чек</th><th>Кассир</th><th>Сумма</th><th>Источник</th></tr></thead>
+          <thead><tr><th>${t("Время")}</th><th>${t("Чек")}</th><th>${t("Кассир")}</th><th>${t("Сумма")}</th><th>${t("Источник")}</th></tr></thead>
           <tbody>${list.map(r => {
             const src = sourceById(r.source);
             return `<tr class="clickable ${prioClass(r.sev)} ${r.id === selectedReceipt.id ? "active" : ""}" onclick="renderPlayer('${r.id}')">
               <td>${r.time}</td><td>№${r.id}</td><td>${r.cashier}</td><td>${r.total}</td>
-              <td><span class="source ${src.cls}">${src.badge}</span>${r.sev ? ` <span class="chip ${prioClass(r.sev)}">${r.sev === "high" ? "высокая" : r.sev === "mid" ? "средняя" : "низкая"}</span>` : ""}</td></tr>`;
+              <td><span class="source ${src.cls}">${t(src.badge)}</span>${r.sev ? ` <span class="chip ${prioClass(r.sev)}">${prioLabel(r.sev)}</span>` : ""}</td></tr>`;
           }).join("")}</tbody>
         </table>`;
       if (list[0]) renderPlayer(list[0].id);
-      toast("Отчёт построен: " + list.length + " чек.");
+      if (!quiet) toast(t("Отчёт построен: {n} чек.", { n: list.length }));
     }
 
+    let selectedAlertId = alerts[0].id;
+
     function renderAlerts() {
-      document.getElementById("alert-list").innerHTML = alerts.map((a, i) => `
-        <div class="alert-item ${prioClass(a.sev)} ${i === 0 ? "active" : ""}" onclick="openAlert('${a.id}', this)">
+      const current = selectedAlertId || alerts[0].id;
+      document.getElementById("alert-list").innerHTML = alerts.map((a) => `
+        <div class="alert-item ${prioClass(a.sev)} ${a.id === current ? "active" : ""}" onclick="openAlert('${a.id}', this)">
           <div class="alert-row">
             <div class="severity sev-${a.sev === "high" ? "high" : a.sev === "mid" ? "mid" : "low"}"></div>
             <div>
-              <div>${a.title}</div>
-              <div class="meta">${a.time} · ${a.kind === "video" ? "только аналитика" : "аналитика + чек"}</div>
+              <div>${t(a.title)}</div>
+              <div class="meta">${a.time} · ${a.kind === "video" ? t("только аналитика") : t("аналитика + чек")}</div>
             </div>
-            <span class="chip ${prioClass(a.sev)}">${a.sev === "high" ? "высокая" : a.sev === "mid" ? "средняя" : "низкая"}</span>
+            <span class="chip ${prioClass(a.sev)}">${prioLabel(a.sev)}</span>
           </div>
         </div>`).join("");
-      openAlert(alerts[0].id);
+      openAlert(current);
     }
 
     function openAlert(id, el) {
@@ -642,36 +673,37 @@
         el.classList.add("active");
       }
       const a = alerts.find(x => x.id === id);
+      selectedAlertId = id;
       const src = a.source ? sourceById(a.source) : null;
-      document.getElementById("alert-title").innerHTML = `${a.title} <span class="chip ${prioClass(a.sev)}">${a.sev === "high" ? "высокая" : a.sev === "mid" ? "средняя" : "низкая"}</span>`;
+      document.getElementById("alert-title").innerHTML = `${t(a.title)} <span class="chip ${prioClass(a.sev)}">${prioLabel(a.sev)}</span>`;
       document.getElementById("alert-caption").style.borderLeftColor = a.sev === "high" ? "var(--prio-high-border)" : a.sev === "mid" ? "var(--prio-mid-border)" : "var(--prio-low-border)";
       document.getElementById("alert-scene").className = "video-scene " + (src ? src.scene : a.scene);
-      document.getElementById("alert-cam").textContent = src ? src.cam : a.cam;
+      document.getElementById("alert-cam").textContent = src ? t(src.cam) : t(a.cam);
       const badge = document.getElementById("alert-source");
       if (src) {
         badge.className = "source " + src.cls;
-        badge.textContent = src.badge;
-        document.getElementById("alert-caption").innerHTML = a.caption || "Титры источника";
+        badge.textContent = t(src.badge);
+        document.getElementById("alert-caption").innerHTML = a.caption ? tx(a.caption).replace(/\n/g, "<br>") : t("Титры источника");
       } else {
         badge.className = "source src-video";
-        badge.textContent = "Только видео";
-        document.getElementById("alert-caption").textContent = "Кассового потока нет · титры не пишутся";
+        badge.textContent = t("Только видео");
+        document.getElementById("alert-caption").textContent = t("Кассового потока нет · титры не пишутся");
       }
-      document.getElementById("alert-why").textContent = a.why;
+      document.getElementById("alert-why").textContent = t(a.why);
     }
 
     function renderScenarios() {
       document.getElementById("scenario-list").innerHTML = scenarios.map(s => `
         <div class="scenario-item ${editingScenario === s.id ? "active" : ""}" onclick="editScenario(${s.id})">
-          <div>${s.name}</div>
-          <div class="meta">окно ${s.window} сек · ${s.source === "all" ? "все источники" : sourceById(s.source).name}</div>
-        </div>`).join("") || `<div class="result-item"><div class="meta">Пока нет своих сценариев</div></div>`;
+          <div>${t(s.name)}</div>
+          <div class="meta">${t("окно {n} сек · {src}", { n: s.window, src: s.source === "all" ? t("все источники") : t(sourceById(s.source).name) })}</div>
+        </div>`).join("") || `<div class="result-item"><div class="meta">${t("Пока нет своих сценариев")}</div></div>`;
     }
 
     function editScenario(id) {
       const s = scenarios.find(x => x.id === id);
       editingScenario = id;
-      document.getElementById("scenario-form-title").textContent = "Редактирование";
+      document.getElementById("scenario-form-title").textContent = t("Редактирование");
       document.getElementById("sc-name").value = s.name;
       document.getElementById("sc-source").value = s.source;
       document.getElementById("sc-video").value = s.video;
@@ -684,7 +716,7 @@
 
     function resetScenario() {
       editingScenario = null;
-      document.getElementById("scenario-form-title").textContent = "Новый сценарий";
+      document.getElementById("scenario-form-title").textContent = t("Новый сценарий");
       document.getElementById("sc-name").value = "";
       document.getElementById("sc-window").value = 15;
       document.getElementById("sc-delete").classList.add("hidden");
@@ -693,7 +725,7 @@
 
     function saveScenario() {
       const name = document.getElementById("sc-name").value.trim();
-      if (!name) return toast("Укажите название");
+      if (!name) return toast(t("Укажите название"));
       const data = {
         name,
         source: document.getElementById("sc-source").value,
@@ -705,13 +737,13 @@
       if (editingScenario) Object.assign(scenarios.find(s => s.id === editingScenario), data);
       else scenarios.push({ id: Date.now(), ...data });
       resetScenario();
-      toast("Сценарий сохранён");
+      toast(t("Сценарий сохранён"));
     }
 
     function deleteScenario() {
       scenarios = scenarios.filter(s => s.id !== editingScenario);
       resetScenario();
-      toast("Сценарий удалён");
+      toast(t("Сценарий удалён"));
     }
 
     function showScreen(id) {
@@ -741,21 +773,19 @@
     });
     document.getElementById("report-type").addEventListener("change", reportParams);
 
-    function applyTheme(theme) {
-      document.documentElement.setAttribute("data-theme", theme);
-      localStorage.setItem("retail-theme", theme);
-    }
-    document.getElementById("theme-btn").addEventListener("click", () => {
-      applyTheme(document.documentElement.getAttribute("data-theme") === "light" ? "dark" : "light");
-    });
-    applyTheme(localStorage.getItem("retail-theme") || "dark");
+    window.onRetailLang = function () {
+      fillSourceSelects();
+      reportParams();
+      renderPlayer(selectedReceipt.id);
+      if (mode === "captions") runCaptionSearch(true);
+      else runReceiptSearch(true);
+      renderAlerts();
+      renderScenarios();
+      if (editingScenario) document.getElementById("scenario-form-title").textContent = t("Редактирование");
+      else document.getElementById("scenario-form-title").textContent = t("Новый сценарий");
+    };
 
-    fillSourceSelects();
-    reportParams();
-    renderPlayer(selectedReceipt.id);
-    runCaptionSearch();
-    renderAlerts();
-    renderScenarios();
+    RetailI18n.bindChrome();
   </script>
 </body>
 </html>
