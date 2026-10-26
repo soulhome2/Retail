@@ -220,35 +220,6 @@
       border: 1px solid var(--border); font-size: 13px; cursor: pointer;
     }
     .template-card:hover { border-color: var(--accent); }
-    .constructor {
-      display: grid; grid-template-columns: 220px 1fr 280px; gap: 16px; min-height: 640px;
-    }
-    .block-palette { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
-    .block-palette h3 { font-size: 12px; color: var(--muted); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
-    .palette-item {
-      padding: 10px; background: var(--surface2); border-radius: 6px;
-      margin-bottom: 8px; font-size: 13px; cursor: grab; border: 1px dashed var(--border);
-    }
-    .canvas {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; padding: 24px; position: relative;
-    }
-    .scenario-node {
-      background: var(--surface2); border: 2px solid var(--accent);
-      border-radius: 10px; padding: 14px 18px; margin: 0 auto 16px;
-      max-width: 320px; text-align: center; font-size: 13px;
-    }
-    .scenario-connector {
-      text-align: center; color: var(--accent); font-weight: 700; font-size: 18px; margin: 4px 0;
-    }
-    .scenario-props {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; padding: 16px;
-    }
-    .scenario-props h3 { font-size: 14px; margin-bottom: 14px; }
-    .prop-row { margin-bottom: 12px; }
-    .prop-row label { font-size: 12px; color: var(--muted); display: block; margin-bottom: 4px; }
-    .prop-row input { width: 100%; padding: 6px 10px; border-radius: 4px; background: var(--surface2); border: 1px solid var(--border); color: var(--text); }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
     th { color: var(--muted); font-weight: 500; font-size: 12px; text-transform: uppercase; }
@@ -329,7 +300,7 @@
     .toast.show { opacity:1; transform:translateY(0); }
     @media (max-width: 1200px) {
       .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-      .grid-2, .constructor, .receipt-layout { grid-template-columns: 1fr; }
+      .grid-2, .receipt-layout { grid-template-columns: 1fr; }
       .source-grid { grid-template-columns:1fr 1fr; }
     }
     @media (max-width: 780px) {
@@ -343,6 +314,7 @@
       .content { padding:14px; }
     }
   </style>
+  <link rel="stylesheet" href="scenario-editor.css">
   <link rel="stylesheet" href="../bridge.css">
 </head>
 <body>
@@ -902,85 +874,8 @@
       <!-- CONSTRUCTOR -->
       <section id="screen-constructor" class="screen">
         <h1>Конструктор сценариев</h1>
-        <p class="subtitle">Создание составных тревожных сценариев · POS или его отсутствие + видеозоны + условия (v3)</p>
-
-        <div class="constructor">
-          <div class="block-palette">
-            <h3>POS-события</h3>
-            <div class="palette-item">Возврат товара</div>
-            <div class="palette-item">Аннуляция чека</div>
-            <div class="palette-item">Оплата наличными</div>
-            <div class="palette-item">Открытие ящика</div>
-            <div class="palette-item">Информация о товаре</div>
-            <div class="palette-item">Штрихкод с весов</div>
-            <div class="palette-item">POS молчит / нет события</div>
-            <h3 style="margin-top:16px">Видео-детекторы</h3>
-            <div class="palette-item">Покупатель в зоне</div>
-            <div class="palette-item">Кассир в зоне</div>
-            <div class="palette-item">Наличные в зоне</div>
-            <div class="palette-item">Подсчёт товаров (X)</div>
-            <div class="palette-item">Рука: зона ленты</div>
-            <div class="palette-item">Рука: зона сканера</div>
-            <div class="palette-item">Рука: зона укладки</div>
-            <h3 style="margin-top:16px">Логика</h3>
-            <div class="palette-item">И (AND)</div>
-            <div class="palette-item">ИЛИ (OR)</div>
-            <div class="palette-item">X = 0</div>
-            <div class="palette-item">Совпадение веса</div>
-            <div class="palette-item">Задержка (N сек)</div>
-          </div>
-
-          <div class="canvas">
-            <div style="text-align:center;color:var(--muted);font-size:12px;margin-bottom:20px">Пример: «Пронос мимо сканера» (3.2.6 / 3.2.7)</div>
-            <div class="scenario-node">Рука: лента → выход</div>
-            <div class="scenario-connector">затем</div>
-            <div class="scenario-node">Рука: зона сканера → выход</div>
-            <div class="scenario-connector">И</div>
-            <div class="scenario-node">POS: нет добавления товара / нет «Честного знака»</div>
-            <div class="scenario-connector">затем</div>
-            <div class="scenario-node">Рука: зона укладки → выход</div>
-            <div class="scenario-connector">→</div>
-            <div class="scenario-node" style="border-color:var(--danger)">⚠ Подозрение на пронос мимо сканера</div>
-            <div style="margin-top:24px;display:flex;gap:10px;justify-content:center">
-              <button class="btn btn-primary">Сохранить сценарий</button>
-              <button class="btn btn-ghost">Сохранить как шаблон</button>
-              <button class="btn btn-ghost">Тест на архиве</button>
-            </div>
-          </div>
-
-          <div class="scenario-props">
-            <h3>Параметры узла</h3>
-            <div class="prop-row">
-              <label>Таймаут добавления в POS (сек)</label>
-              <input type="number" value="2">
-            </div>
-            <div class="prop-row">
-              <label>Учитывать «Честный знак»</label>
-              <select style="width:100%;padding:6px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:4px">
-                <option>Да — нет кода = нет пробития</option>
-                <option>Только штрихкод</option>
-              </select>
-            </div>
-            <div class="prop-row">
-              <label>Допуск X после ухода с КСО</label>
-              <input type="text" value="X, X−1, X−2">
-            </div>
-            <div class="prop-row">
-              <label>Таймаут весового штрихкода (мин)</label>
-              <input type="number" value="12">
-            </div>
-            <div class="prop-row">
-              <label>Название сценария</label>
-              <input type="text" value="Пронос мимо сканера, 3 зоны">
-            </div>
-            <div class="prop-row">
-              <label>Приоритет тревоги</label>
-              <select style="width:100%;padding:6px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:4px">
-                <option>Высокий</option><option>Средний</option><option>Низкий</option>
-              </select>
-            </div>
-          </div>
-        </div>
+        <p class="subtitle">Сценарий — это события системы (сработки объектов и строки титров), связанные логикой И / ИЛИ / НЕ и таймерами</p>
+        <div id="scenario-editor"></div>
       </section>
 
       <!-- ANALYTICS -->
@@ -1145,6 +1040,7 @@
 
   <div id="toast" class="toast"></div>
   <script src="i18n.js"></script>
+  <script src="scenario-editor.js"></script>
   <script>
     function showScreen(id) {
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -1191,7 +1087,9 @@
       el.className = 'health ' + (status === 'Подтверждён' ? 'err' : 'ok');
       demoAction(t("Статус инцидента: {s}", { s: t(status) }));
     }
+    window.onRetailLang = () => ScenarioEditor.refresh();
     RetailI18n.bindChrome();
+    ScenarioEditor.mount(document.getElementById("scenario-editor"), { toast: demoAction });
   </script>
 </body>
 </html>
