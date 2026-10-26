@@ -222,6 +222,102 @@
       background: var(--toast-bg); color: var(--text); font-size: 13px; opacity: 0; transform: translateY(8px); transition: .2s;
     }
     .toast.show { opacity: 1; transform: none; }
+    /* ---- Scenario editor ---- */
+    .sc-layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 16px; align-items: start; }
+    .sc-editor { display: grid; gap: 16px; min-width: 0; }
+    .sc-fs { border: 0; margin: 0; padding: 0; min-width: 0; display: grid; gap: 16px; }
+    .sc-small { padding: 3px 10px; font-size: 12px; }
+    .sc-sub-h { border-top: 1px solid var(--border); color: var(--muted); font-weight: 500; font-size: 12px; }
+    .sc-item-h { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .sc-formula-mini { font-family: Consolas, "Cascadia Mono", monospace; font-size: 11px; color: var(--muted); margin-top: 3px; }
+    .sc-ro { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 0; }
+    .sc-head { display: grid; grid-template-columns: minmax(0, 1fr) 180px; gap: 10px; padding: 14px; }
+    .sc-hint { font-weight: 400; text-align: right; margin: 0; }
+    .sc-conds { padding: 14px 14px 10px; display: flex; flex-direction: column; }
+    .sc-cond { border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 8px; background: var(--surface); }
+    .sc-cond.neg { border-left-color: var(--danger); }
+    .sc-cond-h {
+      display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+      background: var(--surface2); border-bottom: 1px solid var(--border); border-radius: 0 7px 0 0;
+    }
+    .sc-letter {
+      width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 12px; background: var(--accent); color: #fff;
+    }
+    .sc-cond.neg .sc-letter { background: var(--danger); }
+    .sc-cond-h .field { width: auto; padding: 4px 8px; }
+    .sc-start { font-size: 12px; color: var(--muted); }
+    .sc-x {
+      margin-left: auto; background: none; border: 0; color: var(--muted); cursor: pointer;
+      font-size: 16px; line-height: 1; padding: 2px 6px; border-radius: 4px;
+    }
+    .sc-x:hover:not(:disabled) { color: var(--danger); background: var(--surface2); }
+    .sc-ev {
+      display: grid; grid-template-columns: 104px minmax(150px, 1fr) minmax(170px, 1.3fr) minmax(150px, 1fr) 28px;
+      gap: 8px; align-items: center; padding: 8px 10px;
+    }
+    .sc-ev .field { padding: 6px 8px; min-width: 0; }
+    .sc-ev .mono { font-family: Consolas, "Cascadia Mono", monospace; }
+    .sc-ev .sc-x { margin: 0; }
+    .sc-or { display: flex; align-items: center; gap: 8px; padding: 0 10px; font-size: 11px; font-weight: 700; color: var(--warning); }
+    .sc-or::before, .sc-or::after { content: ""; height: 1px; background: var(--border); flex: 1; }
+    .sc-or::before { flex: 0 0 104px; }
+    .sc-cond-f { display: flex; gap: 16px; padding: 0 10px 8px 122px; }
+    .sc-link { background: none; border: 0; color: var(--accent); cursor: pointer; font-size: 12px; padding: 0; }
+    .sc-link:disabled { color: var(--muted); cursor: default; }
+    .sc-timer {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; padding: 8px 10px;
+      border-top: 1px dashed var(--border); font-size: 12px; color: var(--muted);
+    }
+    .sc-timer .field { width: auto; padding: 4px 8px; }
+    .sc-timer input.field { width: 72px; }
+    .sc-timer b { color: var(--text); font-weight: 600; }
+    .sc-timer select.field, .sc-cond-h select.field { padding-right: 28px; background-position: right 6px center; font-size: 12px; }
+    .sc-fs:disabled .sc-x, .sc-fs:disabled .sc-cond-f, .sc-fs:disabled .sc-add { display: none; }
+    .sc-sep { width: 1px; height: 18px; background: var(--border); margin: 0 6px; }
+    .sc-and {
+      align-self: center; margin: 6px 0; font-size: 11px; font-weight: 700; letter-spacing: .04em;
+      padding: 2px 12px; border-radius: 10px; background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+    }
+    .sc-add { padding: 0 14px 14px; }
+    .sc-timeline { padding: 10px 14px 4px; }
+    .sc-timeline svg { width: 100%; height: auto; display: block; }
+    .tl-grid { stroke: var(--border); stroke-width: 1; }
+    .tl-a { stroke: var(--accent); stroke-width: 1; stroke-dasharray: 2 3; }
+    .tl-tick { fill: var(--muted); font-size: 11px; }
+    .tl-label { fill: var(--text); font-size: 12px; }
+    .tl-letter { font-weight: 700; font-size: 12px; }
+    .tl-pos { fill: color-mix(in srgb, var(--accent) 22%, transparent); stroke: var(--accent); stroke-width: 1.2; }
+    .tl-neg { fill: color-mix(in srgb, var(--danger) 14%, transparent); stroke: var(--danger); stroke-width: 1.2; stroke-dasharray: 5 4; }
+    .tl-pt { fill: var(--accent); }
+    .tl-in { fill: var(--text); font-size: 11px; }
+    .tl-alarm { stroke: var(--warning); stroke-width: 2; stroke-dasharray: 4 3; }
+    .tl-alarm-t { fill: var(--warning); font-size: 11px; font-weight: 600; }
+    .sc-readable { padding: 12px 14px 14px; font-size: 13px; line-height: 1.65; border-top: 1px solid var(--border); }
+    .sc-readable ol { margin: 4px 0 8px 20px; }
+    .sc-readable .muted { color: var(--muted); }
+    .sc-formula {
+      display: inline-block; margin-top: 4px; padding: 5px 10px; border-radius: 6px;
+      font-family: Consolas, "Cascadia Mono", monospace; font-size: 12px; background: var(--surface2);
+    }
+    .sc-then { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; padding: 14px; }
+    .sc-actions { padding: 12px 14px; }
+    .sc-test-row { display: grid; grid-template-columns: 90px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 9px 14px; border-bottom: 1px solid var(--border); font-size: 12px; }
+    .sc-test-row .row { gap: 6px; }
+    @media (max-width: 1300px) {
+      .sc-ev { grid-template-columns: 104px minmax(0, 1fr) minmax(0, 1fr) 28px; }
+      .sc-ev > :nth-child(4) { grid-column: 2 / 4; }
+    }
+    @media (max-width: 1100px) {
+      .sc-layout, .sc-head { grid-template-columns: 1fr; }
+      .sc-ev { grid-template-columns: 1fr 28px; }
+      .sc-ev > * { grid-column: 1 / 2 !important; }
+      .sc-ev > .sc-x { grid-column: 2 / 3 !important; grid-row: 1; }
+      .sc-cond-f { padding-left: 10px; flex-wrap: wrap; }
+      .sc-or::before { flex: 1; }
+      .sc-hint { display: none; }
+    }
     @media (max-width: 1100px) {
       .workspace, .grid-2 { grid-template-columns: 1fr; }
       .sidebar { width: 64px; }
@@ -406,71 +502,92 @@
 
       <section id="screen-scenarios" class="screen">
         <h1>Мои сценарии</h1>
-        <p class="subtitle">Серверные правила уже подключены. Оператор создаёт, правит и удаляет только свои простые сценарии</p>
-        <div class="grid-2">
+        <p class="subtitle">Сценарий — это события системы (сработки объектов и строки титров), связанные логикой И / ИЛИ / НЕ и таймерами</p>
+        <div class="sc-layout">
           <div class="panel">
-            <div class="panel-h">Список</div>
+            <div class="panel-h">
+              <span>Мои сценарии</span>
+              <button type="button" class="btn btn-ghost sc-small" onclick="newScenario()">+ Новый</button>
+            </div>
             <div id="scenario-list"></div>
+            <div class="panel-h sc-sub-h">Серверные шаблоны · только просмотр</div>
+            <div id="template-list"></div>
           </div>
-          <div class="panel">
-            <div class="panel-h" id="scenario-form-title">Новый сценарий</div>
-            <div class="form-stack">
-              <div class="form-group">
-                <label>Название</label>
-                <input id="sc-name" class="field" placeholder="Например, возврат без покупателя">
+
+          <div class="sc-editor">
+            <div id="sc-ro" class="note sc-ro hidden">
+              <span><strong>Серверный шаблон.</strong> Его правит администратор. Чтобы изменить под себя — создайте копию.</span>
+              <button type="button" class="btn btn-primary sc-small" onclick="copyTemplate()">Создать копию</button>
+            </div>
+
+            <fieldset id="sc-fs" class="sc-fs">
+              <div class="panel">
+                <div class="panel-h"><span id="scenario-form-title">Новый сценарий</span></div>
+                <div class="sc-head">
+                  <div class="form-group">
+                    <label>Название сценария</label>
+                    <input id="sc-name" class="field" placeholder="Например, аннуляция без покупателя" oninput="draft.name = this.value; renderSummary()">
+                  </div>
+                  <div class="form-group">
+                    <label>Статус</label>
+                    <select id="sc-on" class="field" onchange="draft.on = this.value === '1'"></select>
+                  </div>
+                </div>
               </div>
-              <div class="form-group">
-                <label>Источник</label>
-                <select id="sc-source" class="field"></select>
+
+              <div class="panel">
+                <div class="panel-h">
+                  <span>Если — условия</span>
+                  <span class="meta sc-hint">Условия связаны «И». Внутри условия варианты — «ИЛИ». «НЕ произошло» — событие не наступило за время таймера.</span>
+                </div>
+                <div id="sc-conds" class="sc-conds"></div>
+                <div class="row sc-add">
+                  <button type="button" class="btn" onclick="addCond('obj')">+ И событие объекта</button>
+                  <button type="button" class="btn" onclick="addCond('cap')">+ И строка титров</button>
+                </div>
               </div>
-              <div class="form-group">
-                <label>Если на видео</label>
-                <select id="sc-video" class="field">
-                  <option value="customer">Есть покупатель в зоне кассы</option>
-                  <option value="no-customer">Нет покупателя в зоне кассы</option>
-                  <option value="cashier">Есть кассир в зоне кассы</option>
-                  <option value="hands-up">Поднятые руки в зоне рамок</option>
-                  <option value="scan-move">Движение через зону сканера</option>
-                  <option value="three-zone">Рука: лента → сканер → укладка</option>
-                  <option value="cash">Наличные в зоне кассы</option>
-                  <option value="any">Любое / не учитывать</option>
-                </select>
+
+              <div class="panel">
+                <div class="panel-h">Как сценарий срабатывает во времени</div>
+                <div id="sc-timeline" class="sc-timeline"></div>
+                <div id="sc-readable" class="sc-readable"></div>
               </div>
-              <div class="form-group">
-                <label>И также</label>
-                <select id="sc-extra" class="field">
-                  <option value="ignore">Не учитывать</option>
-                  <option value="cashier">Есть кассир</option>
-                  <option value="cash">Наличные в зоне</option>
-                  <option value="x0">Товаров на площадке: 0</option>
-                  <option value="x-left">Товары остались после ухода (X, X−1, X−2)</option>
-                  <option value="three-zone">Три зоны сканера</option>
-                </select>
+
+              <div class="panel">
+                <div class="panel-h">Тогда — создать тревогу</div>
+                <div class="sc-then">
+                  <div class="form-group">
+                    <label>Приоритет</label>
+                    <select id="sc-prio" class="field" onchange="draft.prio = this.value; renderSummary()"></select>
+                  </div>
+                  <div class="form-group">
+                    <label>Видео в карточке тревоги</label>
+                    <select id="sc-camera" class="field" onchange="draft.camera = this.value"></select>
+                  </div>
+                  <div class="form-group">
+                    <label>Не повторять чаще, сек</label>
+                    <input id="sc-cooldown" class="field" type="number" min="0" oninput="draft.cooldown = Number(this.value)">
+                  </div>
+                  <div class="form-group">
+                    <label>Когда сценарий работает</label>
+                    <select id="sc-schedule" class="field" onchange="draft.schedule = this.value; renderScenarios()"></select>
+                  </div>
+                </div>
               </div>
-              <div class="form-group">
-                <label>И по чеку</label>
-                <select id="sc-pos" class="field">
-                  <option value="no-receipt">Нет чека / POS молчит</option>
-                  <option value="any-receipt">Есть чек или кассовая операция</option>
-                  <option value="return">Возврат товара</option>
-                  <option value="void">Аннуляция</option>
-                  <option value="drawer">Открытие денежного ящика</option>
-                  <option value="no-item">Нет добавления товара / нет «Честного знака»</option>
-                  <option value="scale-code">Выдан штрихкод с весов</option>
-                  <option value="same-weight">Совпадение веса двух штрихкодов</option>
-                  <option value="ignore">Не учитывать чек</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Окно, сек</label>
-                <input id="sc-window" class="field" type="number" value="15">
-              </div>
+            </fieldset>
+
+            <div class="panel sc-actions">
               <div class="row">
-                <button class="btn btn-primary" onclick="saveScenario()">Сохранить</button>
-                <button class="btn btn-ghost" onclick="resetScenario()">Сбросить</button>
-                <button id="sc-delete" class="btn btn-danger hidden" onclick="deleteScenario()">Удалить</button>
+                <button type="button" id="sc-save" class="btn btn-primary" onclick="saveScenario()">Сохранить</button>
+                <button type="button" class="btn" onclick="testScenario()">Проверить на архиве</button>
+                <button type="button" id="sc-reset" class="btn btn-ghost" onclick="resetScenario()">Отменить изменения</button>
+                <button type="button" id="sc-delete" class="btn btn-danger hidden" onclick="deleteScenario()">Удалить</button>
               </div>
-              <div class="meta">Серверные шаблоны: пронос над рамкой, расхождение КСО, быстрый набор, трёхзонный пронос мимо сканера — только для использования, без правки.</div>
+            </div>
+
+            <div id="sc-test" class="panel hidden">
+              <div class="panel-h"><span id="sc-test-title"></span></div>
+              <div id="sc-test-body"></div>
             </div>
           </div>
         </div>
@@ -516,13 +633,6 @@
 
     let mode = "captions";
     let selectedReceipt = receipts[2];
-    let editingScenario = null;
-    let scenarios = [
-      { id: 1, name: "Покупатель без чека на КСО", source: "kso-2", video: "customer", extra: "ignore", pos: "no-receipt", window: 20 },
-      { id: 2, name: "Аннуляция без покупателя", source: "fr-5", video: "no-customer", extra: "ignore", pos: "void", window: 10 },
-      { id: 3, name: "Возврат при X=0", source: "file-1c", video: "customer", extra: "x0", pos: "return", window: 8 },
-      { id: 4, name: "Обслуживание без чека", source: "pos-2", video: "customer", extra: "cash", pos: "no-receipt", window: 30 }
-    ];
 
     function toast(text) {
       const el = document.getElementById("toast");
@@ -539,12 +649,9 @@
 
     function fillSourceSelects() {
       const srcVal = document.getElementById("source-select").value;
-      const scVal = document.getElementById("sc-source").value;
       const opts = sources.map(s => `<option value="${s.id}">${t(s.name)}</option>`).join("");
       document.getElementById("source-select").innerHTML = opts;
-      document.getElementById("sc-source").innerHTML = `<option value="all">${t("Все источники магазина")}</option>` + opts;
       if (srcVal) document.getElementById("source-select").value = srcVal;
-      if (scVal) document.getElementById("sc-source").value = scVal;
     }
 
     function highlight(text, hit) {
@@ -692,58 +799,418 @@
       document.getElementById("alert-why").textContent = t(a.why);
     }
 
+    /* ================= Scenario editor =================
+     * Scenario = conditions joined by AND.
+     * Condition = one or more system events joined by OR, may be negated (NOT = did not happen),
+     *             has a timer relative to an earlier condition and an optional repeat count.
+     * Event = object event (camera detector, sensor, mic, ACS, button) or a caption line (receipt text / any text).
+     */
+    const OBJ_TYPES = {
+      cam: { name: "Камера · детектор", short: "Камера", objects: [
+        "CAM-142-11 · Касса 5 · зона покупателя", "CAM-142-11 · Касса 5 · зона кассира",
+        "CAM-142-09 · Касса 2 · зона ленты", "CAM-142-09 · Касса 2 · зона сканера", "CAM-142-09 · Касса 2 · зона укладки",
+        "CAM-142-17 · КСО-2 · площадка", "CAM-142-12 · Зал · молочный стеллаж",
+        "CAM-142-21 · Склад · дверь 2", "CAM-142-01 · Вход / выход"
+      ], events: [
+        "Человек в зоне", "Зона пуста", "Человек в зоне дольше N сек", "Пересечение линии",
+        "Рука: вход и выход из зоны", "Движение руки к полке", "Наличные в зоне", "Товаров в зоне: 0", "Оставленный предмет"
+      ] },
+      sec: { name: "Охранный датчик", short: "Датчик", objects: ["Склад · дверь 2 · геркон", "Подсобка · ИК-датчик объёма", "Касса 5 · датчик денежного ящика"], events: ["Тревога", "Норма", "Вскрытие корпуса"] },
+      fire: { name: "Пожарный извещатель", short: "Пожарный извещатель", objects: ["Торговый зал · дымовой", "Склад · тепловой"], events: ["Пожар", "Внимание", "Неисправность"] },
+      mic: { name: "Микрофон · аудиоаналитика", short: "Микрофон", objects: ["Касса 5 · микрофон", "Склад · микрофон"], events: ["Крик", "Разбитие стекла", "Громкий звук"] },
+      door: { name: "СКУД · дверь / турникет", short: "СКУД", objects: ["Служебный вход", "Склад · ворота"], events: ["Проход по карте", "Дверь открыта без прохода", "Дверь удерживается открытой"] },
+      btn: { name: "Тревожная кнопка", short: "Тревожная кнопка", objects: ["Касса 5 · тревожная кнопка", "Касса 2 · тревожная кнопка"], events: ["Нажата"] }
+    };
+    const CAP_SOURCES = [{ id: "any", name: "Любой источник титров" }]
+      .concat(sources.map(s => ({ id: s.id, name: s.name })))
+      .concat([{ id: "wms", name: "Склад · произвольный текст (WMS)" }]);
+    const CAP_OPS = [["contains", "содержит"], ["starts", "начинается с"], ["equals", "совпадает с"], ["regex", "рег. выражение"]];
+    const TIME_MODES = [["after", "После события"], ["before", "До события"], ["around", "Рядом по времени (±)"], ["receipt", "В том же чеке"]];
+    const PRIOS = [["high", "высокая"], ["mid", "средняя"], ["low", "низкая"]];
+    const SCHEDULES = ["Всегда", "В часы работы магазина", "Только когда магазин закрыт"];
+    const COUNTS = [1, 2, 3, 4, 5, 10];
+
+    const EV = {
+      obj: (otype, obj, ev) => ({ kind: "obj", otype, obj, ev }),
+      cap: (src, op, text) => ({ kind: "cap", src, op, text })
+    };
+    function cond(alts, opts) {
+      return Object.assign({ neg: false, time: { mode: "after", sec: 10, ref: 0 }, count: 1, per: 5, alts }, opts || {});
+    }
+    function defaultEv(kind) {
+      return kind === "obj" ? EV.obj("cam", OBJ_TYPES.cam.objects[0], OBJ_TYPES.cam.events[0]) : EV.cap("any", "contains", "");
+    }
+    const clone = (o) => JSON.parse(JSON.stringify(o));
+    const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const letter = (i) => String.fromCharCode(65 + i);
+    const opts = (list, cur) => list.map(([v, l]) => `<option value="${esc(v)}" ${String(v) === String(cur) ? "selected" : ""}>${esc(t(l))}</option>`).join("");
+
+    let editingScenario = null;
+    let viewingTemplate = null;
+    let scenarios = [
+      { id: 1, name: "Аннуляция или возврат без покупателя", prio: "high", on: true, cooldown: 60, camera: "auto", schedule: "Всегда", conds: [
+        cond([EV.cap("fr-5", "contains", "АННУЛЯЦИЯ"), EV.cap("fr-5", "contains", "ВОЗВРАТ")]),
+        cond([EV.obj("cam", "CAM-142-11 · Касса 5 · зона покупателя", "Человек в зоне")], { neg: true, time: { mode: "around", sec: 10, ref: 0 } })
+      ] },
+      { id: 2, name: "Коньяк у кассира Петрова", prio: "mid", on: true, cooldown: 0, camera: "auto", schedule: "Всегда", conds: [
+        cond([EV.cap("any", "contains", "КОНЬЯК")]),
+        cond([EV.cap("any", "contains", "КАССИР: ПЕТРОВ")], { time: { mode: "receipt", sec: 0, ref: 0 } })
+      ] },
+      { id: 3, name: "Склад: датчик двери и человек на камере", prio: "high", on: true, cooldown: 120, camera: "CAM-142-21 · Склад · дверь 2", schedule: "Только когда магазин закрыт", conds: [
+        cond([EV.obj("sec", "Склад · дверь 2 · геркон", "Тревога")]),
+        cond([EV.obj("cam", "CAM-142-21 · Склад · дверь 2", "Человек в зоне")], { time: { mode: "after", sec: 30, ref: 0 } })
+      ] },
+      { id: 4, name: "Наличные без оплаты в чеке", prio: "high", on: false, cooldown: 60, camera: "auto", schedule: "В часы работы магазина", conds: [
+        cond([EV.obj("cam", "CAM-142-11 · Касса 5 · зона кассира", "Наличные в зоне")]),
+        cond([EV.cap("fr-5", "regex", "ОПЛАТА НАЛ(ИЧНЫМИ)?")], { neg: true, time: { mode: "after", sec: 30, ref: 0 } })
+      ] }
+    ];
+    const templates = [
+      { id: "t1", name: "Пронос мимо сканера, 3 зоны", prio: "high", on: true, cooldown: 30, camera: "CAM-142-09 · Касса 2 · зона сканера", schedule: "В часы работы магазина", conds: [
+        cond([EV.obj("cam", "CAM-142-09 · Касса 2 · зона ленты", "Рука: вход и выход из зоны")]),
+        cond([EV.obj("cam", "CAM-142-09 · Касса 2 · зона сканера", "Рука: вход и выход из зоны")], { time: { mode: "after", sec: 3, ref: 0 } }),
+        cond([EV.cap("pos-2", "regex", "ДОБАВЛЕН|ЧЕСТНЫЙ ЗНАК")], { neg: true, time: { mode: "after", sec: 2, ref: 1 } }),
+        cond([EV.obj("cam", "CAM-142-09 · Касса 2 · зона укладки", "Рука: вход и выход из зоны")], { time: { mode: "after", sec: 4, ref: 1 } })
+      ] },
+      { id: "t2", name: "Быстрый набор у стеллажа", prio: "low", on: true, cooldown: 60, camera: "auto", schedule: "В часы работы магазина", conds: [
+        cond([EV.obj("cam", "CAM-142-12 · Зал · молочный стеллаж", "Движение руки к полке")], { count: 3, per: 5 })
+      ] },
+      { id: "t3", name: "Неоплата весового товара", prio: "high", on: true, cooldown: 0, camera: "auto", schedule: "В часы работы магазина", conds: [
+        cond([EV.cap("scale", "contains", "ШТРИХКОД ВЫДАН")]),
+        cond([EV.cap("any", "contains", "<штрихкод из A>")], { neg: true, time: { mode: "after", sec: 720, ref: 0 } })
+      ] },
+      { id: "t4", name: "Пожар или крик на складе и люди", prio: "high", on: true, cooldown: 300, camera: "CAM-142-21 · Склад · дверь 2", schedule: "Всегда", conds: [
+        cond([EV.obj("fire", "Склад · тепловой", "Пожар"), EV.obj("mic", "Склад · микрофон", "Крик")]),
+        cond([EV.obj("cam", "CAM-142-21 · Склад · дверь 2", "Человек в зоне")], { time: { mode: "around", sec: 60, ref: 0 } })
+      ] }
+    ];
+    function blankScenario() {
+      return { name: "", prio: "mid", on: true, cooldown: 60, camera: "auto", schedule: "Всегда", conds: [cond([defaultEv("cap")])] };
+    }
+    let draft = clone(scenarios[0]);
+    editingScenario = scenarios[0].id;
+
+    /* ---------- text helpers ---------- */
+    function opLabel(op) { return (CAP_OPS.find(o => o[0] === op) || CAP_OPS[0])[1]; }
+    function capSourceName(id) { return (CAP_SOURCES.find(s => s.id === id) || CAP_SOURCES[0]).name; }
+    function evText(e) {
+      if (e.kind === "obj") return `${esc(t(OBJ_TYPES[e.otype].short))} «${esc(t(e.obj))}»: <b>${esc(t(e.ev))}</b>`;
+      return `${esc(t("титры"))} «${esc(t(capSourceName(e.src)))}» ${esc(t(opLabel(e.op)))} <b>«${esc(e.text || "…")}»</b>`;
+    }
+    function evShort(e) {
+      return e.kind === "obj" ? t(e.ev) : `«${e.text || "…"}»`;
+    }
+    function timeText(c) {
+      const vars = { n: c.time.sec, r: letter(c.time.ref) };
+      if (c.time.mode === "after") return t("в течение {n} сек после {r}", vars);
+      if (c.time.mode === "before") return t("не раньше чем за {n} сек до {r}", vars);
+      if (c.time.mode === "around") return t("в пределах ±{n} сек от {r}", vars);
+      return t("в том же чеке, что и {r}", vars);
+    }
+    function timeShort(c) {
+      const r = letter(c.time.ref), n = c.time.sec;
+      if (c.time.mode === "after") return `${r}+${n}${t("с")}`;
+      if (c.time.mode === "before") return `${r}−${n}${t("с")}`;
+      if (c.time.mode === "around") return `${r}±${n}${t("с")}`;
+      return t("чек {r}", { r });
+    }
+    function condToken(c, i) {
+      const L = letter(i);
+      let tok = c.alts.length > 1 ? "(" + c.alts.map((_, j) => L + (j + 1)).join(" " + t("ИЛИ") + " ") + ")" : L;
+      if (c.count > 1 && !c.neg) tok += ` ×${c.count}/${c.per}${t("с")}`;
+      if (i > 0) tok += ` [${timeShort(c)}]`;
+      return (c.neg ? t("НЕ") + " " : "") + tok;
+    }
+    function formula(s) { return s.conds.map(condToken).join(" " + t("И") + " "); }
+
+    /* ---------- list ---------- */
     function renderScenarios() {
-      document.getElementById("scenario-list").innerHTML = scenarios.map(s => `
-        <div class="scenario-item ${editingScenario === s.id ? "active" : ""}" onclick="editScenario(${s.id})">
-          <div>${t(s.name)}</div>
-          <div class="meta">${t("окно {n} сек · {src}", { n: s.window, src: s.source === "all" ? t("все источники") : t(sourceById(s.source).name) })}</div>
-        </div>`).join("") || `<div class="result-item"><div class="meta">${t("Пока нет своих сценариев")}</div></div>`;
-    }
-
-    function editScenario(id) {
-      const s = scenarios.find(x => x.id === id);
-      editingScenario = id;
-      document.getElementById("scenario-form-title").textContent = t("Редактирование");
-      document.getElementById("sc-name").value = s.name;
-      document.getElementById("sc-source").value = s.source;
-      document.getElementById("sc-video").value = s.video;
-      document.getElementById("sc-extra").value = s.extra || "ignore";
-      document.getElementById("sc-pos").value = s.pos;
-      document.getElementById("sc-window").value = s.window;
-      document.getElementById("sc-delete").classList.remove("hidden");
-      renderScenarios();
-    }
-
-    function resetScenario() {
-      editingScenario = null;
-      document.getElementById("scenario-form-title").textContent = t("Новый сценарий");
-      document.getElementById("sc-name").value = "";
-      document.getElementById("sc-window").value = 15;
-      document.getElementById("sc-delete").classList.add("hidden");
-      renderScenarios();
-    }
-
-    function saveScenario() {
-      const name = document.getElementById("sc-name").value.trim();
-      if (!name) return toast(t("Укажите название"));
-      const data = {
-        name,
-        source: document.getElementById("sc-source").value,
-        video: document.getElementById("sc-video").value,
-        extra: document.getElementById("sc-extra").value,
-        pos: document.getElementById("sc-pos").value,
-        window: Number(document.getElementById("sc-window").value)
+      const item = (s, isTpl) => {
+        const active = isTpl ? viewingTemplate === s.id : (!viewingTemplate && editingScenario === s.id);
+        const click = isTpl ? `openTemplate('${s.id}')` : `editScenario(${s.id})`;
+        const state = isTpl ? "🔒 " + t("сервер") : (s.on ? t("включён") : t("выключен"));
+        return `<div class="scenario-item ${active ? "active" : ""}" onclick="${click}">
+          <div class="sc-item-h"><span>${esc(t(s.name))}</span><span class="chip prio-${s.prio}">${prioLabel(s.prio)}</span></div>
+          <div class="sc-formula-mini">${esc(formula(s))}</div>
+          <div class="meta">${esc(state)} · ${esc(t(s.schedule))}</div>
+        </div>`;
       };
-      if (editingScenario) Object.assign(scenarios.find(s => s.id === editingScenario), data);
-      else scenarios.push({ id: Date.now(), ...data });
-      resetScenario();
+      document.getElementById("scenario-list").innerHTML =
+        scenarios.map(s => item(s, false)).join("") || `<div class="result-item"><div class="meta">${t("Пока нет своих сценариев")}</div></div>`;
+      document.getElementById("template-list").innerHTML = templates.map(s => item(s, true)).join("");
+    }
+
+    /* ---------- editor ---------- */
+    function renderEditor() {
+      const ro = !!viewingTemplate;
+      document.getElementById("scenario-form-title").textContent =
+        ro ? t("Серверный шаблон") : editingScenario ? t("Редактирование") : t("Новый сценарий");
+      document.getElementById("sc-ro").classList.toggle("hidden", !ro);
+      document.getElementById("sc-fs").disabled = ro;
+      document.getElementById("sc-save").classList.toggle("hidden", ro);
+      document.getElementById("sc-reset").classList.toggle("hidden", ro);
+      document.getElementById("sc-delete").classList.toggle("hidden", ro || !editingScenario);
+      document.getElementById("sc-name").value = ro ? t(draft.name) : draft.name;
+      document.getElementById("sc-on").innerHTML = opts([["1", "Включён"], ["0", "Выключен"]], draft.on ? "1" : "0");
+      document.getElementById("sc-prio").innerHTML = opts(PRIOS, draft.prio);
+      const cams = OBJ_TYPES.cam.objects.map(o => [o, o]);
+      document.getElementById("sc-camera").innerHTML = opts([["auto", "Авто — камера из условий"]].concat(cams), draft.camera);
+      document.getElementById("sc-cooldown").value = draft.cooldown;
+      document.getElementById("sc-schedule").innerHTML = opts(SCHEDULES.map(s => [s, s]), draft.schedule);
+      document.getElementById("sc-test").classList.add("hidden");
+      renderConds();
+    }
+
+    function evHtml(e, i, j, canDel) {
+      const kind = `<select class="field" title="${esc(t("Тип события"))}" onchange="setKind(${i},${j},this.value)">${opts([["obj", "Объект"], ["cap", "Титры"]], e.kind)}</select>`;
+      const del = canDel ? `<button type="button" class="sc-x" title="${esc(t("Убрать вариант"))}" onclick="removeAlt(${i},${j})">×</button>` : "<span></span>";
+      if (e.kind === "obj") {
+        const ot = OBJ_TYPES[e.otype];
+        return `<div class="sc-ev">${kind}
+          <select class="field" title="${esc(t("Тип объекта"))}" onchange="setEv(${i},${j},'otype',this.value)">${opts(Object.keys(OBJ_TYPES).map(k => [k, OBJ_TYPES[k].name]), e.otype)}</select>
+          <select class="field" title="${esc(t("Объект"))}" onchange="setEv(${i},${j},'obj',this.value)">${opts(ot.objects.map(o => [o, o]), e.obj)}</select>
+          <select class="field" title="${esc(t("Событие"))}" onchange="setEv(${i},${j},'ev',this.value)">${opts(ot.events.map(o => [o, o]), e.ev)}</select>
+          ${del}</div>`;
+      }
+      const ph = e.op === "regex" ? t("например, ВОЗВРАТ|АННУЛ") : t("текст строки, например АННУЛЯЦИЯ");
+      return `<div class="sc-ev">${kind}
+        <select class="field" title="${esc(t("Источник титров"))}" onchange="setEv(${i},${j},'src',this.value)">${opts(CAP_SOURCES.map(s => [s.id, s.name]), e.src)}</select>
+        <select class="field" title="${esc(t("Как искать"))}" onchange="setEv(${i},${j},'op',this.value)">${opts(CAP_OPS, e.op)}</select>
+        <input class="field mono" value="${esc(e.text)}" placeholder="${esc(ph)}" oninput="setEv(${i},${j},'text',this.value,true)">
+        ${del}</div>`;
+    }
+
+    function condHtml(c, i) {
+      const L = letter(i);
+      const head = i === 0
+        ? `<span class="sc-start">${t("Произошло · стартовое событие, от него считаются таймеры")}</span>`
+        : `<select class="field" onchange="setNeg(${i},this.value)">${opts([["0", "Произошло"], ["1", "НЕ произошло"]], c.neg ? "1" : "0")}</select>`;
+      const delCond = draft.conds.length > 1
+        ? `<button type="button" class="sc-x" title="${esc(t("Удалить условие"))}" onclick="removeCond(${i})">×</button>` : "";
+      const events = c.alts.map((e, j) =>
+        (j ? `<div class="sc-or">${t("ИЛИ")}</div>` : "") + evHtml(e, i, j, c.alts.length > 1)).join("");
+
+      let timer = `<span>⏱</span>`;
+      if (i > 0) {
+        const refs = opts(draft.conds.slice(0, i).map((_, k) => [k, letter(k)]), c.time.ref);
+        const sec = `<input class="field" type="number" min="1" value="${c.time.sec}" oninput="setTime(${i},'sec',this.value,true)">`;
+        const ref = `<select class="field" onchange="setTime(${i},'ref',this.value)">${refs}</select>`;
+        timer += `<b>${t("Таймер:")}</b><select class="field" onchange="setTime(${i},'mode',this.value)">${opts(TIME_MODES, c.time.mode)}</select>`;
+        if (c.time.mode === "after") timer += `<span>${t("в течение")}</span>${sec}<span>${t("сек после")}</span>${ref}`;
+        else if (c.time.mode === "before") timer += `<span>${t("не раньше чем за")}</span>${sec}<span>${t("сек до")}</span>${ref}`;
+        else if (c.time.mode === "around") timer += `<span>±</span>${sec}<span>${t("сек от")}</span>${ref}`;
+        else timer += `<span>${t("что и")}</span>${ref}`;
+      } else {
+        timer += `<b>${t("Таймер:")}</b><span>${t("нет — это точка отсчёта")}</span>`;
+      }
+      if (!c.neg) {
+        timer += `<span class="sc-sep"></span><b>${t("Сколько раз:")}</b><select class="field" onchange="setCond(${i},'count',Number(this.value))">${opts(COUNTS.map(n => [n, n === 1 ? "1 раз" : "не менее " + n]), c.count)}</select>`;
+        if (c.count > 1) timer += `<span>${t("за")}</span><input class="field" type="number" min="1" value="${c.per}" oninput="setCond(${i},'per',Number(this.value),true)"><span>${t("сек")}</span>`;
+      }
+
+      return `<div class="sc-cond ${c.neg ? "neg" : ""}">
+        <div class="sc-cond-h"><span class="sc-letter">${L}</span>${head}${delCond}</div>
+        ${events}
+        <div class="sc-cond-f">
+          <button type="button" class="sc-link" onclick="addAlt(${i},'obj')">${t("+ ИЛИ событие объекта")}</button>
+          <button type="button" class="sc-link" onclick="addAlt(${i},'cap')">${t("+ ИЛИ строка титров")}</button>
+        </div>
+        <div class="sc-timer">${timer}</div>
+      </div>`;
+    }
+
+    function renderConds() {
+      document.getElementById("sc-conds").innerHTML = draft.conds
+        .map((c, i) => (i ? `<div class="sc-and">${t("И")}</div>` : "") + condHtml(c, i)).join("");
+      renderSummary();
+    }
+
+    /* ---------- mutations ---------- */
+    function setCond(i, key, val, soft) { draft.conds[i][key] = val; soft ? renderSummary() : renderConds(); }
+    function setNeg(i, val) { draft.conds[i].neg = val === "1"; if (draft.conds[i].neg) draft.conds[i].count = 1; renderConds(); }
+    function setTime(i, key, val, soft) {
+      draft.conds[i].time[key] = key === "mode" ? val : Number(val);
+      if (key === "mode" && val !== "receipt" && !draft.conds[i].time.sec) draft.conds[i].time.sec = 10;
+      soft ? renderSummary() : renderConds();
+    }
+    function setEv(i, j, key, val, soft) {
+      const e = draft.conds[i].alts[j];
+      e[key] = val;
+      if (key === "otype") { e.obj = OBJ_TYPES[val].objects[0]; e.ev = OBJ_TYPES[val].events[0]; }
+      soft ? renderSummary() : renderConds();
+    }
+    function setKind(i, j, kind) { draft.conds[i].alts[j] = defaultEv(kind); renderConds(); }
+    function addAlt(i, kind) { draft.conds[i].alts.push(defaultEv(kind)); renderConds(); }
+    function removeAlt(i, j) { draft.conds[i].alts.splice(j, 1); renderConds(); }
+    function addCond(kind) {
+      draft.conds.push(cond([defaultEv(kind)], { time: { mode: "after", sec: 10, ref: 0 } }));
+      renderConds();
+    }
+    function removeCond(i) {
+      draft.conds.splice(i, 1);
+      draft.conds.forEach((c, k) => {
+        if (c.time.ref === i) c.time.ref = Math.max(0, i - 1);
+        else if (c.time.ref > i) c.time.ref -= 1;
+        if (c.time.ref >= k) c.time.ref = 0;
+      });
+      draft.conds[0].neg = false;
+      renderConds();
+    }
+
+    /* ---------- timeline + readable ---------- */
+    function windows(s) {
+      const res = [];
+      s.conds.forEach((c, i) => {
+        if (i === 0) { res.push({ s: 0, e: c.count > 1 ? c.per : 0, p: 0 }); return; }
+        const r = res[c.time.ref] || res[0];
+        const pr = r.p, n = Number(c.time.sec) || 0;
+        let w;
+        if (c.time.mode === "after") w = { s: pr, e: pr + n };
+        else if (c.time.mode === "before") w = { s: pr - n, e: pr };
+        else if (c.time.mode === "around") w = { s: pr - n, e: pr + n };
+        else w = { s: Math.min(r.s, pr) - 5, e: Math.max(r.e, pr) + 15, receipt: true };
+        w.p = c.time.mode === "receipt" ? pr : w.e; // chained timers count from the latest moment of the reference
+        res.push(w);
+      });
+      return res;
+    }
+    function fmtSec(v) {
+      const a = Math.abs(v);
+      const txt = a >= 60 && a % 60 === 0 ? a / 60 + " " + t("мин") : a + " " + t("с");
+      return (v > 0 ? "+" : v < 0 ? "−" : "") + txt;
+    }
+    function renderTimeline() {
+      const ws = windows(draft);
+      let min = Math.min(0, ...ws.map(w => w.s)), max = Math.max(0, ...ws.map(w => w.e));
+      if (max - min < 10) { max = Math.max(max, min + 10); }
+      const pad = (max - min) * 0.06; min -= pad; max += pad;
+      const W = 820, X0 = 230, X1 = 800, top = 22, rowH = 34, rows = ws.length;
+      const x = v => X0 + (v - min) / (max - min) * (X1 - X0);
+      const H = top + rows * rowH + 30;
+      const steps = [1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 1200];
+      const step = steps.find(s => (max - min) / s <= 8) || 1800;
+      let svg = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t("Временная шкала сценария"))}">`;
+      for (let v = Math.ceil(min / step) * step; v <= max; v += step) {
+        svg += `<line class="tl-grid" x1="${x(v)}" y1="${top - 6}" x2="${x(v)}" y2="${top + rows * rowH}"/>`;
+        svg += `<text class="tl-tick" x="${x(v)}" y="${H - 8}" text-anchor="middle">${v === 0 ? "A" : esc(fmtSec(v))}</text>`;
+      }
+      svg += `<line class="tl-a" x1="${x(0)}" y1="${top - 10}" x2="${x(0)}" y2="${top + rows * rowH}"/>`;
+      let alarm = null;
+      ws.forEach((w, i) => {
+        const c = draft.conds[i];
+        const y = top + i * rowH;
+        const label = evShort(c.alts[0]) + (c.alts.length > 1 ? " " + t("или ещё {n}", { n: c.alts.length - 1 }) : "");
+        const short = label.length > 28 ? label.slice(0, 27) + "…" : label;
+        svg += `<text class="tl-label" x="0" y="${y + 21}"><tspan class="tl-letter" style="fill:${c.neg ? "var(--danger)" : "var(--accent)"}">${letter(i)}${c.neg ? " " + esc(t("НЕ")) : ""}</tspan>  ${esc(short)}</text>`;
+        if (i === 0 && w.e === w.s) {
+          svg += `<circle class="tl-pt" cx="${x(0)}" cy="${y + 17}" r="6"/>`;
+        } else {
+          const x1 = x(w.s), x2 = Math.max(x(w.e), x1 + 4);
+          svg += `<rect class="${c.neg ? "tl-neg" : "tl-pos"}" x="${x1}" y="${y + 6}" width="${x2 - x1}" height="22" rx="4"/>`;
+          let inner = i === 0 ? t("≥{n} раз", { n: c.count }) : c.neg ? t("не было") : t("было");
+          if (i > 0 && c.count > 1 && !c.neg) inner += " ×" + c.count;
+          if (w.receipt) inner += " · " + t("тот же чек");
+          if (x2 - x1 > 46) svg += `<text class="tl-in" x="${(x1 + x2) / 2}" y="${y + 21}" text-anchor="middle">${esc(inner)}</text>`;
+          if (c.neg) alarm = Math.max(alarm == null ? -Infinity : alarm, w.e);
+        }
+      });
+      if (alarm != null) {
+        svg += `<line class="tl-alarm" x1="${x(alarm)}" y1="${top - 10}" x2="${x(alarm)}" y2="${top + rows * rowH}"/>`;
+        svg += `<text class="tl-alarm-t" x="${Math.min(x(alarm) + 4, W - 70)}" y="${top - 10}">${esc(t("решение"))}</text>`;
+      }
+      svg += "</svg>";
+      document.getElementById("sc-timeline").innerHTML = svg;
+      return alarm;
+    }
+    function renderSummary() {
+      const alarm = renderTimeline();
+      const name = draft.name || t("без названия");
+      const items = draft.conds.map((c, i) => {
+        const what = c.alts.map(evText).join(` <b>${esc(t("или"))}</b> `);
+        const rep = c.count > 1 && !c.neg ? ", " + t("не менее {n} раз за {p} сек", { n: c.count, p: c.per }) : "";
+        if (i === 0) return `<li><b>A</b> — ${esc(t("произошло"))}: ${what}${esc(rep)}</li>`;
+        const conj = c.neg ? t("И НЕ") : t("И");
+        const verb = c.neg ? t("не произошло") : t("произошло");
+        return `<li><b>${esc(conj)} ${letter(i)}</b> — ${esc(verb)}: ${what}${esc(rep)} — <i>${esc(timeText(c))}</i></li>`;
+      }).join("");
+      const when = alarm != null
+        ? t("Тревога ждёт окончания таймера «НЕ»: решение не позже чем через {n} после A, если запрещённое событие так и не наступило.", { n: fmtSec(alarm) })
+        : t("Тревога создаётся сразу, как только выполнены все условия в своих таймерах.");
+      document.getElementById("sc-readable").innerHTML = `
+        <div>${esc(t("Тревога"))} <b>«${esc(viewingTemplate ? t(name) : name)}»</b> (${esc(prioLabel(draft.prio))}), ${esc(t("если:"))}</div>
+        <ol>${items}</ol>
+        <div class="muted">${esc(when)}</div>
+        <div class="sc-formula">${esc(formula(draft))}</div>`;
+    }
+
+    /* ---------- actions ---------- */
+    function editScenario(id) {
+      editingScenario = id; viewingTemplate = null;
+      draft = clone(scenarios.find(s => s.id === id));
+      renderScenarios(); renderEditor();
+    }
+    function openTemplate(id) {
+      viewingTemplate = id; editingScenario = null;
+      draft = clone(templates.find(s => s.id === id));
+      renderScenarios(); renderEditor();
+    }
+    function newScenario() {
+      editingScenario = null; viewingTemplate = null;
+      draft = blankScenario();
+      renderScenarios(); renderEditor();
+      document.getElementById("sc-name").focus();
+    }
+    function copyTemplate() {
+      const tpl = templates.find(s => s.id === viewingTemplate);
+      draft = clone(tpl); delete draft.id;
+      draft.name = t(tpl.name) + " — " + t("копия");
+      viewingTemplate = null; editingScenario = null;
+      renderScenarios(); renderEditor();
+      toast(t("Копия шаблона создана — сохраните её"));
+    }
+    function resetScenario() {
+      if (editingScenario) editScenario(editingScenario); else newScenario();
+      toast(t("Изменения отменены"));
+    }
+    function saveScenario() {
+      if (viewingTemplate) return;
+      draft.name = draft.name.trim();
+      if (!draft.name) return toast(t("Укажите название"));
+      for (let i = 0; i < draft.conds.length; i++) {
+        if (draft.conds[i].alts.some(e => e.kind === "cap" && !String(e.text).trim()))
+          return toast(t("Условие {l}: укажите текст строки титров", { l: letter(i) }));
+      }
+      if (editingScenario) Object.assign(scenarios.find(s => s.id === editingScenario), clone(draft));
+      else { const id = Date.now(); scenarios.push(Object.assign(clone(draft), { id })); editingScenario = id; }
+      renderScenarios(); renderEditor();
       toast(t("Сценарий сохранён"));
     }
-
     function deleteScenario() {
       scenarios = scenarios.filter(s => s.id !== editingScenario);
-      resetScenario();
+      if (scenarios[0]) editScenario(scenarios[0].id); else newScenario();
       toast(t("Сценарий удалён"));
+    }
+    function testScenario() {
+      const ws = windows(draft);
+      const base = ["09:12:40", "11:47:03", "13:05:18", "15:31:56"];
+      const n = 1 + ((draft.conds.length + String(draft.name).length) % 3);
+      const rows = base.slice(0, n).map(time => {
+        const [h, m, s] = time.split(":").map(Number);
+        const parts = draft.conds.map((c, i) => {
+          if (c.neg) return `<span class="chip prio-high">${letter(i)} — ${esc(t("не было"))}</span>`;
+          const off = Math.round(i === 0 ? 0 : Math.max(0, ws[i].p));
+          const sec = h * 3600 + m * 60 + s + off;
+          const tt = [Math.floor(sec / 3600), Math.floor(sec % 3600 / 60), sec % 60].map(v => String(v).padStart(2, "0")).join(":");
+          return `<span class="chip">${letter(i)} ${tt}</span>`;
+        }).join("");
+        return `<div class="sc-test-row"><b>${time}</b><div class="row">${parts}</div>
+          <button type="button" class="btn btn-ghost sc-small" onclick="toast(t('Архив перемотан к моменту A'))">▶ ${esc(t("Видео"))}</button></div>`;
+      }).join("");
+      document.getElementById("sc-test-title").textContent =
+        t("Проверка на архиве · 14.09.2026, 08:00–16:00 · совпадений: {n}", { n });
+      document.getElementById("sc-test-body").innerHTML = rows;
+      document.getElementById("sc-test").classList.remove("hidden");
+      document.getElementById("sc-test").scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
 
     function showScreen(id) {
@@ -781,8 +1248,7 @@
       else runReceiptSearch(true);
       renderAlerts();
       renderScenarios();
-      if (editingScenario) document.getElementById("scenario-form-title").textContent = t("Редактирование");
-      else document.getElementById("scenario-form-title").textContent = t("Новый сценарий");
+      renderEditor();
     };
 
     RetailI18n.bindChrome();
