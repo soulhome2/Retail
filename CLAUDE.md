@@ -45,4 +45,4 @@
 
 ## Скиллы
 
-`/retail-review [роль]` — ревью ТЗ и прототипов; `/retail-fix <пункт>` — выполнить пункт плана. Оформление под ONE PSIM — скилл `one-psim-restyle`, если подключён. Общие файлы скиллов и `tools/kit/` приходят из ClaudeKit (`../ClaudeKit`, версия — `.claude/kit.json`): правятся там и переносятся командой `python ../ClaudeKit/apply.py update .`. Своё для проекта — этот файл, чек-лист [.claude/skills/retail-review/checklist.md](.claude/skills/retail-review/checklist.md), `.claude/kit.json`, `.claude/evals/triggers.md`.
+`/retail-review [роль]` — ревью ТЗ и прототипов; `/retail-fix <пункт>` — выполнить пункт плана. Оформление под ONE PSIM — скилл `one-psim-restyle`, если подключён. Общие файлы скиллов и `tools/kit/` приходят из [ClaudeKit](https://github.com/soulhome2/ClaudeKit) (локальная копия — `../ClaudeKit`, версия — `.claude/kit.json`): правятся там и переносятся командой `python ../ClaudeKit/apply.py update .`. Своё для проекта — этот файл, чек-лист [.claude/skills/retail-review/checklist.md](.claude/skills/retail-review/checklist.md), `.claude/kit.json`, `.claude/evals/triggers.md`.
