@@ -158,12 +158,38 @@
 .sce-test-row { display: grid; grid-template-columns: 90px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 9px 14px; border-bottom: 1px solid var(--border); font-size: 12px; }
 .sce-test-row .sce-row { gap: 6px; }
 
+/* ---- v3: description, repeat, states, comparisons, pickers, errors ---- */
+.sce-desc-fg { grid-column: 1 / -1; }
+.sce textarea.field { resize: vertical; min-height: 52px; font: inherit; font-size: 13px; line-height: 1.45; }
+.sce-desc-mini {
+  font-size: 12px; color: var(--muted); margin-top: 3px;
+  display: -webkit-box !important; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.sce-desc-read { margin: 2px 0 4px; font-style: italic; }
+.sce-code { font-family: Consolas, "Cascadia Mono", monospace; font-size: 11px; color: var(--muted); }
+.sce-repeat { display: flex; align-items: center; gap: 6px; }
+.sce .sce-repeat .field { flex: 1; min-width: 0; }
+.sce .sce-repeat input.field { flex: 0 0 76px; }
+.sce-then-hint { padding: 0 14px 14px; font-size: 12px; color: var(--muted); line-height: 1.5; }
+.sce-cond.state { border-left-style: dashed; }
+.sce-cond.cmp { border-left-color: var(--warning); }
+.sce-cond.cmp .sce-letter { background: var(--warning); }
+.sce-cmp { display: grid; grid-template-columns: minmax(0, 1.4fr) 70px minmax(0, 1fr) 14px 90px; gap: 8px; align-items: center; padding: 10px 10px 4px; }
+.sce .sce-cmp .field { padding-top: 6px; padding-bottom: 6px; }
+.sce-cond.cmp .sce-ev-links { padding-left: 10px; }
+.sce-picker { min-width: 0; }
+.sce-any { font-size: 12px; }
+.sce .sce-err { border-color: var(--danger) !important; box-shadow: 0 0 0 1px var(--danger); }
+.sce .tl-state { fill: color-mix(in srgb, var(--accent) 30%, transparent); stroke: var(--accent); stroke-width: 1.4; }
+
 @media (max-width: 1300px) {
   .sce-ev { grid-template-columns: 104px minmax(0, 1fr) minmax(0, 1fr) 28px; }
   .sce-ev > :nth-child(4) { grid-column: 2 / 4; }
 }
 @media (max-width: 1100px) {
   .sce-layout, .sce-head { grid-template-columns: 1fr; }
+  .sce-cmp { grid-template-columns: 1fr 70px; }
+  .sce-cmp > input:first-child, .sce-cmp > input:nth-of-type(2) { grid-column: 1 / -1; }
   .sce-ev { grid-template-columns: 1fr 28px; }
   .sce-ev > * { grid-column: 1 / 2 !important; }
   .sce-ev > .sce-x { grid-column: 2 / 3 !important; grid-row: 1; }

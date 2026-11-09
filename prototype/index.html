@@ -3,21 +3,43 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Интеллект Х — Антифрод Ритейл (прототип UI)</title>
+  <title>Интеллект X — Ритейл · короткая версия</title>
   <style>
     :root, html[data-theme="dark"] {
-      --bg: #0f1419;
-      --surface: #1a2332;
+      --bg: #10151c;
+      --surface: #1a2230;
       --surface2: #243044;
-      --border: #2d3a4f;
+      --border: #314057;
       --text: #e8edf4;
       --muted: #8b9cb3;
       --accent: #3b82f6;
-      --accent-hover: #2563eb;
       --danger: #ef4444;
       --warning: #f59e0b;
       --success: #22c55e;
-      --sidebar-w: 240px;
+      --sidebar: 210px;
+      --note-bg: #182433;
+      --note-strong: #93c5fd;
+      --toast-bg: #17263a;
+      --toast-border: #35557d;
+      --video-bg: #0a0e14;
+      --caption-bg: rgba(3,7,18,.88);
+      --cam-tag: #cbd5e1;
+      --prio-high-bg: rgba(239,68,68,.16);
+      --prio-high-border: #ef4444;
+      --prio-high-text: #fecaca;
+      --prio-mid-bg: rgba(245,158,11,.16);
+      --prio-mid-border: #f59e0b;
+      --prio-mid-text: #fde68a;
+      --prio-low-bg: rgba(59,130,246,.16);
+      --prio-low-border: #3b82f6;
+      --prio-low-text: #bfdbfe;
+      --src-pos-bg: #1e3a5f; --src-pos-fg: #93c5fd;
+      --src-file-bg: #3b2f1e; --src-file-fg: #fcd34d;
+      --src-fr-bg: #2e1e3b; --src-fr-fg: #d8b4fe;
+      --src-kso-bg: #1e3b2f; --src-kso-fg: #6ee7b7;
+      --src-ofd-bg: #1e2f3b; --src-ofd-fg: #7dd3fc;
+      --src-scale-bg: #3b1e28; --src-scale-fg: #fda4af;
+      --src-video-bg: #2a2438; --src-video-fg: #c4b5fd;
     }
     html[data-theme="light"] {
       --bg: #f3f5f8;
@@ -27,10 +49,32 @@
       --text: #1c2430;
       --muted: #5b6b80;
       --accent: #2563eb;
-      --accent-hover: #1d4ed8;
       --danger: #dc2626;
       --warning: #d97706;
       --success: #16a34a;
+      --note-bg: #e8f1ff;
+      --note-strong: #1d4ed8;
+      --toast-bg: #ffffff;
+      --toast-border: #bfd0e8;
+      --video-bg: #1a2330;
+      --caption-bg: rgba(15,23,42,.88);
+      --cam-tag: #e2e8f0;
+      --prio-high-bg: #fee2e2;
+      --prio-high-border: #dc2626;
+      --prio-high-text: #991b1b;
+      --prio-mid-bg: #fef3c7;
+      --prio-mid-border: #d97706;
+      --prio-mid-text: #92400e;
+      --prio-low-bg: #dbeafe;
+      --prio-low-border: #2563eb;
+      --prio-low-text: #1e40af;
+      --src-pos-bg: #dbeafe; --src-pos-fg: #1d4ed8;
+      --src-file-bg: #fef3c7; --src-file-fg: #92400e;
+      --src-fr-bg: #ede9fe; --src-fr-fg: #6d28d9;
+      --src-kso-bg: #d1fae5; --src-kso-fg: #047857;
+      --src-ofd-bg: #e0f2fe; --src-ofd-fg: #0369a1;
+      --src-scale-bg: #ffe4e6; --src-scale-fg: #be123c;
+      --src-video-bg: #ede9fe; --src-video-fg: #5b21b6;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -40,334 +84,295 @@
       min-height: 100vh;
       display: flex;
     }
+    button, select, input { font: inherit; }
     .sidebar {
-      width: var(--sidebar-w);
+      width: var(--sidebar);
       background: var(--surface);
       border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       flex-shrink: 0;
     }
-    .logo {
-      padding: 20px 16px;
-      border-bottom: 1px solid var(--border);
-      font-weight: 700;
-      font-size: 15px;
-      line-height: 1.3;
-    }
-    .logo span { color: var(--accent); display: block; font-size: 11px; font-weight: 500; margin-top: 4px; }
-    .nav { padding: 12px 8px; flex: 1; }
+    .logo { padding: 18px 16px; border-bottom: 1px solid var(--border); font-weight: 700; }
+    .logo span { display: block; margin-top: 4px; color: var(--accent); font-size: 11px; font-weight: 500; }
+    .nav { padding: 10px 8px; flex: 1; }
     .nav-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 10px 12px; border-radius: 8px; cursor: pointer;
-      color: var(--muted); font-size: 14px; margin-bottom: 2px;
-      border: none; background: none; width: 100%; text-align: left;
+      width: 100%; display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; margin-bottom: 4px; border: 0; border-radius: 8px;
+      background: none; color: var(--muted); text-align: left; cursor: pointer;
     }
     .nav-item:hover { background: var(--surface2); color: var(--text); }
     .nav-item.active { background: var(--accent); color: #fff; }
-    .nav-icon { width: 18px; text-align: center; opacity: 0.85; }
-    .sidebar-footer {
-      padding: 16px; border-top: 1px solid var(--border);
-      font-size: 12px; color: var(--muted);
-    }
-    .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .sidebar-footer { padding: 14px 16px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); line-height: 1.5; }
+    .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
     .topbar {
-      height: 56px; background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 24px;
+      height: 52px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between;
+      background: var(--surface); border-bottom: 1px solid var(--border);
     }
-    .topbar-left { display: flex; align-items: center; gap: 16px; }
-    .store-select {
-      background: var(--surface2); border: 1px solid var(--border);
-      color: var(--text); padding: 6px 12px; border-radius: 6px; font-size: 13px;
+    .store-select, .field, .btn {
+      background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+      border-radius: 6px; padding: 7px 10px;
     }
-    .badge-live {
-      display: flex; align-items: center; gap: 6px;
-      font-size: 12px; color: var(--success);
-    }
-    .badge-live::before {
-      content: ""; width: 8px; height: 8px; border-radius: 50%;
-      background: var(--success); animation: pulse 2s infinite;
-    }
-    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-    .topbar-right { display: flex; align-items: center; gap: 12px; }
-    .avatar {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: var(--accent); display: flex; align-items: center;
-      justify-content: center; font-size: 13px; font-weight: 600;
-    }
-    .content { flex: 1; overflow: auto; padding: 24px; }
+    .content { flex: 1; overflow: auto; padding: 20px; }
     .screen { display: none; }
     .screen.active { display: block; }
-    h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
-    .subtitle { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
-    .kpi-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;
+    h1 { font-size: 20px; font-weight: 600; }
+    .subtitle { color: var(--muted); font-size: 13px; margin: 4px 0 16px; }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .note {
+      background: var(--note-bg); border: 1px solid var(--border); border-radius: 8px;
+      padding: 10px 14px; font-size: 12px; color: var(--muted); margin-bottom: 16px;
     }
-    .kpi-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; padding: 18px;
+    .note strong { color: var(--note-strong); }
+    .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .panel-h {
+      display: flex; justify-content: space-between; align-items: center; gap: 10px;
+      padding: 11px 14px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 600;
     }
-    .kpi-label { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
-    .kpi-value { font-size: 28px; font-weight: 700; }
-    .kpi-delta { font-size: 12px; margin-top: 6px; }
-    .kpi-delta.up { color: var(--danger); }
-    .kpi-delta.down { color: var(--success); }
-    .grid-2 { display: grid; grid-template-columns: 1fr 380px; gap: 20px; }
-    .panel {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; overflow: hidden;
+    .mode-switch { display: flex; gap: 4px; margin-bottom: 16px; }
+    .mode-btn {
+      padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--muted); cursor: pointer;
     }
-    .panel-header {
-      padding: 14px 18px; border-bottom: 1px solid var(--border);
-      display: flex; justify-content: space-between; align-items: center;
-      font-weight: 600; font-size: 14px;
+    .mode-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .workspace { display: grid; grid-template-columns: 340px 1fr; gap: 16px; }
+    .form-stack { display: grid; gap: 10px; padding: 14px; }
+    .form-group label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 5px; }
+    .field, .store-select { width: 100%; }
+    .btn { cursor: pointer; }
+    .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn-ghost { background: transparent; }
+    .btn-danger { background: transparent; color: #fca5a5; border-color: #7f1d1d; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .video {
+      position: relative; aspect-ratio: 16/8.2; background: var(--video-bg);
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
     }
-    .panel-body { padding: 0; }
-    .alert-list { list-style: none; }
-    .alert-item {
-      padding: 14px 18px; border-bottom: 1px solid var(--border);
-      cursor: pointer; transition: background 0.15s;
-      display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: start;
+    .video-scene { position: absolute; inset: 0; }
+    .video-scene::before, .video-scene::after { content: ""; position: absolute; border-radius: 50% 50% 42% 42%; }
+    .video-scene.cashier { background: linear-gradient(#2a384c, #111827); }
+    .video-scene.cashier::before { width: 90px; height: 140px; left: 38%; bottom: 18%; background: #94a3b8; }
+    .video-scene.cashier::after { width: 46%; height: 18%; left: 27%; bottom: 8%; background: #64748b; border-radius: 8px; }
+    .video-scene.pair { background: linear-gradient(#2a384c, #111827); }
+    .video-scene.pair::before { width: 80px; height: 130px; left: 28%; bottom: 16%; background: #94a3b8; }
+    .video-scene.pair::after { width: 80px; height: 130px; left: 54%; bottom: 16%; background: #fca5a5; }
+    .video-scene.gate { background: linear-gradient(#2a384c, #111827); }
+    .video-scene.gate::before, .video-scene.gate::after { width: 18px; height: 70%; top: 15%; background: #ef4444; border-radius: 4px; }
+    .video-scene.gate::before { left: 22%; }
+    .video-scene.gate::after { right: 22%; }
+    .cam-tag {
+      position: absolute; top: 10px; right: 10px; z-index: 2;
+      font-size: 10px; letter-spacing: .06em; color: var(--cam-tag);
+      background: rgba(0,0,0,.55); padding: 4px 8px; border-radius: 4px;
     }
-    .alert-item:hover { background: var(--surface2); }
-    .alert-severity {
-      width: 4px; height: 48px; border-radius: 2px; align-self: center;
+    .caption {
+      position: absolute; left: 12px; bottom: 12px; z-index: 2; width: min(420px, calc(100% - 24px));
+      background: var(--caption-bg); border-left: 3px solid var(--accent); color: #e8edf4;
+      padding: 10px 12px; font-family: Consolas, "Cascadia Mono", monospace;
+      font-size: 13px; line-height: 1.5; white-space: pre-wrap;
+      box-shadow: 0 8px 24px rgba(0,0,0,.4);
     }
-    .alert-severity.critical { background: var(--danger); }
-    .alert-severity.high { background: var(--warning); }
-    .alert-severity.medium { background: var(--accent); }
-    .alert-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
-    .alert-meta { font-size: 12px; color: var(--muted); }
-    .alert-time { font-size: 12px; color: var(--muted); white-space: nowrap; }
-    .tag {
-      display: inline-block; padding: 2px 8px; border-radius: 4px;
-      font-size: 11px; font-weight: 500; margin-right: 6px;
+    .caption .hit { background: #854d0e; color: #fef3c7; }
+    .caption .risk { color: #fca5a5; font-weight: 700; }
+    .source {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; border-radius: 12px; padding: 2px 8px; white-space: nowrap;
     }
-    .tag-hall { background: #1e3a5f; color: #93c5fd; }
-    .tag-pos { background: #3b2f1e; color: #fcd34d; }
-    .tag-scale { background: #1e3b32; color: #6ee7b7; }
-    .tag-kso { background: #1e3b2f; color: #6ee7b7; }
-    .tag-pos-module { background: #2e1e3b; color: #d8b4fe; }
-    .video-mock {
-      aspect-ratio: 16/9; background: #0a0e14;
-      position: relative; display: flex; align-items: center; justify-content: center;
-      color: var(--muted); font-size: 13px;
+    .src-pos { background: var(--src-pos-bg); color: var(--src-pos-fg); }
+    .src-file { background: var(--src-file-bg); color: var(--src-file-fg); }
+    .src-fr { background: var(--src-fr-bg); color: var(--src-fr-fg); }
+    .src-kso { background: var(--src-kso-bg); color: var(--src-kso-fg); }
+    .src-ofd { background: var(--src-ofd-bg); color: var(--src-ofd-fg); }
+    .src-scale { background: var(--src-scale-bg); color: var(--src-scale-fg); }
+    .src-video { background: var(--src-video-bg); color: var(--src-video-fg); }
+    .prio-high { background: var(--prio-high-bg); border-left: 4px solid var(--prio-high-border); }
+    .prio-mid { background: var(--prio-mid-bg); border-left: 4px solid var(--prio-mid-border); }
+    .prio-low { background: var(--prio-low-bg); border-left: 4px solid var(--prio-low-border); }
+    .chip.prio-high { background: var(--prio-high-bg); color: var(--prio-high-text); }
+    .chip.prio-mid { background: var(--prio-mid-bg); color: var(--prio-mid-text); }
+    .chip.prio-low { background: var(--prio-low-bg); color: var(--prio-low-text); }
+    .legend { display: flex; gap: 8px; flex-wrap: wrap; margin: -6px 0 16px; }
+    tr.prio-high td, tr.prio-mid td, tr.prio-low td { background: inherit; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 500; }
+    tr.clickable { cursor: pointer; }
+    tr.clickable:hover td, tr.clickable.active td { background: rgba(59,130,246,.12); }
+    .result-item, .alert-item, .scenario-item {
+      padding: 10px 12px; border-bottom: 1px solid var(--border); cursor: pointer;
     }
-    .video-overlay {
-      position: absolute; top: 12px; left: 12px;
-      background: rgba(0,0,0,0.75); padding: 8px 12px; border-radius: 6px;
-      font-size: 13px; border: 1px solid var(--warning);
-    }
-    .video-overlay .counter { color: var(--warning); font-weight: 700; font-size: 18px; }
-    .video-controls {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      background: linear-gradient(transparent, rgba(0,0,0,0.8));
-      padding: 12px 16px; display: flex; gap: 8px; align-items: center;
-    }
-    .timeline {
-      height: 48px; background: var(--surface2); border-radius: 6px;
-      margin: 16px 18px; position: relative; overflow: hidden;
-    }
-    .timeline-bar {
-      position: absolute; top: 50%; left: 0; right: 0; height: 4px;
-      background: var(--border); transform: translateY(-50%);
-    }
-    .timeline-marker {
-      position: absolute; top: 8px; width: 2px; height: 32px;
-      background: var(--accent);
-    }
-    .timeline-marker.pos { background: var(--warning); }
-    .timeline-marker.alert { background: var(--danger); }
-    .pos-events { padding: 0 18px 18px; }
-    .pos-event {
-      display: flex; gap: 12px; padding: 10px 0;
-      border-bottom: 1px solid var(--border); font-size: 13px;
-    }
-    .pos-time { color: var(--muted); width: 70px; flex-shrink: 0; font-family: monospace; }
-    .filters {
-      display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;
-    }
-    .filter-chip {
-      padding: 6px 14px; border-radius: 20px; font-size: 13px;
-      border: 1px solid var(--border); background: var(--surface);
-      color: var(--muted); cursor: pointer;
-    }
-    .filter-chip.active { border-color: var(--accent); color: var(--accent); background: #1e3a5f; }
-    .btn {
-      padding: 8px 16px; border-radius: 6px; font-size: 13px;
-      border: none; cursor: pointer; font-weight: 500;
-    }
-    .btn-primary { background: var(--accent); color: #fff; }
-    .btn-primary:hover { background: var(--accent-hover); }
-    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
-    .btn-ghost:hover { color: var(--text); border-color: var(--muted); }
-    .search-form {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; padding: 20px; margin-bottom: 20px;
-    }
-    .form-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px; }
-    .form-group label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-    .form-group select, .form-group input {
-      width: 100%; padding: 8px 12px; border-radius: 6px;
-      background: var(--surface2); border: 1px solid var(--border);
-      color: var(--text); font-size: 13px;
-    }
-    .saved-templates { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
-    .template-card {
-      padding: 10px 14px; background: var(--surface2); border-radius: 8px;
-      border: 1px solid var(--border); font-size: 13px; cursor: pointer;
-    }
-    .template-card:hover { border-color: var(--accent); }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
-    th { color: var(--muted); font-weight: 500; font-size: 12px; text-transform: uppercase; }
-    tr:hover td { background: var(--surface2); }
-    .rank { font-weight: 700; color: var(--muted); width: 40px; }
-    .rank-1 { color: #fbbf24; }
-    .rank-2 { color: #94a3b8; }
-    .rank-3 { color: #cd7f32; }
-    .bar-cell { display: flex; align-items: center; gap: 10px; }
-    .bar { height: 6px; border-radius: 3px; background: var(--accent); min-width: 20px; }
-    .chart-placeholder {
-      height: 200px; background: var(--surface2); border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--muted); font-size: 13px; margin-top: 16px;
-    }
-    .tabs { display: flex; gap: 4px; margin-bottom: 20px; }
-    .tab {
-      padding: 8px 16px; border-radius: 6px; font-size: 13px;
-      cursor: pointer; color: var(--muted); background: none; border: none;
-    }
-    .tab.active { background: var(--surface2); color: var(--text); }
-    .proto-note {
-      background: #1e293b; border: 1px solid var(--border); border-radius: 8px;
-      padding: 12px 16px; font-size: 12px; color: var(--muted); margin-bottom: 20px;
-    }
-    .proto-note strong { color: var(--accent); }
-    .status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 6px; }
-    .receipt-layout { display: grid; grid-template-columns: minmax(520px, 1.25fr) minmax(460px, .95fr); gap: 16px; }
-    .receipt-row { cursor: pointer; }
-    .receipt-row.selected td { background: rgba(59,130,246,.14); }
-    .receipt-total { font-size: 22px; font-weight: 700; }
-    .receipt-paper { padding: 18px; font-family: "Cascadia Mono", Consolas, monospace; font-size: 12px; }
-    .receipt-head { text-align: center; padding-bottom: 12px; border-bottom: 1px dashed var(--border); margin-bottom: 8px; }
-    .receipt-line { display: grid; grid-template-columns: 1fr auto; gap: 14px; padding: 8px 4px; border-bottom: 1px dashed var(--border); cursor: pointer; }
-    .receipt-line:hover, .receipt-line.active { background: var(--surface2); color: #fff; }
-    .receipt-line.risk { color: #fca5a5; background: rgba(239,68,68,.08); }
-    .receipt-caption {
-      position: absolute; left: 14px; bottom: 54px; width: min(440px, calc(100% - 28px));
-      padding: 10px 12px; background: rgba(3,7,18,.84); border-left: 3px solid var(--accent);
-      font-family: "Cascadia Mono", Consolas, monospace; font-size: 12px; line-height: 1.45;
-      box-shadow: 0 8px 30px rgba(0,0,0,.35);
-    }
-    .receipt-caption .risk-line { color: #fca5a5; font-weight: 700; }
-    .camera-art {
-      position:absolute; inset:0; overflow:hidden;
-      background: linear-gradient(145deg,#18212d 0%,#0c1118 55%,#151d27 100%);
-    }
-    .camera-art::before {
-      content:""; position:absolute; width:46%; height:38%; left:28%; top:26%;
-      background:#293748; border:12px solid #111923; transform:perspective(450px) rotateX(55deg);
-      box-shadow:0 24px 40px rgba(0,0,0,.45);
-    }
-    .cam-zone-tag {
-      position:absolute; right:12px; top:12px; z-index:1;
-      font-size:10px; letter-spacing:.08em; color:#a8b5c6; background:rgba(0,0,0,.55); padding:5px 8px;
-    }
-    .video-label { position:relative; z-index:1; color:#9aa9bc; }
-    .split-tabs { display:flex; gap:2px; border-bottom:1px solid var(--border); padding:0 14px; background:var(--surface); }
-    .split-tab { padding:11px 14px; border:0; color:var(--muted); background:none; cursor:pointer; border-bottom:2px solid transparent; }
-    .split-tab.active { color:#fff; border-bottom-color:var(--accent); }
-    .source-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
-    .source-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px; }
-    .source-top { display:flex; justify-content:space-between; gap:12px; margin-bottom:14px; }
-    .source-name { font-weight:600; font-size:14px; }
-    .source-meta { color:var(--muted); font-size:12px; line-height:1.7; }
-    .health { font-size:11px; border-radius:12px; padding:3px 8px; white-space:nowrap; height:max-content; }
-    .health.ok { color:#86efac; background:rgba(34,197,94,.12); }
-    .health.warn { color:#fcd34d; background:rgba(245,158,11,.12); }
-    .health.err { color:#fca5a5; background:rgba(239,68,68,.12); }
-    .flow { display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap; padding:20px; }
-    .flow-node { border:1px solid var(--border); background:var(--surface2); border-radius:8px; padding:10px 13px; font-size:12px; }
-    .flow-arrow { color:var(--accent); }
+    .result-item:hover, .alert-item:hover, .scenario-item:hover,
+    .result-item.active, .alert-item.active, .scenario-item.active { box-shadow: inset 0 0 0 1px var(--accent); }
+    .scenario-item:hover, .scenario-item.active { background: var(--surface2); }
+    .meta { color: var(--muted); font-size: 11px; margin-top: 3px; }
+    .receipt { padding: 12px 14px; font-family: Consolas, "Cascadia Mono", monospace; font-size: 12px; }
+    .receipt-line { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed var(--border); }
+    .chip { font-size: 11px; padding: 4px 8px; border-radius: 12px; background: var(--surface2); color: var(--muted); }
+    .severity { width: 4px; border-radius: 2px; }
+    .sev-high { background: var(--danger); }
+    .sev-mid { background: var(--warning); }
+    .sev-low { background: var(--accent); }
+    .alert-row { display: grid; grid-template-columns: 4px 1fr auto; gap: 10px; align-items: start; }
+    .grid-2 { display: grid; grid-template-columns: minmax(280px, 1fr) minmax(360px, 1fr); gap: 16px; }
+    .alerts-grid { grid-template-columns: minmax(300px, 420px) minmax(0, 1fr); }
+    .hidden { display: none !important; }
     .toast {
-      position:fixed; right:24px; bottom:24px; z-index:20; padding:12px 16px;
-      border:1px solid #35557d; background:#17263a; border-radius:8px; font-size:13px;
-      opacity:0; transform:translateY(8px); pointer-events:none; transition:.2s;
+      position: fixed; right: 20px; bottom: 20px; z-index: 20;
+      padding: 10px 14px; border-radius: 8px; border: 1px solid var(--toast-border);
+      background: var(--toast-bg); color: var(--text); font-size: 13px; opacity: 0; transform: translateY(8px); transition: .2s;
     }
-    .toast.show { opacity:1; transform:translateY(0); }
-    @media (max-width: 1200px) {
-      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-      .grid-2, .receipt-layout { grid-template-columns: 1fr; }
-      .source-grid { grid-template-columns:1fr 1fr; }
+    .toast.show { opacity: 1; transform: none; }
+    @media (max-width: 1100px) {
+      .workspace, .grid-2 { grid-template-columns: 1fr; }
+      .sidebar { width: 64px; }
+      .logo, .nav-item { font-size: 0; }
+      .logo span, .sidebar-footer { display: none; }
+      .nav-item { justify-content: center; }
     }
-    @media (max-width: 780px) {
-      .sidebar { width:72px; }
-      .logo { font-size:0; }
-      .logo span { font-size:9px; }
-      .nav-item { font-size:0; justify-content:center; }
-      .nav-icon { font-size:17px; }
-      .sidebar-footer { display:none; }
-      .form-row, .kpi-grid, .source-grid { grid-template-columns:1fr !important; }
-      .content { padding:14px; }
+    /* ---- v4 (замечания 08.11) ---- */
+    :root, [data-theme="light"] {
+      --paper-bg: #ffffff; --paper-fg: #111827; --paper-muted: #4b5563; --paper-line: #d1d5db; --paper-hit: #fde68a;
+    }
+    .nav-item { display: flex; align-items: center; gap: 8px; }
+    .nav-count {
+      margin-left: auto; min-width: 20px; padding: 1px 6px; border-radius: 10px; font-size: 11px; font-weight: 700; text-align: center;
+      background: var(--prio-high-bg); color: var(--prio-high-text);
+    }
+    .nav-item.active .nav-count { background: rgba(255,255,255,.25); color: #fff; }
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: -6px 0 16px; }
+    .toolbar .legend { margin: 0; }
+    .check-label { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
+    .alert-row { grid-template-columns: 4px 1fr auto; }
+    .alert-side { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+    .res-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: start; }
+    .alert-item.unviewed .alert-title { font-weight: 700; }
+    .panel-h .row { gap: 6px; align-items: center; }
+    .btn-sm { padding: 4px 10px; font-size: 12px; }
+    /* player */
+    .player-bar { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-top: 1px solid var(--border); font-size: 12px; }
+    .player-bar input[type="range"] { flex: 1; accent-color: var(--accent); }
+    .player-time { font-family: Consolas, "Cascadia Mono", monospace; min-width: 64px; }
+    .play-btn { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface2); color: var(--text); cursor: pointer; }
+    .xy-overlay {
+      position: absolute; top: 34px; right: 10px; padding: 8px 12px; border-radius: 8px;
+      background: var(--caption-bg); color: #e8edf4; font-size: 12px; text-align: right; border: 1px solid var(--prio-high-border);
+    }
+    .xy-overlay b { display: block; font-size: 26px; line-height: 1.1; color: #fca5a5; }
+    .desc-box { padding: 12px 14px; font-size: 13px; line-height: 1.55; }
+    .desc-box .meta { margin-top: 6px; }
+    /* query builder (UI-7) */
+    .qb {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 6px; min-height: 40px;
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; cursor: text;
+    }
+    .qb:focus-within { outline: 2px solid var(--accent); outline-offset: -1px; }
+    .qb-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 4px 3px 9px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); font-size: 12px; }
+    .qb-chip button { border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 14px; line-height: 1; padding: 0 4px; }
+    .qb-op {
+      border: 1px solid var(--accent); background: transparent; color: var(--accent); border-radius: 6px;
+      font-size: 11px; font-weight: 700; padding: 2px 6px; cursor: pointer;
+    }
+    .qb-op.or { border-color: var(--warning); color: var(--warning); }
+    .qb input { flex: 1; min-width: 140px; border: 0 !important; background: transparent !important; color: var(--text); outline: none; padding: 4px; font: inherit; box-shadow: none !important; }
+    .qb-preview { font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+    .hidden-soft { display: none; }
+    /* saved templates (UI-11) */
+    .tpl-row { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 14px; border-bottom: 1px solid var(--border); align-items: center; }
+    .tpl-row .meta { margin: 0 4px 0 0; }
+    .tpl-chip { border: 1px solid var(--border); background: var(--surface2); color: var(--text); border-radius: 14px; padding: 3px 10px; font-size: 12px; cursor: pointer; }
+    .tpl-chip:hover { border-color: var(--accent); }
+    .tpl-chip .meta { display: inline; margin-left: 4px; }
+    .save-tpl { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+    .save-tpl .row { grid-column: 1 / -1; justify-content: flex-end; align-items: center; }
+    .field-hint { font-size: 11px; color: var(--muted); margin-top: 5px; line-height: 1.45; }
+    .empty { padding: 16px 14px; color: var(--muted); font-size: 13px; line-height: 1.55; }
+    .caption .hit, .snippet .hit { background: #854d0e; color: #fef3c7; border-radius: 2px; }
+    .snippet { font-family: Consolas, "Cascadia Mono", monospace; font-size: 11px; color: var(--muted); margin-top: 4px; }
+    /* PDF report (UI-9) */
+    .modal { position: fixed; inset: 0; z-index: 60; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(0,0,0,.55); }
+    .modal.open { display: flex; }
+    .pdf-dialog { display: grid; grid-template-columns: 260px minmax(0, 1fr); width: min(1080px, 100%); max-height: calc(100vh - 40px); background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .pdf-side { padding: 16px; border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px; overflow: auto; font-size: 13px; }
+    .pdf-side h2 { font-size: 15px; margin: 0; }
+    .pdf-side .opt { display: flex; gap: 8px; align-items: flex-start; cursor: pointer; line-height: 1.4; }
+    .pdf-side .opt input { margin-top: 2px; }
+    .pdf-side .grow { flex: 1; }
+    .pdf-preview { background: var(--surface2); padding: 18px; overflow: auto; }
+    .pdf-sheet { background: var(--paper-bg); color: var(--paper-fg); max-width: 720px; margin: 0 auto; padding: 32px 36px; border-radius: 4px; box-shadow: 0 8px 24px rgba(0,0,0,.25); font-size: 12px; line-height: 1.5; }
+    .pdf-brand { display: flex; justify-content: space-between; color: var(--paper-muted); font-size: 10px; text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid var(--paper-line); padding-bottom: 8px; }
+    .pdf-sheet h1 { font-size: 22px; margin: 14px 0 6px; color: var(--paper-fg); }
+    .pdf-desc { color: var(--paper-muted); margin: 0 0 14px; }
+    .pdf-frame { position: relative; aspect-ratio: 16/8.2; border-radius: 4px; overflow: hidden; background: #0a0e14; margin-bottom: 4px; }
+    .pdf-frame .stamp { position: absolute; right: 8px; bottom: 8px; background: rgba(0,0,0,.7); color: #fff; font-family: Consolas, monospace; font-size: 11px; padding: 2px 6px; border-radius: 3px; }
+    .pdf-cap { color: var(--paper-muted); font-size: 10px; margin-bottom: 14px; }
+    .pdf-sheet h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--paper-muted); margin: 14px 0 6px; }
+    .pdf-receipt { font-family: Consolas, "Cascadia Mono", monospace; font-size: 11px; white-space: pre-wrap; border: 1px solid var(--paper-line); border-radius: 4px; padding: 8px 10px; }
+    .pdf-receipt mark { background: var(--paper-hit); color: var(--paper-fg); font-weight: 700; }
+    .pdf-sheet table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .pdf-sheet td { padding: 4px 0; border-bottom: 1px solid var(--paper-line); color: var(--paper-fg); }
+    .pdf-sheet td:first-child { color: var(--paper-muted); width: 34%; }
+    .pdf-foot { margin-top: 18px; padding-top: 8px; border-top: 1px solid var(--paper-line); color: var(--paper-muted); font-size: 10px; }
+    @media print {
+      body > *:not(#pdf-modal) { display: none !important; }
+      #pdf-modal { position: static; display: block !important; padding: 0; background: none; }
+      .pdf-dialog { display: block; border: 0; max-height: none; }
+      .pdf-side { display: none; }
+      .pdf-preview { padding: 0; background: none; }
+      .pdf-sheet { box-shadow: none; max-width: none; padding: 0; }
+    }
+    @media (max-width: 860px) {
+      .pdf-dialog { grid-template-columns: 1fr; }
+      .pdf-side { border-right: 0; border-bottom: 1px solid var(--border); }
+    }
+    @media (max-width: 640px) {
+      .topbar { flex-wrap: wrap; gap: 8px; padding: 8px 12px; }
+      .topbar .store-select { min-width: 0 !important; width: 100% !important; }
+      .topbar-right { width: 100%; justify-content: space-between; }
+      .content { padding: 12px; }
+      .alerts-grid, .workspace, .grid-2 { grid-template-columns: minmax(0, 1fr) !important; }
+      .player-bar { flex-wrap: wrap; }
+      .player-bar input[type="range"] { min-width: 120px; }
+      .mode-switch { flex-wrap: wrap; }
+      table { font-size: 12px; }
+      th, td { padding: 6px 8px; }
+      .pdf-sheet { padding: 18px; }
+      .modal { padding: 8px; }
+      .topbar-right > span { display: none; }
+      .alert-row { grid-template-columns: 4px minmax(0, 1fr) !important; }
+      .alert-side { grid-column: 2; flex-direction: row; flex-wrap: wrap; align-items: center; }
+      .res-row { grid-template-columns: minmax(0, 1fr); }
+      .res-row .alert-side { grid-column: 1; }
+      .alerts-grid .panel-h { flex-wrap: wrap; }
+      .note { font-size: 11px; }
     }
   </style>
+  <link rel="stylesheet" href="retail-common.css">
   <link rel="stylesheet" href="scenario-editor.css">
   <link rel="stylesheet" href="../bridge.css">
 </head>
 <body>
   <aside class="sidebar">
     <div class="logo">
-      Интеллект Х
-      <span>Антифрод · Ритейл</span>
+      Интеллект X
+      <span>Ритейл</span>
     </div>
     <nav class="nav">
-      <button class="nav-item active" data-screen="dashboard">
-        <span class="nav-icon">◉</span> Центр мониторинга
-      </button>
-      <button class="nav-item" data-screen="alerts">
-        <span class="nav-icon">⚠</span> Тревоги
-      </button>
-      <button class="nav-item" data-screen="receipts">
-        <span class="nav-icon">▥</span> Чеки
-      </button>
-      <button class="nav-item" data-screen="incident">
-        <span class="nav-icon">▶</span> Расследование
-      </button>
-      <button class="nav-item" data-screen="search">
-        <span class="nav-icon">⌕</span> Поиск по титрам
-      </button>
-      <button class="nav-item" data-screen="constructor">
-        <span class="nav-icon">⚙</span> Конструктор сценариев
-      </button>
-      <button class="nav-item" data-screen="analytics">
-        <span class="nav-icon">▤</span> Аналитика и рейтинги
-      </button>
-      <button class="nav-item" data-screen="archive">
-        <span class="nav-icon">▦</span> Видеоархив
-      </button>
-      <button class="nav-item" data-screen="sources">
-        <span class="nav-icon">⇄</span> Источники данных
-      </button>
+      <button class="nav-item active" data-screen="alerts"><span>⚠ Тревоги</span><span id="nav-alerts-count" class="nav-count" data-i18n-skip title=""></span></button>
+      <button class="nav-item" data-screen="search"><span>⌕ Поиск</span></button>
+      <button class="nav-item" data-screen="scenarios"><span>⚙ Мои сценарии</span></button>
     </nav>
     <div class="sidebar-footer">
-      Магазинов: 847 · Касс: 3 204<br>
-      POS-модуль: подключён
+      Источники и камеры настраиваются на сервере.<br>
+      Титры всегда поверх видео.
     </div>
   </aside>
 
   <div class="main">
     <header class="topbar">
-      <div class="topbar-left">
-        <select class="store-select">
-          <option>Вся сеть (847 объектов)</option>
-          <option>Магазин №142 — Москва, ТЦ «Авиапарк»</option>
-          <option>Магазин №089 — СПб, Невский</option>
-        </select>
-        <span class="badge-live">Мониторинг активен</span>
-      </div>
+      <select class="store-select" style="width:auto;min-width:280px" aria-label="Магазин">
+        <option>Магазин №142 — ТЦ «Авиапарк»</option>
+        <option>Магазин №089 — СПб, Невский</option>
+      </select>
       <div class="topbar-right">
         <div class="chrome-actions">
           <label class="lang" for="langSelect">
@@ -392,399 +397,61 @@
           </button>
         </div>
         <span style="font-size:13px;color:var(--muted)">Оператор: Иванова А.С.</span>
-        <div class="avatar">ИА</div>
       </div>
     </header>
 
     <div class="content">
-      <div class="proto-note">
-        <strong>Retail Addon · прототип v3</strong> для «Интеллект X».
-        Чек, отсутствие POS-события, три зоны сканера, весы и титры в одном контексте расследования.
+      <div class="note">
+        <strong>Прототип · v4.</strong>
+        По замечаниям менеджера от 08.11: статус просмотра тревог, поиск по сценариям, выбор нескольких устройств, календарь, слова через «И» / «ИЛИ», отчёт PDF, описание и кассовые события в сценариях.
       </div>
 
-      <!-- DASHBOARD -->
-      <section id="screen-dashboard" class="screen active">
-        <h1>Центр мониторинга</h1>
-        <p class="subtitle">Онлайн-контроль касс, КСО, чеков и инцидентов сети</p>
-
-        <div class="kpi-grid">
-          <div class="kpi-card">
-            <div class="kpi-label">Тревоги за смену</div>
-            <div class="kpi-value" style="color:var(--danger)">23</div>
-            <div class="kpi-delta up">↑ 4 к вчера</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Критичные (касса / КСО)</div>
-            <div class="kpi-value">7</div>
-            <div class="kpi-delta up">3 без обработки</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Расхождения КСО (X−Y ≥ 2)</div>
-            <div class="kpi-value" style="color:var(--warning)">5</div>
-            <div class="kpi-delta">активных индикаторов</div>
-          </div>
-          <div class="kpi-card">
-            <div class="kpi-label">Без чека / весы</div>
-            <div class="kpi-value">4</div>
-            <div class="kpi-delta">3.2.5 · 3.2.17 · 3.2.18</div>
-          </div>
-        </div>
-
-        <div class="grid-2">
-          <div class="panel">
-            <div class="panel-header">
-              Последние тревоги
-              <button class="btn btn-ghost" style="padding:4px 10px;font-size:12px" onclick="showScreen('alerts')">Все →</button>
-            </div>
-            <ul class="alert-list">
-              <li class="alert-item" onclick="showScreen('incident')">
-                <div class="alert-severity critical"></div>
-                <div>
-                  <div class="alert-title">Обслуживание без чека</div>
-                  <div class="alert-meta">
-                    <span class="tag tag-pos">Касса</span>
-                    Касса 1 · 3.2.5 · покупатель + кассир + нал · POS молчит 30 сек
-                  </div>
-                </div>
-                <div class="alert-time">14:26</div>
-              </li>
-              <li class="alert-item" onclick="showScreen('incident')">
-                <div class="alert-severity critical"></div>
-                <div>
-                  <div class="alert-title">Неоплата на КСО — товары унесены</div>
-                  <div class="alert-meta">
-                    <span class="tag tag-kso">КСО</span>
-                    КСО-4 · 3.2.12 · чек не закрыт, после ухода X=0
-                  </div>
-                </div>
-                <div class="alert-time">14:18</div>
-              </li>
-              <li class="alert-item" onclick="showScreen('incident')">
-                <div class="alert-severity high"></div>
-                <div>
-                  <div class="alert-title">Возврат при покупателе, товаров нет</div>
-                  <div class="alert-meta">
-                    <span class="tag tag-pos">Касса</span>
-                    Касса 3 · 3.2.2 · возврат И человек И X=0
-                  </div>
-                </div>
-                <div class="alert-time">14:15</div>
-              </li>
-              <li class="alert-item" onclick="showScreen('incident')">
-                <div class="alert-severity high"></div>
-                <div>
-                  <div class="alert-title">Расхождение: на площадке 5, в чеке 1</div>
-                  <div class="alert-meta">
-                    <span class="tag tag-kso">КСО</span>
-                    Сценарий 3.2.10 · Индикатор 5:1
-                  </div>
-                </div>
-                <div class="alert-time">14:12</div>
-              </li>
-            </ul>
-          </div>
-
-          <div class="panel">
-            <div class="panel-header">Камеры по зонам</div>
-            <div class="panel-body" style="padding:16px">
-              <div style="font-size:13px;margin-bottom:12px">
-                <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
-                  <span>🟢 Торговый зал</span><span style="color:var(--muted)">24 кам.</span>
-                </div>
-                <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
-                  <span>🟢 Кассовая зона</span><span style="color:var(--muted)">8 кам.</span>
-                </div>
-                <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)">
-                  <span>🟡 КСО (расхождение)</span><span style="color:var(--warning)">2 актив.</span>
-                </div>
-                <div style="display:flex;justify-content:space-between;padding:8px 0">
-                  <span>🟢 Склад / отгрузка</span><span style="color:var(--muted)">4 кам.</span>
-                </div>
-              </div>
-              <button class="btn btn-primary" style="width:100%" onclick="showScreen('receipts')">Открыть чеки</button>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <!-- ALERTS -->
-      <section id="screen-alerts" class="screen">
+      <section id="screen-alerts" class="screen active">
         <h1>Тревоги</h1>
-        <p class="subtitle">События от составных сценариев: POS + видеоаналитика + пользовательские условия</p>
-
-        <div class="filters">
-          <span class="filter-chip active">Все</span>
-          <span class="filter-chip">Торговый зал</span>
-          <span class="filter-chip">Кассы</span>
-          <span class="filter-chip">КСО</span>
-          <span class="filter-chip">Весы</span>
-          <span class="filter-chip">Склад</span>
-          <span class="filter-chip">Критичные</span>
-          <span class="filter-chip">Не обработаны</span>
-        </div>
-
-        <div class="panel">
-          <table>
-            <thead>
-              <tr>
-                <th>Время</th>
-                <th>Сценарий</th>
-                <th>Зона</th>
-                <th>Объект</th>
-                <th>Условия</th>
-                <th>Статус</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr style="cursor:pointer" onclick="showScreen('incident')">
-                <td>14:26:08</td>
-                <td>Обслуживание без чека (3.2.5)</td>
-                <td><span class="tag tag-pos">Касса</span></td>
-                <td>Касса 1</td>
-                <td>Покупатель · Кассир · Нал · POS молчит 30 сек</td>
-                <td style="color:var(--danger)">Новая</td>
-              </tr>
-              <tr style="cursor:pointer" onclick="showScreen('incident')">
-                <td>14:18:32</td>
-                <td>Неоплата, товары унесены (3.2.12)</td>
-                <td><span class="tag tag-kso">КСО</span></td>
-                <td>КСО-4</td>
-                <td>Чек открыт · Уход · X=0</td>
-                <td style="color:var(--danger)">Новая</td>
-              </tr>
-              <tr>
-                <td>14:16:40</td>
-                <td>Отказ от покупки на КСО (3.2.13)</td>
-                <td><span class="tag tag-kso">КСО</span></td>
-                <td>КСО-1</td>
-                <td>Чек открыт · Уход · X=3 осталось</td>
-                <td style="color:var(--warning)">Новая</td>
-              </tr>
-              <tr>
-                <td>14:15:11</td>
-                <td>Возврат, товаров нет (3.2.2)</td>
-                <td><span class="tag tag-pos">Касса</span></td>
-                <td>Касса 3</td>
-                <td>Возврат · Покупатель есть · X=0</td>
-                <td style="color:var(--danger)">Новая</td>
-              </tr>
-              <tr style="cursor:pointer" onclick="showScreen('incident')">
-                <td>14:12:05</td>
-                <td>Расхождение по количеству (3.2.10)</td>
-                <td><span class="tag tag-kso">КСО</span></td>
-                <td>КСО-2</td>
-                <td>На площадке: 5 · В чеке: 1</td>
-                <td style="color:var(--warning)">В работе</td>
-              </tr>
-              <tr>
-                <td>14:08:22</td>
-                <td>Пронос мимо сканера, 3 зоны (3.2.6)</td>
-                <td><span class="tag tag-pos">Касса</span></td>
-                <td>Касса 2</td>
-                <td>Лента → сканер → укладка · товара в POS нет</td>
-                <td style="color:var(--warning)">Новая</td>
-              </tr>
-              <tr>
-                <td>13:58:04</td>
-                <td>Неоплата весового товара (3.2.17)</td>
-                <td><span class="tag tag-scale">Весы</span></td>
-                <td>Весы у кассы 3</td>
-                <td>Штрихкод выдан · таймаут 12 мин · в чеке нет</td>
-                <td style="color:var(--danger)">Новая</td>
-              </tr>
-              <tr>
-                <td>13:56:19</td>
-                <td>Совпадение веса весовых (3.2.18)</td>
-                <td><span class="tag tag-scale">Весы</span></td>
-                <td>Весы у кассы 3</td>
-                <td>1,240 кг · два разных штрихкода</td>
-                <td style="color:var(--warning)">Новая</td>
-              </tr>
-              <tr style="cursor:pointer" onclick="showScreen('incident')">
-                <td>13:55:18</td>
-                <td>Отмена после оплаты наличными (3.2.3)</td>
-                <td><span class="tag tag-pos">Касса</span></td>
-                <td>Касса 2</td>
-                <td>Интервал: 7 сек</td>
-                <td style="color:var(--muted)">Закрыта</td>
-              </tr>
-              <tr>
-                <td>13:48:44</td>
-                <td>Наличные в зоне без POS (3.2.4)</td>
-                <td><span class="tag tag-pos">Касса</span></td>
-                <td>Касса 5</td>
-                <td>Детектор наличных · POS молчит 30 сек</td>
-                <td style="color:var(--muted)">Закрыта</td>
-              </tr>
-              <tr>
-                <td>13:41:02</td>
-                <td>Хаотичный набор товаров (1.2.8)</td>
-                <td><span class="tag tag-hall">Зал</span></td>
-                <td>Кам. 12</td>
-                <td>4 движения руки за 5 сек</td>
-                <td style="color:var(--muted)">Закрыта</td>
-              </tr>
-              <tr>
-                <td>13:22:11</td>
-                <td>Операция без покупателя (3.2.1)</td>
-                <td><span class="tag tag-pos">Касса</span></td>
-                <td>Касса 1</td>
-                <td>Возврат + отсутствие человека</td>
-                <td style="color:var(--muted)">Закрыта</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <!-- RECEIPTS -->
-      <section id="screen-receipts" class="screen">
-        <h1>Чеки</h1>
-        <p class="subtitle">Receipt viewer · структурированный чек, кассовые операции и связанное видео</p>
-
-        <div class="search-form">
-          <div class="form-row">
-            <div class="form-group"><label>Период</label><input value="09.09.2026 08:00 — 09.09.2026 15:00"></div>
-            <div class="form-group"><label>Магазин / касса</label><select><option>№142 · Все кассы</option><option>№142 · Касса 2</option><option>№142 · КСО-2</option></select></div>
-            <div class="form-group"><label>Номер / товар / штрихкод</label><input placeholder="Например, 4810153020124"></div>
+        <p class="subtitle">Тревоги сценариев за смену. «Не просмотрена» снимается, когда тревогу открыли хотя бы на секунду — у всех операторов</p>
+        <div class="toolbar">
+          <div class="legend">
+            <span class="chip prio-high">высокая</span>
+            <span class="chip prio-mid">средняя</span>
+            <span class="chip prio-low">низкая</span>
           </div>
-          <div class="form-row">
-            <div class="form-group"><label>Кассир</label><select><option>Все кассиры</option><option>ID 1042 · Петров С.</option><option>ID 0871 · Сидорова М.</option></select></div>
-            <div class="form-group"><label>Операция</label><select><option>Все операции</option><option>Аннуляция</option><option>Возврат</option><option>Информация о товаре</option><option>Штрихкод весов</option><option>Скидка</option><option>Открытие ящика</option></select></div>
-            <div class="form-group"><label>Статус</label><select><option>Любой</option><option>С тревогой</option><option>Без видео</option><option>Импортирован постфактум</option></select></div>
-          </div>
-          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-            <button class="btn btn-primary" onclick="demoAction('Найдено 186 чеков')">Найти чеки</button>
-            <button class="btn btn-ghost" onclick="demoAction('Шаблон «Контроль отмен» сохранён')">Сохранить запрос</button>
-            <span style="font-size:12px;color:var(--muted)">Шаблоны: <a href="#" style="color:#93c5fd">Возвраты</a> · <a href="#" style="color:#93c5fd">КСО с тревогами</a></span>
-          </div>
+          <label class="check-label"><input type="checkbox" id="only-unviewed"> Только непросмотренные</label>
         </div>
-
-        <div class="receipt-layout">
+        <div class="grid-2 alerts-grid">
           <div class="panel">
-            <div class="panel-header"><span>Результаты · 186 чеков</span><span style="color:var(--muted);font-weight:400">Сортировка: новые</span></div>
-            <div style="overflow:auto">
-              <table>
-                <thead><tr><th>Время</th><th>Чек</th><th>Касса</th><th>Кассир</th><th>Сумма</th><th>Состояние</th></tr></thead>
-                <tbody>
-                  <tr class="receipt-row selected" data-receipt="48291">
-                    <td>14:12:41</td><td>№ 48291</td><td>КСО-2</td><td>—</td><td>259,90 ₽</td><td><span class="health err">Тревога</span></td>
-                  </tr>
-                  <tr class="receipt-row" data-receipt="48290">
-                    <td>14:09:18</td><td>№ 48290</td><td>Касса 2</td><td>Петров С.</td><td>1 842,50 ₽</td><td><span class="health ok">Закрыт</span></td>
-                  </tr>
-                  <tr class="receipt-row" data-receipt="48288">
-                    <td>14:03:02</td><td>№ 48288</td><td>Касса 1</td><td>Сидорова М.</td><td>435,00 ₽</td><td><span class="health warn">Отмена</span></td>
-                  </tr>
-                  <tr class="receipt-row" data-receipt="48287">
-                    <td>13:58:44</td><td>№ 48287</td><td>Касса 5</td><td>Козлов А.</td><td>3 105,20 ₽</td><td><span class="health ok">Закрыт</span></td>
-                  </tr>
-                  <tr class="receipt-row" data-receipt="48285">
-                    <td>13:48:10</td><td>№ 48285</td><td>Касса 3</td><td>Петров С.</td><td>719,30 ₽</td><td><span class="health warn">Импорт</span></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <div class="panel-h"><span>Очередь · смена 14.09.2026</span><span id="queue-meta" class="meta" data-i18n-skip></span></div>
+            <div id="alert-list"></div>
           </div>
-
-          <div class="panel">
-            <div class="panel-header"><span>Чек № <span id="receipt-number">48291</span></span><button class="btn btn-primary" style="padding:5px 10px" onclick="showScreen('incident')">Открыть расследование</button></div>
-            <div class="video-mock" style="aspect-ratio:16/8">
-              <div class="camera-art"><span class="cam-zone-tag">КАССОВАЯ ЗОНА · ВИД СВЕРХУ</span></div>
-              <span class="video-label">КСО-2 · камера над кассой и зоной покупателя</span>
-              <div class="receipt-caption">
-                14:11:58  МОЛОКО 3.2% 1Л&nbsp;&nbsp;&nbsp;89,90<br>
-                <span class="risk-line">14:12:05  РАСХОЖДЕНИЕ X=5 / Y=1</span><br>
-                14:12:41  ИТОГ&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;259,90
-              </div>
-              <div class="video-controls"><button class="btn btn-primary" style="padding:4px 12px">▶</button><span style="font-size:12px">14:12:05</span><span style="margin-left:auto;font-size:11px">Титры: ВКЛ · Ракурс: сверху</span></div>
-            </div>
-            <div class="receipt-paper">
-              <div class="receipt-head">МАГАЗИН №142 · КСО-2<br>ЧЕК №48291 · 09.09.2026</div>
-              <div class="receipt-line"><span>Хлеб белый × 1</span><span>74,00</span></div>
-              <div class="receipt-line active"><span>Молоко 3.2% 1л × 1<br><small style="color:var(--muted)">14:11:58 · перейти к видео</small></span><span>89,90</span></div>
-              <div class="receipt-line risk"><span>⚠ Расхождение товаров<br><small>X=5 / Y=1</small></span><span>14:12:05</span></div>
-              <div class="receipt-line"><strong>ИТОГО</strong><strong class="receipt-total">259,90 ₽</strong></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- INCIDENT -->
-      <section id="screen-incident" class="screen">
-        <h1>Расследование инцидента</h1>
-        <p class="subtitle">INC-2026-09142 · POS-07 «Расхождение количества товаров на КСО» (3.2.10) · В работе</p>
-
-        <div class="grid-2" style="grid-template-columns:1fr 400px">
           <div>
             <div class="panel" style="margin-bottom:16px">
-              <div class="video-mock">
-                <div class="camera-art"><span class="cam-zone-tag">КАССОВАЯ ЗОНА · ВИД СВЕРХУ</span></div>
-                <span class="video-label">КСО-2 · Камера над площадкой и зоной покупателя</span>
-                <div class="video-overlay">
-                  <div>На площадке: <span class="counter">5</span> шт.</div>
-                  <div>В чеке: <span class="counter" style="color:var(--danger)">1</span> шт.</div>
-                  <div style="margin-top:4px;font-size:16px">Индикатор: <strong>5:1</strong></div>
-                </div>
-                <div class="receipt-caption">
-                  ЧЕК №48291 · КСО-2<br>
-                  14:11:58  МОЛОКО 3.2% 1Л&nbsp;&nbsp;&nbsp;89,90<br>
-                  <span class="risk-line">14:12:05  ⚠ X=5 / Y=1</span>
-                </div>
-                <div class="video-controls">
-                  <button class="btn btn-ghost" style="padding:4px 10px">⏮</button>
-                  <button class="btn btn-primary" style="padding:4px 14px">▶</button>
-                  <button class="btn btn-ghost" style="padding:4px 10px">⏭</button>
-                  <span style="font-size:12px;color:#ccc;margin-left:8px">14:12:05 / 14:12:45</span>
+              <div class="panel-h">
+                <span id="alert-title" data-i18n-skip>Выберите тревогу</span>
+                <div class="row">
+                  <span id="alert-source" class="source src-video" data-i18n-skip>Видео</span>
+                  <button type="button" class="btn btn-sm" onclick="reportFromAlert()">⤓ Отчёт PDF</button>
                 </div>
               </div>
-              <div class="timeline">
-                <div class="timeline-bar"></div>
-                <div class="timeline-marker" style="left:15%"></div>
-                <div class="timeline-marker pos" style="left:35%" title="POS: сканирование"></div>
-                <div class="timeline-marker pos" style="left:50%" title="POS: оплата"></div>
-                <div class="timeline-marker alert" style="left:72%" title="Тревога"></div>
+              <div class="video">
+                <div id="al-scene" class="video-scene pair"></div>
+                <div id="al-cam" class="cam-tag" data-i18n-skip>КАМЕРА</div>
+                <div id="al-xy" class="xy-overlay hidden" data-i18n-skip></div>
+                <div id="al-caption" class="caption" data-i18n-skip></div>
+              </div>
+              <div class="player-bar">
+                <button type="button" class="play-btn" id="al-play" aria-label="Воспроизвести">▶</button>
+                <input type="range" id="al-range" min="-30" max="30" value="0" aria-label="Позиция в архиве">
+                <span id="al-time" class="player-time"></span>
+                <button type="button" class="btn btn-sm btn-ghost" id="al-back">↺ К моменту срабатывания</button>
               </div>
             </div>
-            <div style="display:flex;gap:10px">
-              <button class="btn btn-primary" onclick="setIncidentStatus('Подтверждён')">Подтвердить</button>
-              <button class="btn btn-ghost" onclick="setIncidentStatus('Ложное срабатывание')">Ложное срабатывание</button>
-              <button class="btn btn-ghost" onclick="demoAction('Видеоклип поставлен в очередь экспорта')">Экспорт клипа</button>
+            <div class="panel" style="margin-bottom:16px">
+              <div class="panel-h">Описание сценария</div>
+              <div id="alert-desc" class="desc-box" data-i18n-skip></div>
             </div>
-          </div>
-
-          <div class="panel">
-            <div class="panel-header"><span>Чек №48291 · 259,90 ₽</span><span id="incident-status" class="health warn">В работе</span></div>
-            <div class="pos-events">
-              <div class="pos-event">
-                <span class="pos-time">14:12:05</span>
-                <span><strong>Тревога:</strong> X−Y ≥ 2 (5 на площадке, 1 в чеке)</span>
-              </div>
-              <div class="pos-event">
-                <span class="pos-time">14:11:58</span>
-                <span>Сканирование: Молоко 3.2% 1л</span>
-              </div>
-              <div class="pos-event">
-                <span class="pos-time">14:11:42</span>
-                <span>Сканирование: Хлеб белый</span>
-              </div>
-              <div class="pos-event">
-                <span class="pos-time">14:11:30</span>
-                <span>Начало чека · КСО-2</span>
-              </div>
-            </div>
-            <div class="panel-header" style="border-top:1px solid var(--border)">Состав сценария</div>
-            <div style="padding:16px;font-size:13px;line-height:1.6">
-              <div>① Детектор подсчёта товаров (Perfema) → X = 5</div>
-              <div>② POS: оплаченных позиций → Y = 1</div>
-              <div>③ Условие: X − Y ≥ 2 → <strong style="color:var(--danger)">Тревога</strong></div>
-            </div>
-            <div class="panel-header" style="border-top:1px solid var(--border)">Карточка инцидента</div>
-            <div style="padding:16px;font-size:12px;line-height:1.9;color:var(--muted)">
-              Ответственный: <strong style="color:var(--text)">Иванова А.С.</strong><br>
-              Магазин: №142 · КСО-2<br>
-              Источники: POS Gateway + Perfema<br>
-              <button class="btn btn-ghost" style="margin-top:8px" onclick="demoAction('Комментарий добавлен в историю аудита')">+ Комментарий</button>
+            <div class="panel">
+              <div class="panel-h">Почему сработало</div>
+              <div id="alert-why" class="desc-box" style="color:var(--muted)" data-i18n-skip></div>
             </div>
           </div>
         </div>
@@ -792,304 +459,677 @@
 
       <!-- SEARCH -->
       <section id="screen-search" class="screen">
-        <h1>Поиск по титрам</h1>
-        <p class="subtitle">Captions search · поиск текста кассового потока с переходом к видео и полному чеку</p>
+        <h1>Поиск</h1>
+        <p class="subtitle">По сценариям — уже сработавшие тревоги; по титрам — текст поверх камеры; по чекам — разбор по полям и отчёты</p>
 
-        <div class="search-form">
-          <div class="form-row">
-            <div class="form-group">
-              <label>Текст или регулярное выражение</label>
-              <input value="(АННУЛЯЦИЯ)|(ВОЗВРАТ)" placeholder="Товар, операция, шаблон">
-            </div>
-            <div class="form-group">
-              <label>Зона / камера</label>
-              <select>
-                <option>Все зоны</option>
-                <option>Торговый зал</option>
-                <option>Кассовая зона</option>
-                <option>КСО</option>
-                <option>Склад / отгрузка</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Период</label>
-              <input type="text" value="26.08.2026 08:00 — 26.08.2026 15:00">
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Касса / КСО</label>
-              <select><option>Любая</option><option>Касса 1</option><option>КСО-2</option></select>
-            </div>
-            <div class="form-group">
-              <label>Кассир (ID)</label>
-              <input type="text" placeholder="Не указан">
-            </div>
-            <div class="form-group">
-              <label>Режим поиска</label>
-              <select>
-                <option>Регулярное выражение</option>
-                <option>Точная фраза</option>
-                <option>Любое из слов</option>
-              </select>
-            </div>
-          </div>
-          <div style="display:flex;gap:10px;align-items:center">
-            <button class="btn btn-primary" onclick="demoAction('Найдено 47 совпадений в титрах')">Найти в видеоархиве</button>
-            <button class="btn btn-ghost">+ Сохранить как шаблон</button>
-          </div>
-          <div class="saved-templates">
-            <span style="font-size:12px;color:var(--muted);align-self:center">Шаблоны:</span>
-            <div class="template-card">🔖 Возвраты без покупателя</div>
-            <div class="template-card">🔖 Возврат при X=0</div>
-            <div class="template-card">🔖 КСО — унос / отказ от покупки</div>
-            <div class="template-card">🔖 Весовой штрихкод без оплаты</div>
-          </div>
+        <div class="mode-switch">
+          <button class="mode-btn active" data-mode="scenarios">По сценариям</button>
+          <button class="mode-btn" data-mode="captions">По титрам</button>
+          <button class="mode-btn" data-mode="receipts">По чекам</button>
         </div>
 
-        <div class="panel">
-          <div class="panel-header">Результаты: 47 событий</div>
-          <table>
-            <thead>
-              <tr><th>Время</th><th>Совпадение в титрах</th><th>Касса</th><th>Чек</th><th>Действие</th></tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>12:44:10</td><td><mark style="background:#854d0e;color:#fef3c7">ВЕС</mark> 1.240 КГ · штрихкод выдан · оплаты нет</td><td>Весы 3</td><td>W-201</td>
-                <td><button class="btn btn-ghost" style="padding:4px 10px" onclick="showScreen('receipts')">▶ Видео + чек</button></td>
-              </tr>
-              <tr>
-                <td>12:34:11</td><td><mark style="background:#854d0e;color:#fef3c7">АННУЛЯЦИЯ</mark> ЧЕКА · 719,30 ₽</td><td>Касса 3</td><td>№48285</td>
-                <td><button class="btn btn-ghost" style="padding:4px 10px" onclick="showScreen('receipts')">▶ Видео + чек</button></td>
-              </tr>
-              <tr>
-                <td>11:08:55</td><td><mark style="background:#854d0e;color:#fef3c7">ВОЗВРАТ</mark> · X=0 на кассе</td><td>Касса 1</td><td>№48288</td>
-                <td><button class="btn btn-ghost" style="padding:4px 10px" onclick="showScreen('receipts')">▶ Видео + чек</button></td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="workspace">
+          <div class="panel">
+            <div class="panel-h">Источник и запрос</div>
+            <div id="tpl-row" class="tpl-row" data-i18n-skip></div>
+            <div class="form-stack">
+              <div class="form-group">
+                <label>Источник / касса</label>
+                <div id="src-picker" data-i18n-skip></div>
+              </div>
+              <div class="form-group">
+                <label>Период</label>
+                <div id="period" data-i18n-skip></div>
+              </div>
+
+              <div id="scenarios-query">
+                <div class="form-group">
+                  <label for="sc-select">Сценарий</label>
+                  <select id="sc-select" class="field" data-i18n-skip></select>
+                  <div class="field-hint">Ищет уже сработавшие тревоги. Новый сценарий не находит событий до своего создания — чтобы проверить его на прошлом архиве, используйте «Проверить на архиве» в Моих сценариях.</div>
+                </div>
+              </div>
+
+              <div id="captions-query" class="hidden">
+                <div class="form-group">
+                  <label for="qb-input">Текст в титрах</label>
+                  <div id="qb" class="qb" data-i18n-skip></div>
+                  <input id="re-input" class="field hidden" value="(АННУЛЯЦИЯ)|(ВОЗВРАТ)" aria-label="Регулярное выражение">
+                  <div id="qb-preview" class="qb-preview" data-i18n-skip></div>
+                  <label class="check-label" style="margin-top:6px;font-size:12px"><input type="checkbox" id="re-toggle"> Расширенный: регулярное выражение</label>
+                </div>
+                <div class="form-group">
+                  <label for="out-mode">Вывод результатов</label>
+                  <select id="out-mode" class="field">
+                    <option value="receipt">Чеки с заданным текстом</option>
+                    <option value="line">Отдельные титры с заданным текстом</option>
+                  </select>
+                </div>
+              </div>
+
+              <div id="receipts-query" class="hidden">
+                <div class="form-group">
+                  <label for="report-type">Тип отчёта</label>
+                  <select id="report-type" class="field">
+                    <option value="all">№01 Список всех чеков</option>
+                    <option value="number">№04 Поиск по номеру чека</option>
+                    <option value="cashier">№06 / №16 По кассиру</option>
+                    <option value="sku">№07 / №15 По артикулу или товару</option>
+                    <option value="and">№13 Список чеков по товарам (и)</option>
+                    <option value="returns">Возвраты и аннуляции</option>
+                    <option value="scale">Весовые штрихкоды без оплаты</option>
+                    <option value="amount">Чеки по сумме</option>
+                  </select>
+                </div>
+                <div id="report-params"></div>
+              </div>
+
+              <div class="row">
+                <button type="button" class="btn btn-primary" id="run-search">Найти</button>
+                <button type="button" class="btn btn-ghost" id="save-tpl-btn">☆ Сохранить как шаблон</button>
+              </div>
+              <div id="save-tpl" class="save-tpl hidden">
+                <input id="tpl-name" class="field" placeholder="Название шаблона" aria-label="Название шаблона">
+                <label class="check-label" style="font-size:12px"><input type="checkbox" id="tpl-shared"> Общий</label>
+                <div class="row">
+                  <button type="button" class="btn btn-ghost btn-sm" id="tpl-cancel">Отмена</button>
+                  <button type="button" class="btn btn-primary btn-sm" id="tpl-ok">Сохранить шаблон</button>
+                </div>
+              </div>
+            </div>
+            <div class="panel-h"><span>Результаты</span><span id="result-count" class="meta" data-i18n-skip></span></div>
+            <div id="results" data-i18n-skip></div>
+          </div>
+
+          <div>
+            <div class="panel" style="margin-bottom:16px">
+              <div class="panel-h">
+                <span id="player-title" data-i18n-skip>Касса 2 · вид на кассира и руки</span>
+                <div class="row">
+                  <span id="player-source" class="source src-pos" data-i18n-skip>Кассовое ПО</span>
+                  <button type="button" class="btn btn-sm" onclick="reportFromSearch()">⤓ Отчёт PDF</button>
+                </div>
+              </div>
+              <div class="video">
+                <div id="pl-scene" class="video-scene cashier"></div>
+                <div id="pl-cam" class="cam-tag" data-i18n-skip>CAM-142-09 · КАССИР / РУКИ</div>
+                <div id="pl-xy" class="xy-overlay hidden" data-i18n-skip></div>
+                <div id="pl-caption" class="caption" data-i18n-skip></div>
+              </div>
+              <div class="player-bar">
+                <button type="button" class="play-btn" id="pl-play" aria-label="Воспроизвести">▶</button>
+                <input type="range" id="pl-range" min="-30" max="30" value="0" aria-label="Позиция в архиве">
+                <span id="pl-time" class="player-time"></span>
+                <button type="button" class="btn btn-sm btn-ghost" id="pl-back">↺ К моменту</button>
+              </div>
+            </div>
+            <div class="panel">
+              <div class="panel-h" id="detail-h" data-i18n-skip>Разбор чека</div>
+              <div id="receipt-view" data-i18n-skip></div>
+            </div>
+          </div>
         </div>
       </section>
 
-      <!-- CONSTRUCTOR -->
-      <section id="screen-constructor" class="screen">
-        <h1>Конструктор сценариев</h1>
-        <p class="subtitle">Сценарий — это события системы (сработки объектов и строки титров), связанные логикой И / ИЛИ / НЕ и таймерами</p>
+      <!-- SCENARIOS -->
+      <section id="screen-scenarios" class="screen">
+        <h1>Мои сценарии</h1>
+        <p class="subtitle">Сценарий — это события системы (кассовые события, сработки объектов, строки титров), их состояния и сравнения, связанные логикой И / ИЛИ / НЕ и таймерами</p>
         <div id="scenario-editor"></div>
-      </section>
-
-      <!-- ANALYTICS -->
-      <section id="screen-analytics" class="screen">
-        <h1>Аналитика и рейтинги</h1>
-        <p class="subtitle">Менеджер инцидентов · Аномальное поведение кассиров · Бенчмаркинг (п. 3.1.4, 4.1.6)</p>
-
-        <div class="tabs">
-          <button class="tab active">Кассиры</button>
-          <button class="tab">Магазины</button>
-          <button class="tab">Сценарии</button>
-          <button class="tab">Потери</button>
-        </div>
-
-        <div class="grid-2">
-          <div class="panel">
-            <div class="panel-header">Топ кассиров по тревожным операциям (смена)</div>
-            <table>
-              <thead>
-                <tr><th>#</th><th>Кассир</th><th>Возвраты</th><th>Аннуляции</th><th>Всего</th><th></th></tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="rank rank-1">1</td>
-                  <td>ID 1042 · Петров С.</td>
-                  <td>12</td><td>4</td>
-                  <td><div class="bar-cell"><div class="bar" style="width:120px;background:var(--danger)"></div>16</div></td>
-                  <td><span style="color:var(--danger);font-size:12px">↑ порог</span></td>
-                </tr>
-                <tr>
-                  <td class="rank rank-2">2</td>
-                  <td>ID 0871 · Сидорова М.</td>
-                  <td>11</td><td>2</td>
-                  <td><div class="bar-cell"><div class="bar" style="width:100px;background:var(--warning)"></div>13</div></td>
-                  <td><span style="color:var(--warning);font-size:12px">↑ порог</span></td>
-                </tr>
-                <tr>
-                  <td class="rank rank-3">3</td>
-                  <td>ID 0234 · Козлов А.</td>
-                  <td>6</td><td>3</td>
-                  <td><div class="bar-cell"><div class="bar" style="width:60px"></div>9</div></td>
-                  <td></td>
-                </tr>
-              </tbody>
-            </table>
-            <div style="padding:14px 18px;border-top:1px solid var(--border);font-size:12px;color:var(--muted)">
-              Порог: &gt;10 возвратов за смену → уведомление руководителю
-            </div>
-          </div>
-
-          <div class="panel">
-            <div class="panel-header">Топ-5 магазинов по инцидентам</div>
-            <table>
-              <thead><tr><th>#</th><th>Магазин</th><th>Инциденты</th><th>Тренд</th></tr></thead>
-              <tbody>
-                <tr><td class="rank rank-1">1</td><td>№142 Авиапарк</td><td>34</td><td style="color:var(--danger)">↑ 12%</td></tr>
-                <tr><td class="rank rank-2">2</td><td>№089 Невский</td><td>28</td><td style="color:var(--success)">↓ 3%</td></tr>
-                <tr><td class="rank rank-3">3</td><td>ℹ031 Казань</td><td>22</td><td>—</td></tr>
-              </tbody>
-            </table>
-            <div class="chart-placeholder">📊 Дашборд: динамика потерь по сети</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- SOURCES -->
-      <section id="screen-sources" class="screen">
-        <h1>Источники данных</h1>
-        <p class="subtitle">POS Gateway, адаптеры касс и постфактум-импорт · контроль доставки и синхронизации</p>
-
-        <div class="source-grid" style="margin-bottom:16px">
-          <div class="source-card">
-            <div class="source-top"><div><div class="source-name">POS Gateway · магазин №142</div><div class="source-meta">Онлайн · JSON/HTTPS</div></div><span class="health ok">Подключён</span></div>
-            <div class="source-meta">Последнее событие: 2 сек назад<br>Касс: 8 · очередь: 0<br>Смещение времени: +0,12 сек</div>
-          </div>
-          <div class="source-card">
-            <div class="source-top"><div><div class="source-name">Adapter Utility · кассы 1–5</div><div class="source-meta">Windows Service · v2.1.4</div></div><span class="health ok">Работает</span></div>
-            <div class="source-meta">Доставлено сегодня: 18 492<br>Ошибок: 0 · повторов: 12<br>Конфигурация: актуальна</div>
-          </div>
-          <div class="source-card">
-            <div class="source-top"><div><div class="source-name">КСО-4 · нативный адаптер</div><div class="source-meta">TCP/XML</div></div><span class="health warn">Буферизация</span></div>
-            <div class="source-meta">Нет связи: 3 мин 18 сек<br>В очереди: 47 событий<br>Автоповтор: через 22 сек</div>
-          </div>
-        </div>
-
-        <div class="panel" style="margin-bottom:16px">
-          <div class="panel-header">Поток кассовых данных</div>
-          <div class="flow">
-            <span class="flow-node">Кассовое ПО / POS</span><span class="flow-arrow">→</span>
-            <span class="flow-node">Gateway / Adapter Utility</span><span class="flow-arrow">→</span>
-            <span class="flow-node">Универсальная модель</span><span class="flow-arrow">→</span>
-            <span class="flow-node">Receipt Store</span><span class="flow-arrow">→</span>
-            <span class="flow-node">Титры + правила + инциденты</span>
-          </div>
-        </div>
-
-        <div class="grid-2">
-          <div class="panel">
-            <div class="panel-header">Импорт постфактум</div>
-            <div style="padding:18px">
-              <div class="form-row" style="grid-template-columns:1fr 1fr">
-                <div class="form-group"><label>Файл кассовой выгрузки</label><input value="receipts_2026-09-08.xml"></div>
-                <div class="form-group"><label>Магазин и часовой пояс</label><select><option>№142 · UTC+3</option></select></div>
-              </div>
-              <div style="padding:12px;background:var(--surface2);border-radius:7px;font-size:12px;color:var(--muted);margin-bottom:14px">
-                Предварительная проверка: 12 480 событий · 1 904 чека · дубликатов 3 · ошибок 0<br>
-                Видеоархив найден за весь период · расчётное смещение +1,4 сек
-              </div>
-              <button class="btn btn-primary" onclick="demoAction('Постфактум-импорт запущен')">Запустить импорт</button>
-              <button class="btn btn-ghost" onclick="demoAction('Сопоставление полей открыто')">Сопоставить поля</button>
-            </div>
-          </div>
-          <div class="panel">
-            <div class="panel-header">Касса ↔ камеры</div>
-            <table>
-              <thead><tr><th>Касса</th><th>Основная камера</th><th>Ракурсы</th><th>Статус</th></tr></thead>
-              <tbody>
-                <tr><td>КСО-2</td><td>CAM-142-17 · сверху</td><td>2</td><td><span class="health ok">Видео есть</span></td></tr>
-                <tr><td>Касса 2</td><td>CAM-142-09 · фронт</td><td>2</td><td><span class="health ok">Видео есть</span></td></tr>
-                <tr><td>КСО-4</td><td>CAM-142-19 · сверху</td><td>1</td><td><span class="health warn">Дрейф 2,8 сек</span></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- ARCHIVE -->
-      <section id="screen-archive" class="screen">
-        <h1>Видеоархив</h1>
-        <p class="subtitle">Поиск по титрам POS · Синхронизация с транзакциями</p>
-
-        <div class="search-form" style="margin-bottom:16px">
-          <div class="form-row" style="grid-template-columns:1fr 1fr 1fr auto;align-items:end">
-            <div class="form-group">
-              <label>Камера</label>
-              <select><option>КСО-2 — вид сверху</option><option>Касса 2 — фронт</option></select>
-            </div>
-            <div class="form-group">
-              <label>Дата и время</label>
-              <input type="text" value="26.08.2026 14:12:00">
-            </div>
-            <div class="form-group">
-              <label>POS-титр</label>
-              <select><option>Любой</option><option>Аннуляция</option><option>Сканирование</option></select>
-            </div>
-            <button class="btn btn-primary">Перейти</button>
-          </div>
-        </div>
-
-        <div class="panel">
-          <div class="video-mock" style="min-height:360px">
-            <span>[ Архив · Камера КСО-2 · 26.08.2026 14:12:05 ]</span>
-            <div class="video-overlay">
-              POS-титр: «Сканирование: Хлеб белый»<br>
-              <span style="font-size:11px;color:var(--muted)">Синхронизация POS-модуля</span>
-            </div>
-          </div>
-        </div>
       </section>
     </div>
   </div>
 
-  <div id="toast" class="toast"></div>
+  <!-- PDF REPORT -->
+  <div id="pdf-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="pdf-h" data-i18n-skip>
+    <div class="pdf-dialog">
+      <div class="pdf-side">
+        <h2 id="pdf-h"></h2>
+        <div id="pdf-opts"></div>
+        <div class="grow"></div>
+        <div class="meta" id="pdf-audit"></div>
+        <div class="row">
+          <button type="button" class="btn btn-ghost" onclick="closeReport()" id="pdf-close"></button>
+          <button type="button" class="btn btn-primary" onclick="printReport()" id="pdf-print"></button>
+        </div>
+      </div>
+      <div class="pdf-preview"><div id="pdf-sheet" class="pdf-sheet"></div></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
   <script src="i18n.js"></script>
+  <script src="retail-common.js"></script>
   <script src="scenario-editor.js"></script>
   <script>
-    function showScreen(id) {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      const screen = document.getElementById('screen-' + id);
-      if (screen) screen.classList.add('active');
-      const nav = document.querySelector('[data-screen="' + id + '"]');
-      if (nav) nav.classList.add('active');
-    }
-    document.querySelectorAll('.nav-item').forEach(btn => {
-      btn.addEventListener('click', () => showScreen(btn.dataset.screen));
-    });
-    document.querySelectorAll('.filter-chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        chip.parentElement.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
-      });
-    });
-    document.querySelectorAll('.receipt-row').forEach(row => {
-      row.addEventListener('click', () => {
-        document.querySelectorAll('.receipt-row').forEach(r => r.classList.remove('selected'));
-        row.classList.add('selected');
-        document.getElementById('receipt-number').textContent = row.dataset.receipt;
-        demoAction(t("Открыт чек №{n} со связанным видео", { n: row.dataset.receipt }));
-      });
-    });
-    document.querySelectorAll('.receipt-line').forEach(line => {
-      line.addEventListener('click', () => {
-        document.querySelectorAll('.receipt-line').forEach(r => r.classList.remove('active'));
-        line.classList.add('active');
-        demoAction(t("Видео перемещено к выбранной операции"));
-      });
-    });
-    function demoAction(text) {
-      const toast = document.getElementById('toast');
-      toast.textContent = t(text);
-      toast.classList.add('show');
+    const OPERATOR = "Иванова А.С.";
+    const STORE = "Магазин №142 — ТЦ «Авиапарк»";
+    const DATE = "14.09.2026";
+    const sourceById = (id) => Retail.deviceById(id);
+    const esc = Retail.esc;
+
+    /* ---------- receipts (demo archive, 14.09.2026) ---------- */
+    const receipts = [
+      { id: "48293", time: "15:02:11", source: "pos-2", cashier: "Иванова Е.", total: "0,00", status: "Аннуляция", sev: "high", text: "КАССИР ИВАНОВА Е.\nВОДКА ПУТИНКА 0,5Л\nАННУЛЯЦИЯ ЧЕКА\nИТОГО 0,00", parsed: [["Водка «Путинка» 0,5 л ×1", "389,00"], ["АННУЛЯЦИЯ", "15:02:11"], ["ИТОГО", "0,00 ₽"]] },
+      { id: "48291", time: "14:12:41", source: "kso-2", cashier: "—", total: "259,90", status: "Тревога", sev: "high", text: "МОЛОКО 3.2%\nРАСХОЖДЕНИЕ X=5 / Y=1\nИТОГО 259,90", parsed: [["Хлеб белый ×1", "74,00"], ["Молоко 3.2% ×1", "89,90"], ["Расхождение X=5 / Y=1", "14:12:05"], ["ИТОГО", "259,90 ₽"]] },
+      { id: "48290", time: "14:09:18", source: "pos-2", cashier: "Петров С.", total: "1 842,50", status: "Закрыт", text: "СКАНИРОВАНИЕ СЫР 45%\nОПЛАТА КАРТА\nИТОГО 1842,50", parsed: [["Сыр 45% ×1", "420,00"], ["Кофе зерно ×1", "890,00"], ["Оплата карта", "1 842,50"], ["ИТОГО", "1 842,50 ₽"]] },
+      { id: "48288", time: "14:03:02", source: "fr-5", cashier: "Сидорова М.", total: "435,00", status: "Аннуляция", sev: "mid", text: "ВОЗВРАТ ХЛЕБ\nАННУЛЯЦИЯ ЧЕКА\nИТОГО 0,00", parsed: [["Хлеб белый", "74,00"], ["АННУЛЯЦИЯ", "14:03:08"], ["ИТОГО", "0,00 ₽"]] },
+      { id: "48285", time: "13:48:10", source: "file-1c", cashier: "Петров С.", total: "719,30", status: "Импорт 1С", sev: "low", text: "ЧЕК ИЗ ВЫГРУЗКИ 1С\nВОЗВРАТ МОЛОКО\nИТОГО 719,30", parsed: [["Молоко 1л ×2", "178,00"], ["Возврат", "13:48:10"], ["ИТОГО", "719,30 ₽"]] },
+      { id: "48280", time: "13:21:44", source: "ofd", cashier: "Козлов А.", total: "3 105,20", status: "ОФД", text: "ФД 118204  ФН 9999\nОПЛАТА НАЛ\nИТОГО 3105,20", parsed: [["Позиции из ОФД", "12"], ["Оплата наличными", "3 105,20"], ["ИТОГО", "3 105,20 ₽"]] },
+      { id: "W-104", time: "13:10:05", source: "scale-veg", cashier: "Сидорова М.", total: "186,40", status: "Вес", text: "ВЕС 1.240 КГ\nБАНАНЫ\nСУММА 186,40", parsed: [["Бананы", "1,240 кг"], ["Сумма", "186,40 ₽"]] },
+      { id: "W-201", time: "12:44:10", source: "scale-fish", cashier: "—", total: "0,00", status: "Штрихкод без оплаты", sev: "high", text: "ВЕС 1.240 КГ\nСЁМГА ОХЛ.\nШТРИХКОД ВЫДАН\nОПЛАТЫ НЕТ", parsed: [["Сёмга охл.", "1,240 кг"], ["Штрихкод", "2900123004512"], ["Оплата", "нет"]] }
+    ];
+
+    /* ---------- alarm journal: queue of the shift + history for "search by scenario" ---------- */
+    const journal = [
+      { id: "a1", date: DATE, time: "14:26:00", sc: "t-pos-05", sev: "high", source: "fr-5", caption: "14:26  ПОКУПАТЕЛЬ И КАССИР\nНАЛИЧНЫЕ В ЗОНЕ\nPOS МОЛЧИТ 30 СЕК", why: "3.2.5. Детекторы покупателя и кассира сработали, наличные на столе есть, оплаты в POS нет 30 сек. Подозрение на обслуживание посетителя без чека." },
+      { id: "a2", date: DATE, time: "14:12:41", sc: "t-pos-07", sev: "high", source: "kso-2", receipt: "48291", xy: { x: 5, y: 1 }, caption: "14:12  КСО-2: НА ПЛОЩАДКЕ 5\nВ ЧЕКЕ 1 ПОЗИЦИЯ\nX − Y = 4", why: "3.2.10. Перед закрытием чека на площадке КСО 5 товаров, в чеке 1 позиция. Расхождение 4 ≥ порога 2." },
+      { id: "a3", date: DATE, time: "14:15:00", sc: "t-pos-02", sev: "high", source: "file-1c", caption: "14:15  ВОЗВРАТ ТОВАРА\nПОКУПАТЕЛЬ ЕСТЬ\nX=0 НА КАССЕ", why: "3.2.2. POS: возврат. Покупатель в зоне есть, детектор подсчёта показывает 0 товаров. Возврат без товара на кассе.", viewed: { by: "Петров С. (старший смены)", at: "14:15:40" } },
+      { id: "a4", date: DATE, time: "14:08:00", sc: "t-pos-06", sev: "high", source: "pos-2", caption: "14:08  ЛЕНТА → СКАНЕР → УКЛАДКА\nДОБАВЛЕНИЯ ТОВАРА НЕТ\nЧЕСТНЫЙ ЗНАК НЕТ", why: "3.2.6. Рука прошла зону ленты и сканера, в POS нет добавления товара и нет «Честного знака», затем рука в зоне укладки." },
+      { id: "a5", date: DATE, time: "14:03:08", sc: "t-pos-01", sev: "high", source: "fr-5", receipt: "48288", caption: "14:03  АННУЛЯЦИЯ ЧЕКА\nПОКУПАТЕЛЯ НЕТ\nИТОГО 0,00", why: "С шины ФР пришла аннуляция. Детектор присутствия в зоне покупателя не сработал ±10 сек. Камера смотрит на кассира и руки — покупателя в кадре нет.", viewed: { by: "Петров С. (старший смены)", at: "14:04:02" } },
+      { id: "a6", date: DATE, time: "12:56:10", sc: "t-pos-10", sev: "high", source: "scale-fish", receipt: "W-201", caption: "12:56  ВЕС 1.240 КГ\nШТРИХКОД ВЫДАН\nОПЛАТЫ НЕТ 12 МИН", why: "3.2.17. Весы «рыба» выдали штрихкод 2900123004512 в 12:44. За 12 минут он не пробит ни на кассе, ни на КСО." },
+      { id: "a7", date: DATE, time: "13:56:00", sc: "t-pos-11", sev: "mid", source: "scale-veg", caption: "13:56  ВЕС 1.240 КГ\nШТРИХКОД 1 И ШТРИХКОД 2\nНАИМЕНОВАНИЯ РАЗНЫЕ", why: "3.2.18. Весы «овощи-фрукты» выдали штрихкод на бананы с тем же весом 1,240 кг (± 20 г), что и сёмга на весах «рыба» 12 минут назад." },
+      { id: "a8", date: DATE, time: "13:50:00", sc: "t-pos-09", sev: "mid", source: "kso-2", caption: "13:50  ЧЕК НЕ ЗАКРЫТ\nУХОД С ЗОНЫ КСО\nX=3 ОСТАЛОСЬ", why: "3.2.13. Чек открыт, покупатель ушёл, на площадке по-прежнему 3 товара (было 3, допуск −2). Не путать с уносом (3.2.12), где после ухода X=0.", viewed: { by: OPERATOR, at: "13:51:12" } },
+      { id: "a9", date: DATE, time: "13:41:00", sc: "t-retail-01b", sev: "mid", source: null, cam: "CAM-142-01 · ВХОД / ВЫХОД", scene: "gate", view: "Вход / выход", why: "Корзина оставлена у выхода в 13:38. За 3 минуты владелец (трек 1041) её не забрал. Кассового потока нет, титры не накладываются." },
+      { id: "a10", date: DATE, time: "12:58:00", sc: "t-retail-02", sev: "low", source: null, cam: "CAM-142-12 · ЗАЛ", scene: "pair", view: "Стеллаж молочной зоны", why: "Только аналитика зала: 4 движения руки к полке за 5 сек. Чека нет — событие готовит кражу до кассы.", viewed: { by: "Петров С. (старший смены)", at: "13:00:21" } },
+      // earlier days — visible only in "search by scenario"
+      { id: "h1", date: "13.09.2026", time: "19:44:05", sc: "t-pos-06", sev: "high", source: "pos-2", caption: "19:44  ЛЕНТА → СКАНЕР → УКЛАДКА\nДОБАВЛЕНИЯ ТОВАРА НЕТ", why: "3.2.6. Три зоны пройдены, добавления товара в POS нет.", viewed: { by: "Петров С. (старший смены)", at: "19:45:00" }, incident: "Подтверждён" },
+      { id: "h2", date: "13.09.2026", time: "11:02:30", sc: "t-pos-06", sev: "high", source: "pos-2", caption: "11:02  ЛЕНТА → СКАНЕР → УКЛАДКА\nДОБАВЛЕНИЯ ТОВАРА НЕТ", why: "3.2.6. Три зоны пройдены, добавления товара в POS нет.", viewed: { by: OPERATOR, at: "11:03:10" }, incident: "Ложное срабатывание" },
+      { id: "h3", date: "12.09.2026", time: "16:20:00", sc: "t-pos-01", sev: "high", source: "fr-5", caption: "16:20  ВОЗВРАТ\nПОКУПАТЕЛЯ НЕТ", why: "Возврат при пустой зоне покупателя.", viewed: { by: OPERATOR, at: "16:21:00" }, incident: "Принят в работу" },
+      { id: "h4", date: "12.09.2026", time: "10:15:00", sc: 1, sev: "high", source: "fr-5", caption: "10:15  АННУЛЯЦИЯ\nПОКУПАТЕЛЯ НЕТ", why: "Мой сценарий: аннуляция без покупателя.", viewed: { by: OPERATOR, at: "10:16:00" }, incident: "Закрыт" },
+      { id: "h5", date: "11.09.2026", time: "18:30:00", sc: "old-7", scName: "Возвраты после 22:00 (удалён)", sev: "mid", source: "pos-2", caption: "18:30  ВОЗВРАТ", why: "Сценарий удалён 12.09; тревоги остались в журнале.", viewed: { by: OPERATOR, at: "18:31:00" }, incident: "Закрыт" }
+    ];
+    journal.forEach(j => { if (!j.incident) j.incident = "Новый"; });
+
+    function toast(text) {
+      const el = document.getElementById("toast");
+      el.textContent = text;
+      el.classList.add("show");
       clearTimeout(window.toastTimer);
-      window.toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+      window.toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
     }
-    function setIncidentStatus(status) {
-      const el = document.getElementById('incident-status');
-      el.textContent = t(status);
-      el.className = 'health ' + (status === 'Подтверждён' ? 'err' : 'ok');
-      demoAction(t("Статус инцидента: {s}", { s: t(status) }));
+    function prioLabel(sev) { return sev === "high" ? t("высокая") : sev === "mid" ? t("средняя") : t("низкая"); }
+    const prioClass = (sev) => (sev ? "prio-" + sev : "");
+    const scenarioOf = (j) => ScenarioEditor.byId(j.sc);
+    const scenarioName = (j) => { const s = scenarioOf(j); return s ? t(s.name) : t(j.scName || "Сценарий удалён"); };
+    const nowClock = () => { const d = new Date(); return [d.getHours(), d.getMinutes(), d.getSeconds()].map(v => String(v).padStart(2, "0")).join(":"); };
+    const toSec = (hms) => { const [h, m, s] = hms.split(":").map(Number); return h * 3600 + m * 60 + (s || 0); };
+    const fromSec = (n) => [Math.floor(n / 3600), Math.floor(n % 3600 / 60), n % 60].map(v => String(v).padStart(2, "0")).join(":");
+    const dateOf = (s) => { const [d, m, y] = s.split(".").map(Number); return new Date(y, m - 1, d); };
+    const stampOf = (date, time) => { const d = dateOf(date); const sec = toSec(time); d.setHours(Math.floor(sec / 3600), Math.floor(sec % 3600 / 60), sec % 60); return d; };
+    function viewedBadge(j) {
+      return j.viewed
+        ? `<span class="rc-badge viewed" title="${esc(t("Просмотрел: {by}, {at}", { by: t(j.viewed.by), at: j.viewed.at }))}">✓ ${esc(t("Просмотрена"))}</span>`
+        : `<span class="rc-badge unviewed" title="${esc(t("Ещё никто не открывал"))}">● ${esc(t("Не просмотрена"))}</span>`;
     }
-    window.onRetailLang = () => ScenarioEditor.refresh();
+
+    /* ---------- player (archive around a moment) ---------- */
+    function makePlayer(p) {
+      const st = { base: 0, pos: 0, playing: false, timer: null };
+      const $ = (s) => document.getElementById(p + "-" + s);
+      const show = () => { $("time").textContent = fromSec(st.base + st.pos); $("range").value = st.pos; $("play").textContent = st.playing ? "⏸" : "▶"; $("play").setAttribute("aria-label", t(st.playing ? "Пауза" : "Воспроизвести")); };
+      const stop = () => { st.playing = false; clearInterval(st.timer); show(); };
+      $("play").addEventListener("click", () => {
+        if (st.playing) return stop();
+        st.playing = true; show();
+        st.timer = setInterval(() => { if (st.pos >= 30) return stop(); st.pos += 1; show(); }, 1000);
+      });
+      $("range").addEventListener("input", () => { st.pos = Number($("range").value); show(); });
+      $("back").addEventListener("click", () => { stop(); st.pos = 0; show(); });
+      return {
+        load(o) {
+          stop(); st.base = toSec(o.time); st.pos = 0;
+          $("scene").className = "video-scene " + o.scene;
+          $("cam").textContent = t(o.cam);
+          $("caption").innerHTML = o.caption;
+          const xy = $("xy");
+          if (o.xy) { xy.innerHTML = `${esc(t("На площадке: {x} · в чеке: {y}", { x: o.xy.x, y: o.xy.y }))}<b>${o.xy.x}:${o.xy.y}</b>`; xy.classList.remove("hidden"); }
+          else xy.classList.add("hidden");
+          show();
+        },
+        moment: () => fromSec(st.base), current: () => fromSec(st.base + st.pos), moved: () => st.pos !== 0
+      };
+    }
+    const alPlayer = makePlayer("al");
+    const plPlayer = makePlayer("pl");
+
+    /* ---------- ALERTS (UI-1, UI-2, СЦ-9) ---------- */
+    const queue = journal.filter(j => j.date === DATE).sort((a, b) => b.time.localeCompare(a.time));
+    let selectedAlertId = queue[0].id, viewTimer = null;
+
+    function updateCounter() {
+      const n = queue.filter(j => !j.viewed).length;
+      const el = document.getElementById("nav-alerts-count");
+      el.textContent = n || "";
+      el.classList.toggle("hidden", !n);
+      el.title = t("Непросмотренных: {n}", { n });
+      document.getElementById("queue-meta").textContent = t("не просмотрено {n} из {all}", { n, all: queue.length });
+    }
+    function renderAlerts() {
+      const only = document.getElementById("only-unviewed").checked;
+      const list = queue.filter(j => !only || !j.viewed || j.id === selectedAlertId);
+      document.getElementById("alert-list").innerHTML = list.map(j => `
+        <div class="alert-item ${prioClass(j.sev)} ${j.viewed ? "" : "unviewed"} ${j.id === selectedAlertId ? "active" : ""}" onclick="openAlert('${j.id}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openAlert('${j.id}')">
+          <div class="alert-row">
+            <div class="severity sev-${j.sev}"></div>
+            <div>
+              <div class="alert-title">${esc(scenarioName(j))}</div>
+              <div class="meta">${j.time.slice(0, 5)} · ${j.source ? esc(t(sourceById(j.source).name)) : esc(t("только видеоаналитика"))}</div>
+            </div>
+            <div class="alert-side"><span class="chip ${prioClass(j.sev)}">${prioLabel(j.sev)}</span>${viewedBadge(j)}</div>
+          </div>
+        </div>`).join("") || `<div class="empty">${esc(t("Все тревоги смены просмотрены"))}</div>`;
+      updateCounter();
+    }
+    function describe(j, el) {
+      const s = scenarioOf(j);
+      el.innerHTML = s
+        ? `<b>${esc(t(s.name))}</b>${s.code ? ` <span class="meta" style="display:inline">${esc(s.code)}</span>` : ""}<div>${esc(t(s.desc || ""))}</div>`
+        : `<b>${esc(scenarioName(j))}</b><div class="meta">${esc(t("Сценарий удалён — описания нет"))}</div>`;
+    }
+    function openAlert(id) {
+      selectedAlertId = id;
+      const j = journal.find(x => x.id === id);
+      const src = j.source ? sourceById(j.source) : null;
+      document.getElementById("alert-title").innerHTML = `${esc(scenarioName(j))} <span class="chip ${prioClass(j.sev)}">${prioLabel(j.sev)}</span> ${viewedBadge(j)}`;
+      const badge = document.getElementById("alert-source");
+      badge.className = "source " + (src ? src.cls : "src-video");
+      badge.textContent = src ? t(src.badge) : t("Только видео");
+      document.getElementById("al-caption").style.borderLeftColor = `var(--prio-${j.sev}-border)`;
+      alPlayer.load({
+        time: j.time, scene: src ? src.scene : j.scene, cam: src ? src.cam : j.cam, xy: j.xy,
+        caption: j.caption ? tx(j.caption).replace(/\n/g, "<br>") : esc(t("Кассового потока нет · титры не пишутся"))
+      });
+      describe(j, document.getElementById("alert-desc"));
+      document.getElementById("alert-why").textContent = t(j.why);
+      renderAlerts();
+      clearTimeout(viewTimer);
+      if (!j.viewed) viewTimer = setTimeout(() => {
+        if (selectedAlertId !== id) return;
+        j.viewed = { by: OPERATOR, at: nowClock() };
+        renderAlerts();
+        document.getElementById("alert-title").innerHTML = `${esc(scenarioName(j))} <span class="chip ${prioClass(j.sev)}">${prioLabel(j.sev)}</span> ${viewedBadge(j)}`;
+      }, 1000);
+    }
+    document.getElementById("only-unviewed").addEventListener("change", renderAlerts);
+
+    /* ---------- SEARCH: shared controls (UI-5, UI-6) ---------- */
+    let mode = "scenarios";
+    const picker = Retail.mountPicker(document.getElementById("src-picker"), { value: ["*"] });
+    const period = Retail.mountPeriod(document.getElementById("period"), { from: Retail.at(Retail.TODAY, 8, 0, 0), to: Retail.at(Retail.TODAY, 20, 0, 0) });
+    const inPeriod = (date, time) => { const p = period.get(); const d = stampOf(date, time); return d >= p.from && d <= p.to; };
+
+    /* ---------- search by scenario (UI-3, UI-4) ---------- */
+    function fillScenarioSelect() {
+      const sel = document.getElementById("sc-select");
+      const cur = sel.value || "all";
+      const { base, mine } = ScenarioEditor.list();
+      sel.innerHTML = `<option value="all">${esc(t("Все сценарии"))}</option>
+        <optgroup label="${esc(t("Базовые"))}">${base.map(s => `<option value="${s.id}">${esc((s.code ? s.code + " · " : "") + t(s.name))}</option>`).join("")}</optgroup>
+        <optgroup label="${esc(t("Мои"))}">${mine.map(s => `<option value="${s.id}">${esc(t(s.name))}${s.on ? "" : " · " + esc(t("выключен"))}</option>`).join("")}</optgroup>
+        <optgroup label="${esc(t("Удалённые, есть тревоги"))}"><option value="old-7">${esc(t("Возвраты после 22:00 (удалён)"))}</option></optgroup>`;
+      sel.value = Array.from(sel.options).some(o => o.value === cur) ? cur : "all";
+    }
+    let selectedJournalId = null;
+    function runScenarioSearch(quiet) {
+      const sc = document.getElementById("sc-select").value;
+      const all = picker.get().includes("*");
+      const ids = picker.ids();
+      const list = journal.filter(j => (sc === "all" || String(j.sc) === sc)
+        && (j.source ? ids.includes(j.source) : all) && inPeriod(j.date, j.time))
+        .sort((a, b) => stampOf(b.date, b.time) - stampOf(a.date, a.time));
+      document.getElementById("result-count").textContent = t("найдено: {n}", { n: list.length });
+      if (!list.length) {
+        document.getElementById("results").innerHTML = `<div class="empty">${esc(t("За выбранный период тревог этого сценария нет. Расширьте период (например, «7 дней») или проверьте сценарий на архиве в Моих сценариях."))}</div>`;
+        if (!quiet) toast(t("Тревог не найдено"));
+        return;
+      }
+      document.getElementById("results").innerHTML = list.map(j => `
+        <div class="result-item ${prioClass(j.sev)} ${j.id === selectedJournalId ? "active" : ""}" data-jid="${j.id}" onclick="openJournal('${j.id}')">
+          <div class="res-row">
+            <div><div>${j.date.slice(0, 5)} ${j.time.slice(0, 5)} · ${esc(scenarioName(j))}</div>
+              <div class="meta">${j.source ? esc(t(sourceById(j.source).name)) : esc(t("только видеоаналитика"))} · ${esc(t("инцидент: {s}", { s: t(j.incident) }))}</div></div>
+            <div class="alert-side"><span class="chip ${prioClass(j.sev)}">${prioLabel(j.sev)}</span>${viewedBadge(j)}</div>
+          </div>
+        </div>`).join("");
+      openJournal(list.some(j => j.id === selectedJournalId) ? selectedJournalId : list[0].id);
+      if (!quiet) toast(t("Найдено тревог: {n}", { n: list.length }));
+    }
+    function openJournal(id) {
+      selectedJournalId = id;
+      const j = journal.find(x => x.id === id);
+      const src = j.source ? sourceById(j.source) : null;
+      document.getElementById("player-title").textContent = `${j.date} ${j.time} · ${src ? t(src.view) : t(j.view)}`;
+      const badge = document.getElementById("player-source");
+      badge.className = "source " + (src ? src.cls : "src-video");
+      badge.textContent = src ? t(src.badge) : t("Только видео");
+      plPlayer.load({ time: j.time, scene: src ? src.scene : j.scene, cam: src ? src.cam : j.cam, xy: j.xy,
+        caption: j.caption ? tx(j.caption).replace(/\n/g, "<br>") : esc(t("Кассового потока нет · титры не пишутся")) });
+      document.getElementById("detail-h").textContent = t("Тревога и сценарий");
+      const box = document.createElement("div"); box.className = "desc-box"; describe(j, box);
+      const rec = j.receipt ? receipts.find(r => r.id === j.receipt) : null;
+      document.getElementById("receipt-view").innerHTML = box.outerHTML
+        + `<div class="desc-box" style="color:var(--muted);border-top:1px solid var(--border)">${esc(t(j.why))}</div>`
+        + (rec ? receiptHtml(rec, []) : "");
+      document.querySelectorAll("#results [data-jid]").forEach(el => el.classList.toggle("active", el.dataset.jid === id));
+    }
+
+    /* ---------- search by captions: words with AND / OR (UI-7) ---------- */
+    let terms = [{ text: "АННУЛЯЦИЯ", op: null }];
+    const norm = (s) => String(s).toUpperCase().replace(/Ё/g, "Е");
+    function groups() {
+      const out = [[]];
+      terms.forEach((x, i) => { if (i && x.op === "ИЛИ") out.push([]); out[out.length - 1].push(x.text); });
+      return out.filter(g => g.length);
+    }
+    function renderQB() {
+      const qb = document.getElementById("qb");
+      qb.innerHTML = terms.map((x, i) => `${i ? `<button type="button" class="qb-op ${x.op === "ИЛИ" ? "or" : ""}" onclick="toggleOp(${i})" title="${esc(t("Переключить И / ИЛИ"))}">${esc(t(x.op))}</button>` : ""}<span class="qb-chip">${/\s/.test(x.text) ? "«" + esc(x.text) + "»" : esc(x.text)}<button type="button" aria-label="${esc(t("Убрать"))}" onclick="removeTerm(${i})">×</button></span>`).join("")
+        + `<input id="qb-input" placeholder="${esc(t(terms.length ? "ещё слово…" : "слово или \"фраза в кавычках\", Enter"))}" aria-label="${esc(t("Текст в титрах"))}">`;
+      const input = document.getElementById("qb-input");
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") { e.preventDefault(); addTerms(input.value); }
+        if (e.key === "Backspace" && !input.value && terms.length) { terms.pop(); renderQB(); document.getElementById("qb-input").focus(); }
+      });
+      input.addEventListener("blur", () => { if (input.value.trim()) addTerms(input.value, true); });
+      qb.onclick = (e) => { if (e.target === qb) input.focus(); };
+      const g = groups();
+      const line = document.getElementById("out-mode").value === "line";
+      document.getElementById("qb-preview").textContent = !g.length ? t("Добавьте слово или фразу и нажмите Enter. Между словами — «И» или «ИЛИ» (по клику).")
+        : t(line ? "Найдёт строки титров, где есть: " : "Найдёт чеки, где есть: ") + g.map(x => x.map(w => /\s/.test(w) ? "«" + w + "»" : w).join(" " + t("и") + " ")).join("; " + t("или") + ": ") + ". " + t("«И» связывает сильнее «ИЛИ»; регистр и ё/е не важны.");
+    }
+    function addTerms(raw, noFocus) {
+      let next = "И";
+      (raw.match(/"[^"]+"|«[^»]+»|\S+/g) || []).forEach(tok => {
+        const up = norm(tok);
+        if (up === "И" || up === "AND") { next = "И"; return; }
+        if (up === "ИЛИ" || up === "OR") { next = "ИЛИ"; return; }
+        terms.push({ text: tok.replace(/^["«]|["»]$/g, ""), op: terms.length ? next : null });
+        next = "И";
+      });
+      renderQB();
+      if (!noFocus) document.getElementById("qb-input").focus();
+    }
+    function toggleOp(i) { terms[i].op = terms[i].op === "И" ? "ИЛИ" : "И"; renderQB(); }
+    function removeTerm(i) { terms.splice(i, 1); if (terms[0]) terms[0].op = null; renderQB(); }
+
+    function receiptLines(r) { return [t("Кассир") + ": " + r.cashier].concat(r.text.split("\n")).concat(r.parsed.map(p => p[0])); }
+    function matchReceipt(r) {
+      if (document.getElementById("re-toggle").checked) {
+        let re; try { re = new RegExp(document.getElementById("re-input").value, "i"); } catch (e) { return null; }
+        const lines = receiptLines(r).concat(tx(r.text).split("\n"));
+        const hit = lines.filter(l => re.test(l));
+        return hit.length ? { lines: hit } : null;
+      }
+      const g = groups();
+      if (!g.length) return null;
+      const lines = receiptLines(r).map(l => [l, tx(l)]);
+      const has = (line, w) => norm(line[0]).includes(norm(w)) || norm(line[1]).includes(norm(t(w)));
+      const byLine = document.getElementById("out-mode").value === "line";
+      for (const grp of g) {
+        if (byLine) { const hit = lines.filter(l => grp.every(w => has(l, w))); if (hit.length) return { lines: hit.map(l => l[0]), words: grp }; }
+        else if (grp.every(w => lines.some(l => has(l, w)))) return { lines: lines.filter(l => grp.some(w => has(l, w))).map(l => l[0]), words: grp };
+      }
+      return null;
+    }
+    function markWords(text, words) {
+      let out = esc(text);
+      (words || []).forEach(w => {
+        [w, t(w)].forEach(x => {
+          if (!x) return;
+          const re = new RegExp(x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/[ЕЁ]/gi, "[ЕЁеё]"), "gi");
+          out = out.replace(re, m => `<span class="hit">${m}</span>`);
+        });
+      });
+      return out;
+    }
+    let selectedReceipt = receipts[0], selectedWords = [];
+    function receiptHtml(rec, words) {
+      const src = sourceById(rec.source);
+      return `<div class="receipt">
+          <div class="receipt-line"><span>${esc(t("Чек №{id}", { id: rec.id }))}</span><span>${rec.time}</span></div>
+          <div class="receipt-line"><span>${esc(t("Кассир"))}</span><span>${markWords(t(rec.cashier), words)}</span></div>
+          <div class="receipt-line"><span>${esc(t("Источник"))}</span><span class="source ${src.cls}">${esc(t(src.name))}</span></div>
+          ${rec.parsed.map(([a, b]) => `<div class="receipt-line"><span>${markWords(t(a), words)}</span><span>${esc(t(b))}</span></div>`).join("")}
+        </div>`;
+    }
+    function renderPlayer(id, words) {
+      const rec = receipts.find(r => r.id === id) || selectedReceipt;
+      selectedReceipt = rec; selectedWords = words || [];
+      const src = sourceById(rec.source);
+      document.getElementById("player-title").textContent = `${DATE} ${rec.time} · ${t(src.view)}`;
+      const badge = document.getElementById("player-source");
+      badge.className = "source " + src.cls; badge.textContent = t(src.badge);
+      plPlayer.load({ time: rec.time, scene: src.scene, cam: src.cam, caption: markWords(tx(rec.text), selectedWords).replace(/\n/g, "<br>") });
+      document.getElementById("detail-h").textContent = t("Разбор чека");
+      document.getElementById("receipt-view").innerHTML = receiptHtml(rec, selectedWords);
+    }
+    function runCaptionSearch(quiet) {
+      const ids = picker.ids();
+      if (document.getElementById("re-toggle").checked) {
+        try { new RegExp(document.getElementById("re-input").value); } catch (e) { toast(t("Ошибка в регулярном выражении")); return; }
+      }
+      const found = receipts.map(r => ({ r, m: ids.includes(r.source) && inPeriod(DATE, r.time) ? matchReceipt(r) : null })).filter(x => x.m);
+      document.getElementById("result-count").textContent = t("найдено: {n}", { n: found.length });
+      document.getElementById("results").innerHTML = found.map(({ r, m }) => {
+        const src = sourceById(r.source);
+        return `<div class="result-item ${prioClass(r.sev)} ${r.id === selectedReceipt.id ? "active" : ""}" onclick='renderPlayer("${r.id}", ${JSON.stringify(m.words || [])}); markResult(this)'>
+          <div>${r.time} · ${esc(t("чек №{id}", { id: r.id }))} · ${esc(t(r.status))}${r.sev ? ` <span class="chip ${prioClass(r.sev)}">${prioLabel(r.sev)}</span>` : ""}</div>
+          <div class="meta">${esc(t(src.name))} · ${esc(t(r.cashier))}</div>
+          <div class="snippet">${m.lines.slice(0, 3).map(l => markWords(t(l), m.words)).join(" · ")}</div>
+        </div>`;
+      }).join("") || `<div class="empty">${esc(t("Совпадений нет. Проверьте устройства и период или замените «И» на «ИЛИ»."))}</div>`;
+      if (found[0]) renderPlayer(found[0].r.id, found[0].m.words);
+      if (!quiet) toast(t("Найдено в титрах: {n}", { n: found.length }));
+    }
+    function markResult(el) {
+      el.parentElement.querySelectorAll(".result-item").forEach(i => i.classList.remove("active"));
+      el.classList.add("active");
+      toast(t("Архив перемотан к титру"));
+    }
+
+    /* ---------- search by receipts (UI-8) ---------- */
+    function reportParams() {
+      const type = document.getElementById("report-type").value;
+      const map = {
+        all: "", returns: "", scale: "",
+        number: `<div class="form-group"><label>${t("Номер чека")}</label><input class="field" value="48288"></div>`,
+        cashier: `<div class="form-group"><label>${t("Кассир")}</label><input class="field" value="Сидорова М."></div>`,
+        sku: `<div class="form-group"><label>${t("Артикул / товар")}</label><input class="field" value="${t("МОЛОКО")}"></div>`,
+        and: `<div class="form-group"><label>${t("Товар 1")}</label><input class="field" value="${t("Хлеб")}"></div><div class="form-group"><label>${t("Товар 2")}</label><input class="field" value="${t("Молоко")}"></div>`,
+        amount: `<div class="form-group"><label>${t("Сумма от")}</label><input class="field" value="400"></div>`
+      };
+      document.getElementById("report-params").innerHTML = map[type];
+    }
+    const blob = (r) => receiptLines(r).concat(tx(r.text)).join("\n").toUpperCase();
+    function runReceiptSearch(quiet) {
+      const type = document.getElementById("report-type").value;
+      const ids = picker.ids();
+      let list = receipts.filter(r => ids.includes(r.source) && inPeriod(DATE, r.time));
+      if (type === "number") list = list.filter(r => r.id === "48288");
+      if (type === "cashier") list = list.filter(r => r.cashier.includes("Сидорова"));
+      if (type === "sku") list = list.filter(r => /МОЛОКО|MILK/.test(blob(r)));
+      if (type === "returns") list = list.filter(r => /АННУЛЯЦИЯ|ВОЗВРАТ|VOID|RETURN/.test(blob(r)));
+      if (type === "scale") list = list.filter(r => sourceById(r.source).group === "scale");
+      if (type === "and") list = list.filter(r => /ХЛЕБ|BREAD/.test(blob(r)) && /МОЛОКО|MILK/.test(blob(r)));
+      if (type === "amount") list = list.filter(r => parseFloat(r.total.replace(/\s/g, "").replace(",", ".")) >= 400);
+      document.getElementById("result-count").textContent = t("найдено: {n}", { n: list.length });
+      document.getElementById("results").innerHTML = list.length ? `
+        <table>
+          <thead><tr><th>${t("Время")}</th><th>${t("Чек")}</th><th>${t("Кассир")}</th><th>${t("Сумма")}</th><th>${t("Источник")}</th></tr></thead>
+          <tbody>${list.map(r => {
+            const src = sourceById(r.source);
+            return `<tr class="clickable ${prioClass(r.sev)} ${r.id === selectedReceipt.id ? "active" : ""}" onclick="renderPlayer('${r.id}')">
+              <td>${r.time}</td><td>№${r.id}</td><td>${esc(t(r.cashier))}</td><td>${r.total}</td>
+              <td><span class="source ${src.cls}">${esc(t(src.name))}</span>${r.sev ? ` <span class="chip ${prioClass(r.sev)}">${prioLabel(r.sev)}</span>` : ""}</td></tr>`;
+          }).join("")}</tbody>
+        </table>` : `<div class="empty">${esc(t("Чеков не найдено. Проверьте устройства и период."))}</div>`;
+      if (list[0]) renderPlayer(list[0].id);
+      if (!quiet) toast(t("Отчёт построен: {n} чек.", { n: list.length }));
+    }
+
+    function runSearch(quiet) {
+      if (!picker.ids().length) { toast(t("Выберите хотя бы одно устройство")); return; }
+      if (mode === "scenarios") runScenarioSearch(quiet);
+      else if (mode === "captions") runCaptionSearch(quiet);
+      else runReceiptSearch(quiet);
+    }
+    function setMode(m, quiet) {
+      mode = m;
+      document.querySelectorAll(".mode-btn").forEach(b => b.classList.toggle("active", b.dataset.mode === m));
+      ["scenarios", "captions", "receipts"].forEach(k => document.getElementById(k + "-query").classList.toggle("hidden", k !== m));
+      renderTemplates();
+      runSearch(quiet);
+    }
+    document.querySelectorAll(".mode-btn").forEach(btn => btn.addEventListener("click", () => setMode(btn.dataset.mode)));
+    document.getElementById("run-search").addEventListener("click", () => runSearch());
+    document.getElementById("report-type").addEventListener("change", reportParams);
+    document.getElementById("out-mode").addEventListener("change", renderQB);
+    document.getElementById("re-toggle").addEventListener("change", (e) => {
+      document.getElementById("qb").classList.toggle("hidden", e.target.checked);
+      document.getElementById("qb-preview").classList.toggle("hidden", e.target.checked);
+      document.getElementById("re-input").classList.toggle("hidden", !e.target.checked);
+    });
+
+    /* ---------- saved search templates (UI-11) ---------- */
+    const searchTemplates = [
+      { id: "st1", name: "Аннуляции Ивановой с водкой", mode: "captions", shared: false, p: { terms: [{ text: "Иванова", op: null }, { text: "Аннуляция", op: "И" }, { text: "водка Путинка", op: "И" }] } },
+      { id: "st2", name: "Весы: штрихкод без оплаты", mode: "receipts", shared: true, p: { report: "scale", srcs: ["scale-veg", "scale-fish", "scale-meat", "scale-saus", "scale-cheese"] } },
+      { id: "st3", name: "Пронос мимо сканера за 7 дней", mode: "scenarios", shared: true, p: { sc: "t-pos-06", week: true } }
+    ];
+    const MODE_ICON = { scenarios: "⚙", captions: "T", receipts: "₽" };
+    function renderTemplates() {
+      document.getElementById("tpl-row").innerHTML = `<span class="meta">${esc(t("Шаблоны:"))}</span>` + searchTemplates.map(s =>
+        `<button type="button" class="tpl-chip" onclick="applyTemplate('${s.id}')" title="${esc(t(s.shared ? "Общий шаблон" : "Мой шаблон"))}">${MODE_ICON[s.mode]} ${esc(t(s.name))}${s.shared ? `<span class="meta">· ${esc(t("общий"))}</span>` : ""}</button>`).join("");
+    }
+    function applyTemplate(id) {
+      const s = searchTemplates.find(x => x.id === id);
+      picker.set(s.p.srcs || ["*"]);
+      if (s.p.week) period.set(Retail.at(Retail.TODAY, 0, 0, 0, -6), Retail.at(Retail.TODAY, 23, 59, 59));
+      else if (s.p.from) period.set(new Date(s.p.from), new Date(s.p.to));
+      if (s.p.terms) { terms = JSON.parse(JSON.stringify(s.p.terms)); document.getElementById("re-toggle").checked = false; document.getElementById("re-toggle").dispatchEvent(new Event("change")); renderQB(); }
+      if (s.p.report) { document.getElementById("report-type").value = s.p.report; reportParams(); }
+      if (s.p.sc) document.getElementById("sc-select").value = s.p.sc;
+      setMode(s.mode, true);
+      toast(t("Применён шаблон «{n}»", { n: t(s.name) }));
+    }
+    document.getElementById("save-tpl-btn").addEventListener("click", () => {
+      document.getElementById("save-tpl").classList.remove("hidden");
+      document.getElementById("tpl-name").focus();
+    });
+    document.getElementById("tpl-cancel").addEventListener("click", () => document.getElementById("save-tpl").classList.add("hidden"));
+    document.getElementById("tpl-ok").addEventListener("click", () => {
+      const name = document.getElementById("tpl-name").value.trim();
+      if (!name) { document.getElementById("tpl-name").classList.add("rc-invalid"); toast(t("Укажите название шаблона")); return; }
+      const p = period.get();
+      searchTemplates.push({ id: "st" + Date.now(), name, mode, shared: document.getElementById("tpl-shared").checked,
+        p: { srcs: picker.get(), from: +p.from, to: +p.to, terms: JSON.parse(JSON.stringify(terms)), report: document.getElementById("report-type").value, sc: document.getElementById("sc-select").value } });
+      document.getElementById("save-tpl").classList.add("hidden");
+      document.getElementById("tpl-name").value = "";
+      renderTemplates();
+      toast(t("Шаблон «{n}» сохранён", { n: name }));
+    });
+
+    /* ---------- PDF report (UI-9) ---------- */
+    let report = null;
+    function reportFromAlert() {
+      const j = journal.find(x => x.id === selectedAlertId);
+      openReport(reportCtx(j, alPlayer, "alert"));
+    }
+    function reportFromSearch() {
+      if (mode === "scenarios") {
+        const j = journal.find(x => x.id === selectedJournalId);
+        if (!j) return toast(t("Сначала выберите тревогу в результатах"));
+        return openReport(reportCtx(j, plPlayer, "scenario"));
+      }
+      const rec = selectedReceipt, src = sourceById(rec.source);
+      const title = mode === "captions"
+        ? (document.getElementById("re-toggle").checked ? document.getElementById("re-input").value : groups().map(g => g.join(" " + t("И") + " ")).join(" " + t("ИЛИ") + " "))
+        : document.getElementById("report-type").selectedOptions[0].textContent;
+      openReport({
+        kind: mode, title, desc: "", player: plPlayer, scene: src.scene, cam: src.cam, date: DATE, receipt: rec, words: selectedWords,
+        rows: [["Магазин", t(STORE)], ["Касса / камера", `${t(src.name)} · ${t(src.cam)}`], ["Чек", "№" + rec.id], ["Кассир", t(rec.cashier)], ["Режим поиска", mode === "captions" ? t("По титрам") : t("По чекам")]]
+      });
+    }
+    function reportCtx(j, player, kind) {
+      const src = j.source ? sourceById(j.source) : null, s = scenarioOf(j);
+      const rec = j.receipt ? receipts.find(r => r.id === j.receipt) : null;
+      return {
+        kind, title: scenarioName(j), desc: s ? t(s.desc || "") : "", player, scene: src ? src.scene : j.scene, cam: src ? src.cam : j.cam, date: j.date, receipt: rec, words: [], xy: j.xy,
+        rows: [["Магазин", t(STORE)], ["Касса / камера", src ? `${t(src.name)} · ${t(src.cam)}` : t(j.cam)], ["Тревога №", j.id.toUpperCase()], ["Приоритет", prioLabel(j.sev)],
+          ["Сценарий", (s && s.code ? s.code + " · " : "") + scenarioName(j)], ["Кассир", rec ? t(rec.cashier) : "—"], ["Просмотр", j.viewed ? t("Просмотрел: {by}, {at}", { by: t(j.viewed.by), at: j.viewed.at }) : t("Не просмотрена")], ["Инцидент", t(j.incident)]]
+      };
+    }
+    function openReport(ctx) {
+      report = Object.assign(ctx, { frame: "moment", withReceipt: !!ctx.receipt });
+      const moved = ctx.player.moved();
+      document.getElementById("pdf-h").textContent = t("Отчёт PDF");
+      document.getElementById("pdf-opts").innerHTML = `
+        <div class="meta" style="margin:0 0 6px">${esc(t("Кадр с камеры"))}</div>
+        <label class="opt"><input type="radio" name="frame" value="moment" checked><span>${esc(t("Момент срабатывания"))} · ${ctx.player.moment()}</span></label>
+        <label class="opt"><input type="radio" name="frame" value="current" ${moved ? "" : "disabled"}><span>${esc(t("Текущий кадр на паузе"))} · ${ctx.player.current()}${moved ? "" : `<br><span class="meta">${esc(t("Остановите видео на нужном кадре — и выберите этот пункт"))}</span>`}</span></label>
+        <div class="meta" style="margin:10px 0 6px">${esc(t("Состав"))}</div>
+        <label class="opt"><input type="checkbox" id="pdf-receipt" ${ctx.receipt ? "checked" : "disabled"}><span>${esc(t("Текст чека"))}${ctx.receipt ? "" : ` · ${esc(t("чека нет"))}`}</span></label>`;
+      document.getElementById("pdf-audit").textContent = t("Формирование отчёта записывается в журнал аудита. Платёжные реквизиты в отчёт не попадают.");
+      document.getElementById("pdf-close").textContent = t("Закрыть");
+      document.getElementById("pdf-print").textContent = t("Сохранить PDF");
+      document.querySelectorAll('#pdf-opts input[name="frame"]').forEach(r => r.addEventListener("change", () => { report.frame = r.value; renderSheet(); }));
+      document.getElementById("pdf-receipt").addEventListener("change", (e) => { report.withReceipt = e.target.checked; renderSheet(); });
+      renderSheet();
+      document.getElementById("pdf-modal").classList.add("open");
+      document.getElementById("pdf-print").focus();
+    }
+    function renderSheet() {
+      const r = report;
+      const time = r.frame === "current" ? r.player.current() : r.player.moment();
+      const rec = r.withReceipt ? r.receipt : null;
+      const recText = rec ? (tx(rec.text).split("\n").map(l => l.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]))).join("\n")) : "";
+      let marked = recText;
+      (r.words || []).forEach(w => { const re = new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/[ЕЁ]/gi, "[ЕЁеё]"), "gi"); marked = marked.replace(re, m => `<mark>${m}</mark>`); });
+      const kindTitle = { alert: "Отчёт по тревоге", scenario: "Отчёт · поиск по сценариям", captions: "Отчёт · поиск по титрам", receipts: "Отчёт · поиск по чекам" }[r.kind];
+      document.getElementById("pdf-sheet").innerHTML = `
+        <div class="pdf-brand"><span>${esc(t("Интеллект X · Ритейл"))}</span><span>${esc(t(kindTitle))}</span></div>
+        <h1>${esc(r.title)}</h1>
+        ${r.desc ? `<p class="pdf-desc">${esc(r.desc)}</p>` : ""}
+        <div class="pdf-frame"><div class="video-scene ${r.scene}"></div><div class="cam-tag">${esc(t(r.cam))}</div>
+          ${r.xy ? `<div class="xy-overlay">${esc(t("На площадке: {x} · в чеке: {y}", { x: r.xy.x, y: r.xy.y }))}<b>${r.xy.x}:${r.xy.y}</b></div>` : ""}
+          <div class="stamp">${r.date} ${time}</div></div>
+        <div class="pdf-cap">${esc(r.frame === "current" ? t("Кадр выбран оператором на паузе") : t("Кадр в момент срабатывания"))}</div>
+        ${rec ? `<h3>${esc(t("Чек №{id}", { id: rec.id }))}</h3><div class="pdf-receipt">${marked}</div>` : ""}
+        <h3>${esc(t("Сведения"))}</h3>
+        <table>${r.rows.concat([["Дата и время кадра", `${r.date} ${time}`]]).map(([k, v]) => `<tr><td>${esc(t(k))}</td><td>${esc(v)}</td></tr>`).join("")}</table>
+        <div class="pdf-foot">${esc(t("Сформировал: {who}, {when}", { who: t(OPERATOR), when: "09.11.2026 " + nowClock() }))}</div>`;
+    }
+    function closeReport() { document.getElementById("pdf-modal").classList.remove("open"); }
+    function printReport() { toast(t("Откроется печать — выберите «Сохранить как PDF»")); setTimeout(() => window.print(), 50); }
+    document.getElementById("pdf-modal").addEventListener("click", (e) => { if (e.target.id === "pdf-modal") closeReport(); });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeReport(); });
+
+    /* ---------- navigation ---------- */
+    function showScreen(id) {
+      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+      document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
+      document.getElementById("screen-" + id).classList.add("active");
+      document.querySelector(`[data-screen="${id}"]`).classList.add("active");
+      Retail.closePopovers();
+    }
+    document.querySelectorAll(".nav-item").forEach(btn => btn.addEventListener("click", () => showScreen(btn.dataset.screen)));
+
+    window.onRetailLang = function () {
+      picker.refresh(); period.refresh();
+      reportParams();
+      fillScenarioSelect();
+      renderQB();
+      renderTemplates();
+      ScenarioEditor.refresh();
+      openAlert(selectedAlertId);
+      runSearch(true);
+    };
+
     RetailI18n.bindChrome();
-    ScenarioEditor.mount(document.getElementById("scenario-editor"), { toast: demoAction });
+    ScenarioEditor.mount(document.getElementById("scenario-editor"), { toast, onChange: () => { fillScenarioSelect(); renderAlerts(); } });
+    window.onRetailLang();
   </script>
 </body>
 </html>

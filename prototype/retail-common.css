@@ -1,0 +1,84 @@
+/* Shared controls for both Retail prototypes: device picker, period picker, status badges.
+ * Load BEFORE ../bridge.css. Colours only through page / ONE PSIM tokens. */
+
+:root {
+  --rc-ok-bg: var(--one-success-bg, rgba(34, 197, 94, .16));
+  --rc-ok-text: var(--one-success-text, #bbf7d0);
+  --rc-ok-icon: var(--success);
+}
+
+/* ---- popover ---- */
+.rc-pop {
+  position: fixed; z-index: 50; max-width: calc(100vw - 16px); max-height: calc(100vh - 16px); overflow: auto;
+  background: var(--toast-bg, var(--surface)); border: 1px solid var(--border); border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .28); color: var(--text); font-size: 13px;
+}
+.rc-foot { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--border); }
+.rc-foot .btn { padding: 6px 12px; border-radius: 6px; }
+.rc-hint { flex: 1; font-size: 11px; color: var(--muted); }
+
+/* ---- device picker ---- */
+.rc-picker { position: relative; min-width: 0; }
+.rc-trigger {
+  display: flex; align-items: center; gap: 8px; width: 100%; min-width: 0; text-align: left; cursor: pointer;
+  padding-right: 2rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238C8C8C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right .5rem center; background-size: 1rem;
+}
+.rc-trigger:disabled { cursor: default; }
+.rc-sum { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rc-off { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--danger); }
+.rc-search { margin: 10px 12px 4px; width: calc(100% - 24px); }
+.rc-list { max-height: 320px; overflow: auto; padding: 6px 0; }
+.rc-row { display: flex; align-items: center; gap: 10px; padding: 6px 12px; cursor: pointer; }
+.rc-row:hover { background: var(--surface2); }
+.rc-all { font-weight: 600; border-bottom: 1px solid var(--border); margin-bottom: 4px; }
+.rc-group { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; padding-top: 10px; }
+.rc-dev { padding-left: 28px; }
+.rc-name { flex: 1; }
+.rc-status { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+.rc-status.off { color: var(--danger); }
+.rc-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex: none; }
+.rc-dot.on { background: var(--success); }
+.rc-dot.off { background: var(--danger); }
+
+/* ---- period picker ---- */
+.rc-period { position: relative; display: flex; }
+.rc-period-input { padding-right: 36px !important; }
+.rc-period-input.rc-invalid { border-color: var(--danger) !important; }
+.rc-cal-btn {
+  position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+  width: 28px; height: 28px; border: 0; border-radius: 6px; background: transparent; color: var(--muted); cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.rc-cal-btn:hover { background: var(--surface2); color: var(--text); }
+.rc-cal-btn svg { width: 18px; height: 18px; }
+.rc-presets { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 12px; border-bottom: 1px solid var(--border); }
+.rc-preset { padding: 4px 10px !important; font-size: 12px; border-radius: 14px !important; }
+.rc-cals { display: grid; grid-template-columns: repeat(2, 236px); gap: 16px; padding: 12px; }
+.rc-cal-title { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 6px; }
+.rc-cal-h { display: grid; grid-template-columns: 26px 1fr 78px 26px; gap: 4px; align-items: center; margin-bottom: 6px; }
+.rc-cal-h .field { padding: 4px 24px 4px 6px; font-size: 12px; background-position: right 4px center; }
+.rc-nav { border: 0; background: transparent; color: var(--text); font-size: 18px; cursor: pointer; border-radius: 6px; height: 26px; }
+.rc-nav:hover { background: var(--surface2); }
+.rc-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
+.rc-wd { font-size: 10px; color: var(--muted); padding: 4px 0; }
+.rc-day { border: 0; background: transparent; color: var(--text); font: inherit; font-size: 12px; height: 28px; border-radius: 6px; cursor: pointer; }
+.rc-day:hover { background: var(--surface2); }
+.rc-day.range { background: color-mix(in srgb, var(--accent) 14%, transparent); }
+.rc-day.sel { background: var(--accent); color: #fff; font-weight: 600; }
+.rc-time { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 12px; color: var(--muted); }
+.rc-time .field { flex: 1; padding: 4px 8px; font-family: Consolas, "Cascadia Mono", monospace; }
+.rc-time .field.rc-invalid { border-color: var(--danger); }
+.rc-err { flex: 1; color: var(--danger); font-size: 12px; }
+
+/* ---- viewed badge (UI-2) ---- */
+.rc-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 12px; white-space: nowrap; }
+.rc-badge.unviewed { background: var(--prio-high-bg); color: var(--prio-high-text); }
+.rc-badge.viewed { background: var(--rc-ok-bg); color: var(--rc-ok-text); }
+.rc-badge .rc-dot.on { background: var(--rc-ok-icon); }
+
+@media (max-width: 640px) {
+  .rc-cals { grid-template-columns: 1fr; }
+  .rc-pop { left: 8px !important; right: 8px; }
+}
