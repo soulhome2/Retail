@@ -2,6 +2,8 @@
 
 Источник стиля: соседний клон `../ONE.PSIM.PrototypeKit` (`AGENTS.md`, `docs/RESTYLE-RULES.md` §0–§4). Словарь и native-лестницы скопированы из кита как есть, без пересборки.
 
+> **11.11.2026 — прототип v5.** Каркас переделан по образцу Incident Manager (`../IM`): шапка, рейка разделов, дерево магазинов, очередь и карточка тревоги, видеомонитор с чеком, строка состояния; новая закладка «Конфигурация» — все настройки сервера; тема обновлена из кита (словарь от 03.11.2026), шрифт Inter — в `theme/fonts/`; английский язык полностью. Что и почему — [Переработка интерфейса по образцу IM](Specification/2026-11-11%20Переработка%20интерфейса%20по%20образцу%20IM.md). Разделы ниже про рестайл — история (до v5 стили были внутри `index.html`).
+>
 > **09.11.2026:** прототип один — `prototype/index.html` (бывший `short_version.html`). Старый полный прототип удалён; упоминания «полного» и «короткого» ниже — история рестайла.
 
 Изменено только оформление. Разметка — две строки подключения `bridge.css` и `data-theme="dark"` на полном прототипе (китовский Dark живёт на `[data-theme=dark]`, не на `:root`). JS и адаптив не трогались.
@@ -13,7 +15,9 @@
 | [`theme/one-psim.css`](theme/one-psim.css) | Словарь `--one-*` из кита |
 | [`theme/native.css`](theme/native.css) | Чекбокс / радио / switch / `<select>` без классов (D-040) |
 | [`bridge.css`](bridge.css) | Маппинг переменных + лестницы §2 |
-| [`prototype/index.html`](prototype/index.html) | Прототип: Тревоги, Поиск, Мои сценарии; переключатель темы и языка; `<link href="../bridge.css">` |
+| [`prototype/index.html`](prototype/index.html) | Прототип v5: Тревоги, Поиск, Мои сценарии, Конфигурация; переключатель темы и языка; `<link href="../bridge.css">` |
+| [`prototype/retail.css`](prototype/retail.css), [`app.js`](prototype/app.js) | Каркас по образцу IM и логика экранов |
+| [`prototype/data.js`](prototype/data.js), [`config-data.js`](prototype/config-data.js), [`config.js`](prototype/config.js) | Демо-сервер `RetailApi`, серверная конфигурация и её закладка |
 | [`prototype/retail-common.js`](prototype/retail-common.js), [`scenario-editor.js`](prototype/scenario-editor.js) | Устройства, выбор периода, редактор сценариев (+ одноимённые `.css`) |
 
 ## Диагностика (§0)

@@ -3,512 +3,267 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Интеллект X — Ритейл · короткая версия</title>
-  <style>
-    :root, html[data-theme="dark"] {
-      --bg: #10151c;
-      --surface: #1a2230;
-      --surface2: #243044;
-      --border: #314057;
-      --text: #e8edf4;
-      --muted: #8b9cb3;
-      --accent: #3b82f6;
-      --danger: #ef4444;
-      --warning: #f59e0b;
-      --success: #22c55e;
-      --sidebar: 210px;
-      --note-bg: #182433;
-      --note-strong: #93c5fd;
-      --toast-bg: #17263a;
-      --toast-border: #35557d;
-      --video-bg: #0a0e14;
-      --caption-bg: rgba(3,7,18,.88);
-      --cam-tag: #cbd5e1;
-      --prio-high-bg: rgba(239,68,68,.16);
-      --prio-high-border: #ef4444;
-      --prio-high-text: #fecaca;
-      --prio-mid-bg: rgba(245,158,11,.16);
-      --prio-mid-border: #f59e0b;
-      --prio-mid-text: #fde68a;
-      --prio-low-bg: rgba(59,130,246,.16);
-      --prio-low-border: #3b82f6;
-      --prio-low-text: #bfdbfe;
-      --src-pos-bg: #1e3a5f; --src-pos-fg: #93c5fd;
-      --src-file-bg: #3b2f1e; --src-file-fg: #fcd34d;
-      --src-fr-bg: #2e1e3b; --src-fr-fg: #d8b4fe;
-      --src-kso-bg: #1e3b2f; --src-kso-fg: #6ee7b7;
-      --src-ofd-bg: #1e2f3b; --src-ofd-fg: #7dd3fc;
-      --src-scale-bg: #3b1e28; --src-scale-fg: #fda4af;
-      --src-video-bg: #2a2438; --src-video-fg: #c4b5fd;
-    }
-    html[data-theme="light"] {
-      --bg: #f3f5f8;
-      --surface: #ffffff;
-      --surface2: #eef2f7;
-      --border: #d5deea;
-      --text: #1c2430;
-      --muted: #5b6b80;
-      --accent: #2563eb;
-      --danger: #dc2626;
-      --warning: #d97706;
-      --success: #16a34a;
-      --note-bg: #e8f1ff;
-      --note-strong: #1d4ed8;
-      --toast-bg: #ffffff;
-      --toast-border: #bfd0e8;
-      --video-bg: #1a2330;
-      --caption-bg: rgba(15,23,42,.88);
-      --cam-tag: #e2e8f0;
-      --prio-high-bg: #fee2e2;
-      --prio-high-border: #dc2626;
-      --prio-high-text: #991b1b;
-      --prio-mid-bg: #fef3c7;
-      --prio-mid-border: #d97706;
-      --prio-mid-text: #92400e;
-      --prio-low-bg: #dbeafe;
-      --prio-low-border: #2563eb;
-      --prio-low-text: #1e40af;
-      --src-pos-bg: #dbeafe; --src-pos-fg: #1d4ed8;
-      --src-file-bg: #fef3c7; --src-file-fg: #92400e;
-      --src-fr-bg: #ede9fe; --src-fr-fg: #6d28d9;
-      --src-kso-bg: #d1fae5; --src-kso-fg: #047857;
-      --src-ofd-bg: #e0f2fe; --src-ofd-fg: #0369a1;
-      --src-scale-bg: #ffe4e6; --src-scale-fg: #be123c;
-      --src-video-bg: #ede9fe; --src-video-fg: #5b21b6;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: "Segoe UI", system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-    }
-    button, select, input { font: inherit; }
-    .sidebar {
-      width: var(--sidebar);
-      background: var(--surface);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      flex-shrink: 0;
-    }
-    .logo { padding: 18px 16px; border-bottom: 1px solid var(--border); font-weight: 700; }
-    .logo span { display: block; margin-top: 4px; color: var(--accent); font-size: 11px; font-weight: 500; }
-    .nav { padding: 10px 8px; flex: 1; }
-    .nav-item {
-      width: 100%; display: flex; align-items: center; gap: 10px;
-      padding: 10px 12px; margin-bottom: 4px; border: 0; border-radius: 8px;
-      background: none; color: var(--muted); text-align: left; cursor: pointer;
-    }
-    .nav-item:hover { background: var(--surface2); color: var(--text); }
-    .nav-item.active { background: var(--accent); color: #fff; }
-    .sidebar-footer { padding: 14px 16px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); line-height: 1.5; }
-    .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-    .topbar {
-      height: 52px; padding: 0 20px; display: flex; align-items: center; justify-content: space-between;
-      background: var(--surface); border-bottom: 1px solid var(--border);
-    }
-    .store-select, .field, .btn {
-      background: var(--surface2); border: 1px solid var(--border); color: var(--text);
-      border-radius: 6px; padding: 7px 10px;
-    }
-    .content { flex: 1; overflow: auto; padding: 20px; }
-    .screen { display: none; }
-    .screen.active { display: block; }
-    h1 { font-size: 20px; font-weight: 600; }
-    .subtitle { color: var(--muted); font-size: 13px; margin: 4px 0 16px; }
-    .topbar-right { display: flex; align-items: center; gap: 12px; }
-    .note {
-      background: var(--note-bg); border: 1px solid var(--border); border-radius: 8px;
-      padding: 10px 14px; font-size: 12px; color: var(--muted); margin-bottom: 16px;
-    }
-    .note strong { color: var(--note-strong); }
-    .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-    .panel-h {
-      display: flex; justify-content: space-between; align-items: center; gap: 10px;
-      padding: 11px 14px; border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 600;
-    }
-    .mode-switch { display: flex; gap: 4px; margin-bottom: 16px; }
-    .mode-btn {
-      padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border);
-      background: var(--surface); color: var(--muted); cursor: pointer;
-    }
-    .mode-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
-    .workspace { display: grid; grid-template-columns: 340px 1fr; gap: 16px; }
-    .form-stack { display: grid; gap: 10px; padding: 14px; }
-    .form-group label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 5px; }
-    .field, .store-select { width: 100%; }
-    .btn { cursor: pointer; }
-    .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-    .btn-ghost { background: transparent; }
-    .btn-danger { background: transparent; color: #fca5a5; border-color: #7f1d1d; }
-    .row { display: flex; gap: 8px; flex-wrap: wrap; }
-    .video {
-      position: relative; aspect-ratio: 16/8.2; background: var(--video-bg);
-      display: flex; align-items: center; justify-content: center; overflow: hidden;
-    }
-    .video-scene { position: absolute; inset: 0; }
-    .video-scene::before, .video-scene::after { content: ""; position: absolute; border-radius: 50% 50% 42% 42%; }
-    .video-scene.cashier { background: linear-gradient(#2a384c, #111827); }
-    .video-scene.cashier::before { width: 90px; height: 140px; left: 38%; bottom: 18%; background: #94a3b8; }
-    .video-scene.cashier::after { width: 46%; height: 18%; left: 27%; bottom: 8%; background: #64748b; border-radius: 8px; }
-    .video-scene.pair { background: linear-gradient(#2a384c, #111827); }
-    .video-scene.pair::before { width: 80px; height: 130px; left: 28%; bottom: 16%; background: #94a3b8; }
-    .video-scene.pair::after { width: 80px; height: 130px; left: 54%; bottom: 16%; background: #fca5a5; }
-    .video-scene.gate { background: linear-gradient(#2a384c, #111827); }
-    .video-scene.gate::before, .video-scene.gate::after { width: 18px; height: 70%; top: 15%; background: #ef4444; border-radius: 4px; }
-    .video-scene.gate::before { left: 22%; }
-    .video-scene.gate::after { right: 22%; }
-    .cam-tag {
-      position: absolute; top: 10px; right: 10px; z-index: 2;
-      font-size: 10px; letter-spacing: .06em; color: var(--cam-tag);
-      background: rgba(0,0,0,.55); padding: 4px 8px; border-radius: 4px;
-    }
-    .caption {
-      position: absolute; left: 12px; bottom: 12px; z-index: 2; width: min(420px, calc(100% - 24px));
-      background: var(--caption-bg); border-left: 3px solid var(--accent); color: #e8edf4;
-      padding: 10px 12px; font-family: Consolas, "Cascadia Mono", monospace;
-      font-size: 13px; line-height: 1.5; white-space: pre-wrap;
-      box-shadow: 0 8px 24px rgba(0,0,0,.4);
-    }
-    .caption .hit { background: #854d0e; color: #fef3c7; }
-    .caption .risk { color: #fca5a5; font-weight: 700; }
-    .source {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 11px; border-radius: 12px; padding: 2px 8px; white-space: nowrap;
-    }
-    .src-pos { background: var(--src-pos-bg); color: var(--src-pos-fg); }
-    .src-file { background: var(--src-file-bg); color: var(--src-file-fg); }
-    .src-fr { background: var(--src-fr-bg); color: var(--src-fr-fg); }
-    .src-kso { background: var(--src-kso-bg); color: var(--src-kso-fg); }
-    .src-ofd { background: var(--src-ofd-bg); color: var(--src-ofd-fg); }
-    .src-scale { background: var(--src-scale-bg); color: var(--src-scale-fg); }
-    .src-video { background: var(--src-video-bg); color: var(--src-video-fg); }
-    .prio-high { background: var(--prio-high-bg); border-left: 4px solid var(--prio-high-border); }
-    .prio-mid { background: var(--prio-mid-bg); border-left: 4px solid var(--prio-mid-border); }
-    .prio-low { background: var(--prio-low-bg); border-left: 4px solid var(--prio-low-border); }
-    .chip.prio-high { background: var(--prio-high-bg); color: var(--prio-high-text); }
-    .chip.prio-mid { background: var(--prio-mid-bg); color: var(--prio-mid-text); }
-    .chip.prio-low { background: var(--prio-low-bg); color: var(--prio-low-text); }
-    .legend { display: flex; gap: 8px; flex-wrap: wrap; margin: -6px 0 16px; }
-    tr.prio-high td, tr.prio-mid td, tr.prio-low td { background: inherit; }
-    table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    th, td { padding: 9px 12px; text-align: left; border-bottom: 1px solid var(--border); }
-    th { color: var(--muted); font-weight: 500; }
-    tr.clickable { cursor: pointer; }
-    tr.clickable:hover td, tr.clickable.active td { background: rgba(59,130,246,.12); }
-    .result-item, .alert-item, .scenario-item {
-      padding: 10px 12px; border-bottom: 1px solid var(--border); cursor: pointer;
-    }
-    .result-item:hover, .alert-item:hover, .scenario-item:hover,
-    .result-item.active, .alert-item.active, .scenario-item.active { box-shadow: inset 0 0 0 1px var(--accent); }
-    .scenario-item:hover, .scenario-item.active { background: var(--surface2); }
-    .meta { color: var(--muted); font-size: 11px; margin-top: 3px; }
-    .receipt { padding: 12px 14px; font-family: Consolas, "Cascadia Mono", monospace; font-size: 12px; }
-    .receipt-line { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px dashed var(--border); }
-    .chip { font-size: 11px; padding: 4px 8px; border-radius: 12px; background: var(--surface2); color: var(--muted); }
-    .severity { width: 4px; border-radius: 2px; }
-    .sev-high { background: var(--danger); }
-    .sev-mid { background: var(--warning); }
-    .sev-low { background: var(--accent); }
-    .alert-row { display: grid; grid-template-columns: 4px 1fr auto; gap: 10px; align-items: start; }
-    .grid-2 { display: grid; grid-template-columns: minmax(280px, 1fr) minmax(360px, 1fr); gap: 16px; }
-    .alerts-grid { grid-template-columns: minmax(300px, 420px) minmax(0, 1fr); }
-    .hidden { display: none !important; }
-    .toast {
-      position: fixed; right: 20px; bottom: 20px; z-index: 20;
-      padding: 10px 14px; border-radius: 8px; border: 1px solid var(--toast-border);
-      background: var(--toast-bg); color: var(--text); font-size: 13px; opacity: 0; transform: translateY(8px); transition: .2s;
-    }
-    .toast.show { opacity: 1; transform: none; }
-    @media (max-width: 1100px) {
-      .workspace, .grid-2 { grid-template-columns: 1fr; }
-      .sidebar { width: 64px; }
-      .logo, .nav-item { font-size: 0; }
-      .logo span, .sidebar-footer { display: none; }
-      .nav-item { justify-content: center; }
-    }
-    /* ---- v4 (замечания 08.11) ---- */
-    :root, [data-theme="light"] {
-      --paper-bg: #ffffff; --paper-fg: #111827; --paper-muted: #4b5563; --paper-line: #d1d5db; --paper-hit: #fde68a;
-    }
-    .nav-item { display: flex; align-items: center; gap: 8px; }
-    .nav-count {
-      margin-left: auto; min-width: 20px; padding: 1px 6px; border-radius: 10px; font-size: 11px; font-weight: 700; text-align: center;
-      background: var(--prio-high-bg); color: var(--prio-high-text);
-    }
-    .nav-item.active .nav-count { background: rgba(255,255,255,.25); color: #fff; }
-    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: -6px 0 16px; }
-    .toolbar .legend { margin: 0; }
-    .check-label { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
-    .alert-row { grid-template-columns: 4px 1fr auto; }
-    .alert-side { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-    .res-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: start; }
-    .alert-item.unviewed .alert-title { font-weight: 700; }
-    .panel-h .row { gap: 6px; align-items: center; }
-    .btn-sm { padding: 4px 10px; font-size: 12px; }
-    /* player */
-    .player-bar { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-top: 1px solid var(--border); font-size: 12px; }
-    .player-bar input[type="range"] { flex: 1; accent-color: var(--accent); }
-    .player-time { font-family: Consolas, "Cascadia Mono", monospace; min-width: 64px; }
-    .play-btn { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface2); color: var(--text); cursor: pointer; }
-    .xy-overlay {
-      position: absolute; top: 34px; right: 10px; padding: 8px 12px; border-radius: 8px;
-      background: var(--caption-bg); color: #e8edf4; font-size: 12px; text-align: right; border: 1px solid var(--prio-high-border);
-    }
-    .xy-overlay b { display: block; font-size: 26px; line-height: 1.1; color: #fca5a5; }
-    .desc-box { padding: 12px 14px; font-size: 13px; line-height: 1.55; }
-    .desc-box .meta { margin-top: 6px; }
-    /* query builder (UI-7) */
-    .qb {
-      display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 6px; min-height: 40px;
-      background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; cursor: text;
-    }
-    .qb:focus-within { outline: 2px solid var(--accent); outline-offset: -1px; }
-    .qb-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 4px 3px 9px; border-radius: 12px; background: var(--surface); border: 1px solid var(--border); font-size: 12px; }
-    .qb-chip button { border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 14px; line-height: 1; padding: 0 4px; }
-    .qb-op {
-      border: 1px solid var(--accent); background: transparent; color: var(--accent); border-radius: 6px;
-      font-size: 11px; font-weight: 700; padding: 2px 6px; cursor: pointer;
-    }
-    .qb-op.or { border-color: var(--warning); color: var(--warning); }
-    .qb input { flex: 1; min-width: 140px; border: 0 !important; background: transparent !important; color: var(--text); outline: none; padding: 4px; font: inherit; box-shadow: none !important; }
-    .qb-preview { font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
-    .hidden-soft { display: none; }
-    /* saved templates (UI-11) */
-    .tpl-row { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 14px; border-bottom: 1px solid var(--border); align-items: center; }
-    .tpl-row .meta { margin: 0 4px 0 0; }
-    .tpl-chip { border: 1px solid var(--border); background: var(--surface2); color: var(--text); border-radius: 14px; padding: 3px 10px; font-size: 12px; cursor: pointer; }
-    .tpl-chip:hover { border-color: var(--accent); }
-    .tpl-chip .meta { display: inline; margin-left: 4px; }
-    .save-tpl { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
-    .save-tpl .row { grid-column: 1 / -1; justify-content: flex-end; align-items: center; }
-    .field-hint { font-size: 11px; color: var(--muted); margin-top: 5px; line-height: 1.45; }
-    .empty { padding: 16px 14px; color: var(--muted); font-size: 13px; line-height: 1.55; }
-    .caption .hit, .snippet .hit { background: #854d0e; color: #fef3c7; border-radius: 2px; }
-    .snippet { font-family: Consolas, "Cascadia Mono", monospace; font-size: 11px; color: var(--muted); margin-top: 4px; }
-    /* PDF report (UI-9) */
-    .modal { position: fixed; inset: 0; z-index: 60; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(0,0,0,.55); }
-    .modal.open { display: flex; }
-    .pdf-dialog { display: grid; grid-template-columns: 260px minmax(0, 1fr); width: min(1080px, 100%); max-height: calc(100vh - 40px); background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-    .pdf-side { padding: 16px; border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px; overflow: auto; font-size: 13px; }
-    .pdf-side h2 { font-size: 15px; margin: 0; }
-    .pdf-side .opt { display: flex; gap: 8px; align-items: flex-start; cursor: pointer; line-height: 1.4; }
-    .pdf-side .opt input { margin-top: 2px; }
-    .pdf-side .grow { flex: 1; }
-    .pdf-preview { background: var(--surface2); padding: 18px; overflow: auto; }
-    .pdf-sheet { background: var(--paper-bg); color: var(--paper-fg); max-width: 720px; margin: 0 auto; padding: 32px 36px; border-radius: 4px; box-shadow: 0 8px 24px rgba(0,0,0,.25); font-size: 12px; line-height: 1.5; }
-    .pdf-brand { display: flex; justify-content: space-between; color: var(--paper-muted); font-size: 10px; text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid var(--paper-line); padding-bottom: 8px; }
-    .pdf-sheet h1 { font-size: 22px; margin: 14px 0 6px; color: var(--paper-fg); }
-    .pdf-desc { color: var(--paper-muted); margin: 0 0 14px; }
-    .pdf-frame { position: relative; aspect-ratio: 16/8.2; border-radius: 4px; overflow: hidden; background: #0a0e14; margin-bottom: 4px; }
-    .pdf-frame .stamp { position: absolute; right: 8px; bottom: 8px; background: rgba(0,0,0,.7); color: #fff; font-family: Consolas, monospace; font-size: 11px; padding: 2px 6px; border-radius: 3px; }
-    .pdf-cap { color: var(--paper-muted); font-size: 10px; margin-bottom: 14px; }
-    .pdf-sheet h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--paper-muted); margin: 14px 0 6px; }
-    .pdf-receipt { font-family: Consolas, "Cascadia Mono", monospace; font-size: 11px; white-space: pre-wrap; border: 1px solid var(--paper-line); border-radius: 4px; padding: 8px 10px; }
-    .pdf-receipt mark { background: var(--paper-hit); color: var(--paper-fg); font-weight: 700; }
-    .pdf-sheet table { width: 100%; border-collapse: collapse; font-size: 11px; }
-    .pdf-sheet td { padding: 4px 0; border-bottom: 1px solid var(--paper-line); color: var(--paper-fg); }
-    .pdf-sheet td:first-child { color: var(--paper-muted); width: 34%; }
-    .pdf-foot { margin-top: 18px; padding-top: 8px; border-top: 1px solid var(--paper-line); color: var(--paper-muted); font-size: 10px; }
-    @media print {
-      body > *:not(#pdf-modal) { display: none !important; }
-      #pdf-modal { position: static; display: block !important; padding: 0; background: none; }
-      .pdf-dialog { display: block; border: 0; max-height: none; }
-      .pdf-side { display: none; }
-      .pdf-preview { padding: 0; background: none; }
-      .pdf-sheet { box-shadow: none; max-width: none; padding: 0; }
-    }
-    @media (max-width: 860px) {
-      .pdf-dialog { grid-template-columns: 1fr; }
-      .pdf-side { border-right: 0; border-bottom: 1px solid var(--border); }
-    }
-    @media (max-width: 640px) {
-      .topbar { flex-wrap: wrap; gap: 8px; padding: 8px 12px; }
-      .topbar .store-select { min-width: 0 !important; width: 100% !important; }
-      .topbar-right { width: 100%; justify-content: space-between; }
-      .content { padding: 12px; }
-      .alerts-grid, .workspace, .grid-2 { grid-template-columns: minmax(0, 1fr) !important; }
-      .player-bar { flex-wrap: wrap; }
-      .player-bar input[type="range"] { min-width: 120px; }
-      .mode-switch { flex-wrap: wrap; }
-      table { font-size: 12px; }
-      th, td { padding: 6px 8px; }
-      .pdf-sheet { padding: 18px; }
-      .modal { padding: 8px; }
-      .topbar-right > span { display: none; }
-      .alert-row { grid-template-columns: 4px minmax(0, 1fr) !important; }
-      .alert-side { grid-column: 2; flex-direction: row; flex-wrap: wrap; align-items: center; }
-      .res-row { grid-template-columns: minmax(0, 1fr); }
-      .res-row .alert-side { grid-column: 1; }
-      .alerts-grid .panel-h { flex-wrap: wrap; }
-      .note { font-size: 11px; }
-    }
-  </style>
+  <title>Интеллект X — Ритейл · рабочее место</title>
   <link rel="stylesheet" href="retail-common.css">
   <link rel="stylesheet" href="scenario-editor.css">
+  <link rel="stylesheet" href="retail.css">
   <link rel="stylesheet" href="../bridge.css">
 </head>
 <body>
-  <aside class="sidebar">
-    <div class="logo">
-      Интеллект X
-      <span>Ритейл</span>
-    </div>
-    <nav class="nav">
-      <button class="nav-item active" data-screen="alerts"><span>⚠ Тревоги</span><span id="nav-alerts-count" class="nav-count" data-i18n-skip title=""></span></button>
-      <button class="nav-item" data-screen="search"><span>⌕ Поиск</span></button>
-      <button class="nav-item" data-screen="scenarios"><span>⚙ Мои сценарии</span></button>
-    </nav>
-    <div class="sidebar-footer">
-      Источники и камеры настраиваются на сервере.<br>
-      Титры всегда поверх видео.
-    </div>
-  </aside>
+  <!-- Icons: one family (Lucide-style strokes), inline so the page works offline -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+      <symbol id="i-workflow" viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="2"/><path d="M7 11v4a2 2 0 0 0 2 2h4"/><rect x="13" y="13" width="8" height="8" rx="2"/></symbol>
+      <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M21 4h-7M10 4H3M21 12h-9M8 12H3M21 20h-5M12 20H3M14 2v4M8 10v4M16 18v4"/></symbol>
+      <symbol id="i-panel-left" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></symbol>
+      <symbol id="i-panel-right" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M15 3v18"/></symbol>
+      <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3a13 13 0 0 0 0 18 13 13 0 0 0 0-18M3 12h18"/></symbol>
+      <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></symbol>
+      <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+      <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+      <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+      <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+      <symbol id="i-rotate" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
+      <symbol id="i-file-down" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v5h5M12 18v-6M9 15l3 3 3-3"/></symbol>
+      <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+      <symbol id="i-maximize" viewBox="0 0 24 24"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></symbol>
+      <symbol id="i-store" viewBox="0 0 24 24"><path d="M3 9 4.5 4h15L21 9"/><path d="M3 9h18a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0"/><path d="M5 12v9h14v-9M10 21v-5h4v5"/></symbol>
+      <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="13" rx="2"/><path d="M8 21h8M12 16v5"/></symbol>
+      <symbol id="i-video" viewBox="0 0 24 24"><path d="m16 13 5.2 3.5a.5.5 0 0 0 .8-.4V7.9a.5.5 0 0 0-.8-.4L16 11"/><rect x="2" y="6" width="14" height="12" rx="2"/></symbol>
+      <symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 3v18M5 7h14M8 21h8"/><path d="M5 7l-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0z"/></symbol>
+      <symbol id="i-folder" viewBox="0 0 24 24"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-8l-2-3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2z"/></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+      <symbol id="i-log-out" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+      <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></symbol>
+      <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></symbol>
+      <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1z"/><path d="M8 7h8M8 11h8M8 15h5"/></symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+      <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5M3 12a9 3 0 0 0 18 0"/></symbol>
+      <symbol id="i-plug" viewBox="0 0 24 24"><path d="M12 22v-5M9 8V2M15 8V2M18 8v5a6 6 0 0 1-12 0V8z"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+      <symbol id="i-type" viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></symbol>
+      <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></symbol>
+      <symbol id="i-activity" viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
+      <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/></symbol>
+      <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+      <symbol id="i-fold" viewBox="0 0 24 24"><path d="m7 20 5-5 5 5M7 4l5 5 5-5"/></symbol>
+      <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></symbol>
+      <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></symbol>
+      <symbol id="i-upload-cloud" viewBox="0 0 24 24"><path d="M4 15a5 5 0 0 1 3-9 6 6 0 0 1 11 2 4 4 0 0 1 2 7"/><path d="m8 15 4-4 4 4M12 11v10"/></symbol>
+      <symbol id="i-sun-moon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 7a5 5 0 0 0 0 10z" fill="currentColor"/><path d="M12 1.5v2.5M12 20v2.5M1.5 12H4M20 12h2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M19.4 4.6l-1.8 1.8M6.4 17.6l-1.8 1.8"/></symbol>
+    </defs>
+  </svg>
 
-  <div class="main">
+  <div class="app" id="app">
     <header class="topbar">
-      <select class="store-select" style="width:auto;min-width:280px" aria-label="Магазин">
-        <option>Магазин №142 — ТЦ «Авиапарк»</option>
-        <option>Магазин №089 — СПб, Невский</option>
-      </select>
-      <div class="topbar-right">
-        <div class="chrome-actions">
-          <label class="lang" for="langSelect">
-            <svg class="lang-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/>
-              <ellipse cx="12" cy="12" rx="4" ry="9" fill="none" stroke="currentColor" stroke-width="1.7"/>
-              <path d="M3 12h18" fill="none" stroke="currentColor" stroke-width="1.7"/>
-            </svg>
-            <select id="langSelect" class="lang-select" data-i18n-skip aria-label="Язык интерфейса" title="Язык интерфейса">
-              <option value="ru">Русский</option>
-              <option value="en">English</option>
-            </select>
-          </label>
-          <button type="button" class="theme-btn" id="themeToggle" title="Тёмная тема" aria-label="Тёмная тема">
-            <svg class="theme-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <g stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
-                <path d="M12 1.4v2.4M12 20.2v2.4M1.4 12h2.4M20.2 12h2.4M4.4 4.4l1.7 1.7M17.9 17.9l1.7 1.7M19.6 4.4l-1.7 1.7M6.1 17.9l-1.7 1.7"/>
-              </g>
-              <circle cx="12" cy="12" r="5.7" fill="none" stroke="currentColor" stroke-width="1.7"/>
-              <path d="M12 6.3a5.7 5.7 0 0 0 0 11.4z" fill="currentColor"/>
-            </svg>
-          </button>
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <div class="brand-text">
+          <strong>Интеллект X · Ритейл</strong>
+          <span>Антифрод · ITV</span>
         </div>
-        <span style="font-size:13px;color:var(--muted)">Оператор: Иванова А.С.</span>
+      </div>
+
+      <div class="topbar-cluster">
+        <button type="button" class="icon-btn only-wide" id="toggleTree" aria-pressed="true" data-tip="Скрыть или показать дерево магазинов" aria-label="Дерево магазинов">
+          <svg class="ic"><use href="#i-panel-left"/></svg>
+        </button>
+        <button type="button" class="icon-btn only-narrow" id="openDrawer" data-tip="Магазины и устройства" aria-label="Магазины и устройства">
+          <svg class="ic"><use href="#i-menu"/></svg>
+        </button>
+        <button type="button" class="icon-btn" id="toggleMedia" aria-pressed="true" data-tip="Скрыть или показать видео и чек" aria-label="Видео и чек">
+          <svg class="ic"><use href="#i-panel-right"/></svg>
+        </button>
+        <select class="field store-pick" id="storeSelect" aria-label="Магазин" data-i18n-skip></select>
+      </div>
+
+      <div class="topbar-actions">
+        <label class="lang" for="langSelect">
+          <svg class="ic sm"><use href="#i-globe"/></svg>
+          <select id="langSelect" data-i18n-skip aria-label="Язык интерфейса" title="Язык интерфейса">
+            <option value="ru">Русский</option>
+            <option value="en">English</option>
+          </select>
+        </label>
+        <button type="button" class="icon-btn" id="themeToggle" aria-label="Тёмная тема" data-tip="Сменить тему">
+          <svg class="ic lg theme-icon"><use href="#i-sun-moon"/></svg>
+        </button>
+        <div class="menu" id="helpMenu">
+          <button type="button" class="icon-btn" id="helpBtn" aria-haspopup="menu" aria-expanded="false" data-tip="Справка" aria-label="Справка">
+            <svg class="ic lg"><use href="#i-help"/></svg>
+          </button>
+          <div class="menu-pop wide" role="menu" hidden>
+            <div class="menu-head">Справка</div>
+            <button type="button" class="menu-item menu-item-rich" role="menuitem" data-help="legend">
+              <svg class="ic"><use href="#i-info"/></svg>
+              <span><span>Как читать тревогу</span><span class="menu-item-desc">Полоса — приоритет, плашка — статус просмотра</span></span>
+            </button>
+            <button type="button" class="menu-item menu-item-rich" role="menuitem" data-help="config">
+              <svg class="ic"><use href="#i-sliders"/></svg>
+              <span><span>Что настраивается на сервере</span><span class="menu-item-desc">Закладка «Конфигурация»</span></span>
+            </button>
+            <div class="menu-sep"></div>
+            <button type="button" class="menu-item" role="menuitem" data-help="about">
+              <svg class="ic"><use href="#i-file-down"/></svg>
+              <span>О прототипе</span>
+            </button>
+          </div>
+        </div>
+        <div class="menu" id="userMenu">
+          <button type="button" class="user-btn" id="userBtn" aria-haspopup="menu" aria-expanded="false">
+            <span class="operator-meta">
+              <strong>Иванова А. С.</strong>
+              <span id="roleLabel">Оператор</span>
+            </span>
+            <span class="duty" id="dutyBadge">На смене</span>
+            <svg class="ic sm"><use href="#i-chevron-down"/></svg>
+          </button>
+          <div class="menu-pop wide" role="menu" hidden>
+            <div class="menu-head">Роль в прототипе</div>
+            <button type="button" class="menu-item" role="menuitemradio" data-role="operator" aria-checked="true">
+              <svg class="ic"><use href="#i-user"/></svg><span>Оператор</span>
+            </button>
+            <button type="button" class="menu-item" role="menuitemradio" data-role="admin" aria-checked="false">
+              <svg class="ic"><use href="#i-shield"/></svg><span>Администратор</span>
+            </button>
+            <div class="menu-sep"></div>
+            <button type="button" class="menu-item" role="menuitem" id="signOutBtn">
+              <svg class="ic"><use href="#i-log-out"/></svg><span>Выйти</span>
+            </button>
+          </div>
+        </div>
+        <time class="clock" id="clock" data-i18n-skip>14:32:11</time>
       </div>
     </header>
 
-    <div class="content">
-      <div class="note">
-        <strong>Прототип · v4.</strong>
-        По замечаниям менеджера от 08.11: статус просмотра тревог, поиск по сценариям, выбор нескольких устройств, календарь, слова через «И» / «ИЛИ», отчёт PDF, описание и кассовые события в сценариях.
-      </div>
+    <main class="workspace" id="workspace" data-section="alarms" data-tree="on" data-media="on">
+      <nav class="rail" aria-label="Разделы">
+        <button type="button" class="rail-item" data-section="alarms" aria-current="page">
+          <svg class="ic"><use href="#i-bell"/></svg><span>Тревоги</span>
+          <span class="rail-count" id="railAlarmCount" data-i18n-skip hidden></span>
+        </button>
+        <button type="button" class="rail-item" data-section="search">
+          <svg class="ic"><use href="#i-search"/></svg><span>Поиск</span>
+        </button>
+        <button type="button" class="rail-item" data-section="scenarios">
+          <svg class="ic"><use href="#i-workflow"/></svg><span>Мои сценарии</span>
+        </button>
+        <div class="rail-spacer"></div>
+        <div class="rail-sep"></div>
+        <button type="button" class="rail-item" data-section="config" data-tip="Всё, что настраивается на сервере. Позже — отдельный конфигуратор">
+          <svg class="ic"><use href="#i-sliders"/></svg><span>Конфигурация</span>
+        </button>
+      </nav>
 
-      <!-- ALERTS -->
-      <section id="screen-alerts" class="screen active">
-        <h1>Тревоги</h1>
-        <p class="subtitle">Тревоги сценариев за смену. «Не просмотрена» снимается, когда тревогу открыли хотя бы на секунду — у всех операторов</p>
-        <div class="toolbar">
-          <div class="legend">
-            <span class="chip prio-high">высокая</span>
-            <span class="chip prio-mid">средняя</span>
-            <span class="chip prio-low">низкая</span>
+      <section class="panel" id="panelTree" aria-label="Магазины и устройства">
+        <header class="panel-h">
+          <h2>Магазины</h2>
+          <div class="panel-h-actions">
+            <button type="button" class="icon-btn" id="treeFold" data-tip="Свернуть все" aria-label="Свернуть все"><svg class="ic"><use href="#i-fold"/></svg></button>
+            <button type="button" class="icon-btn only-narrow" id="treeClose" data-tip="Закрыть" aria-label="Закрыть"><svg class="ic"><use href="#i-x"/></svg></button>
           </div>
-          <label class="check-label"><input type="checkbox" id="only-unviewed"> Только непросмотренные</label>
+        </header>
+        <div class="tree-search">
+          <div class="search-wrap">
+            <svg class="ic sm"><use href="#i-search"/></svg>
+            <input type="search" id="treeSearch" placeholder="Поиск кассы, весов, камеры…" aria-label="Поиск в дереве">
+          </div>
         </div>
-        <div class="grid-2 alerts-grid">
-          <div class="panel">
-            <div class="panel-h"><span>Очередь · смена 14.09.2026</span><span id="queue-meta" class="meta" data-i18n-skip></span></div>
-            <div id="alert-list"></div>
-          </div>
-          <div>
-            <div class="panel" style="margin-bottom:16px">
-              <div class="panel-h">
-                <span id="alert-title" data-i18n-skip>Выберите тревогу</span>
-                <div class="row">
-                  <span id="alert-source" class="source src-video" data-i18n-skip>Видео</span>
-                  <button type="button" class="btn btn-sm" onclick="reportFromAlert()">⤓ Отчёт PDF</button>
-                </div>
-              </div>
-              <div class="video">
-                <div id="al-scene" class="video-scene pair"></div>
-                <div id="al-cam" class="cam-tag" data-i18n-skip>КАМЕРА</div>
-                <div id="al-xy" class="xy-overlay hidden" data-i18n-skip></div>
-                <div id="al-caption" class="caption" data-i18n-skip></div>
-              </div>
-              <div class="player-bar">
-                <button type="button" class="play-btn" id="al-play" aria-label="Воспроизвести">▶</button>
-                <input type="range" id="al-range" min="-30" max="30" value="0" aria-label="Позиция в архиве">
-                <span id="al-time" class="player-time"></span>
-                <button type="button" class="btn btn-sm btn-ghost" id="al-back">↺ К моменту срабатывания</button>
-              </div>
-            </div>
-            <div class="panel" style="margin-bottom:16px">
-              <div class="panel-h">Описание сценария</div>
-              <div id="alert-desc" class="desc-box" data-i18n-skip></div>
-            </div>
-            <div class="panel">
-              <div class="panel-h">Почему сработало</div>
-              <div id="alert-why" class="desc-box" style="color:var(--muted)" data-i18n-skip></div>
-            </div>
-          </div>
+        <div class="panel-b">
+          <ul class="tree" id="tree" role="tree" data-i18n-skip></ul>
+        </div>
+        <div class="tree-foot">
+          <span><i class="status-dot" data-tone="ok"></i>в сети</span>
+          <span><i class="status-dot" data-tone="down"></i>не в сети</span>
+          <span><i class="tree-n hot" style="min-width:18px">2</i>непросмотренные</span>
         </div>
       </section>
+      <div class="splitter" id="splitTree" role="separator" tabindex="0" aria-orientation="vertical" aria-label="Ширина дерева" data-tip="Потяните, чтобы изменить ширину. Двойной щелчок — по умолчанию"></div>
 
-      <!-- SEARCH -->
-      <section id="screen-search" class="screen">
-        <h1>Поиск</h1>
-        <p class="subtitle">По сценариям — уже сработавшие тревоги; по титрам — текст поверх камеры; по чекам — разбор по полям и отчёты</p>
-
-        <div class="mode-switch">
-          <button class="mode-btn active" data-mode="scenarios">По сценариям</button>
-          <button class="mode-btn" data-mode="captions">По титрам</button>
-          <button class="mode-btn" data-mode="receipts">По чекам</button>
+      <section class="panel" id="panelStage">
+        <!-- ALARMS: queue (IM queue mode) and card (IM work mode) -->
+        <div class="section active" id="sec-alarms">
+          <div class="section active" id="alarmQueue">
+            <header class="panel-h">
+              <h2>Тревоги <em id="alarmCount" data-i18n-skip>0</em></h2>
+              <span class="meta" id="queueScope" data-i18n-skip></span>
+              <div class="panel-h-actions">
+                <button type="button" class="btn compact outline" id="markAllViewed" data-tip="Отметить просмотренными все тревоги в фильтре">
+                  <svg class="ic"><use href="#i-eye"/></svg><span>Все просмотрены</span>
+                </button>
+              </div>
+            </header>
+            <div class="toolbar">
+              <div class="search-wrap">
+                <svg class="ic sm"><use href="#i-search"/></svg>
+                <input type="search" id="alarmSearch" placeholder="Сценарий, касса, номер тревоги…" aria-label="Поиск тревог">
+              </div>
+              <select id="alarmPrio" aria-label="Приоритет">
+                <option value="all">Все приоритеты</option>
+                <option value="high">Высокий</option>
+                <option value="mid">Средний</option>
+                <option value="low">Низкий</option>
+              </select>
+              <button type="button" class="chip" id="onlyUnviewed" aria-pressed="false">Не просмотренные <span class="n" id="unviewedN" data-i18n-skip></span></button>
+            </div>
+            <div class="section-b">
+              <div class="alarm-list" id="alarmList" data-i18n-skip></div>
+            </div>
+          </div>
+          <div class="section" id="alarmCard" data-i18n-skip></div>
         </div>
 
-        <div class="workspace">
-          <div class="panel">
-            <div class="panel-h">Источник и запрос</div>
-            <div id="tpl-row" class="tpl-row" data-i18n-skip></div>
-            <div class="form-stack">
-              <div class="form-group">
-                <label>Источник / касса</label>
-                <div id="src-picker" data-i18n-skip></div>
-              </div>
-              <div class="form-group">
-                <label>Период</label>
-                <div id="period" data-i18n-skip></div>
-              </div>
-
-              <div id="scenarios-query">
+        <!-- SEARCH -->
+        <div class="section" id="sec-search">
+          <div class="search-h">
+            <div class="tabs" role="tablist" aria-label="Режим поиска">
+              <button type="button" class="tab" role="tab" data-mode="scenarios" aria-selected="true">По сценариям</button>
+              <button type="button" class="tab" role="tab" data-mode="captions" aria-selected="false">По титрам</button>
+              <button type="button" class="tab" role="tab" data-mode="receipts" aria-selected="false">По чекам</button>
+            </div>
+          </div>
+          <div class="section-b">
+            <div class="query-card">
+              <div class="tpl-row" id="tpl-row" data-i18n-skip></div>
+              <div class="form-grid">
                 <div class="form-group">
+                  <label>Источник / касса</label>
+                  <div id="src-picker" data-i18n-skip></div>
+                </div>
+                <div class="form-group">
+                  <label>Период</label>
+                  <div id="period" data-i18n-skip></div>
+                </div>
+                <div class="form-group" data-q="scenarios">
                   <label for="sc-select">Сценарий</label>
                   <select id="sc-select" class="field" data-i18n-skip></select>
-                  <div class="field-hint">Ищет уже сработавшие тревоги. Новый сценарий не находит событий до своего создания — чтобы проверить его на прошлом архиве, используйте «Проверить на архиве» в Моих сценариях.</div>
+                  <div class="field-hint">Ищет уже сработавшие тревоги. Новый сценарий не находит событий до своего создания — проверить его на прошлом архиве можно в «Моих сценариях».</div>
                 </div>
-              </div>
-
-              <div id="captions-query" class="hidden">
-                <div class="form-group">
+                <div class="form-group" data-q="captions" hidden>
                   <label for="qb-input">Текст в титрах</label>
                   <div id="qb" class="qb" data-i18n-skip></div>
                   <input id="re-input" class="field hidden" value="(АННУЛЯЦИЯ)|(ВОЗВРАТ)" aria-label="Регулярное выражение">
                   <div id="qb-preview" class="qb-preview" data-i18n-skip></div>
-                  <label class="check-label" style="margin-top:6px;font-size:12px"><input type="checkbox" id="re-toggle"> Расширенный: регулярное выражение</label>
+                  <label class="check-label"><input type="checkbox" id="re-toggle"> Расширенный: регулярное выражение</label>
                 </div>
-                <div class="form-group">
+                <div class="form-group" data-q="captions" hidden>
                   <label for="out-mode">Вывод результатов</label>
                   <select id="out-mode" class="field">
                     <option value="receipt">Чеки с заданным текстом</option>
                     <option value="line">Отдельные титры с заданным текстом</option>
                   </select>
                 </div>
-              </div>
-
-              <div id="receipts-query" class="hidden">
-                <div class="form-group">
+                <div class="form-group" data-q="receipts" hidden>
                   <label for="report-type">Тип отчёта</label>
                   <select id="report-type" class="field">
                     <option value="all">№01 Список всех чеков</option>
@@ -521,66 +276,101 @@
                     <option value="amount">Чеки по сумме</option>
                   </select>
                 </div>
-                <div id="report-params"></div>
+                <div id="report-params" data-q="receipts" class="form-grid" style="grid-column:1/-1" hidden></div>
               </div>
-
-              <div class="row">
-                <button type="button" class="btn btn-primary" id="run-search">Найти</button>
-                <button type="button" class="btn btn-ghost" id="save-tpl-btn">☆ Сохранить как шаблон</button>
-              </div>
-              <div id="save-tpl" class="save-tpl hidden">
-                <input id="tpl-name" class="field" placeholder="Название шаблона" aria-label="Название шаблона">
-                <label class="check-label" style="font-size:12px"><input type="checkbox" id="tpl-shared"> Общий</label>
-                <div class="row">
-                  <button type="button" class="btn btn-ghost btn-sm" id="tpl-cancel">Отмена</button>
-                  <button type="button" class="btn btn-primary btn-sm" id="tpl-ok">Сохранить шаблон</button>
+              <div class="query-actions">
+                <button type="button" class="btn primary" id="run-search"><svg class="ic"><use href="#i-search"/></svg><span>Найти</span></button>
+                <button type="button" class="btn outline" id="save-tpl-btn"><svg class="ic"><use href="#i-star"/></svg><span>Сохранить как шаблон</span></button>
+                <div id="save-tpl" class="save-tpl grow" hidden>
+                  <input id="tpl-name" class="field" placeholder="Название шаблона" aria-label="Название шаблона">
+                  <label class="check-label"><input type="checkbox" id="tpl-shared"> Общий</label>
+                  <button type="button" class="btn compact" id="tpl-cancel">Отмена</button>
+                  <button type="button" class="btn compact primary" id="tpl-ok">Сохранить</button>
                 </div>
               </div>
             </div>
-            <div class="panel-h"><span>Результаты</span><span id="result-count" class="meta" data-i18n-skip></span></div>
-            <div id="results" data-i18n-skip></div>
+            <div class="results-h"><h3>Результаты</h3><span id="result-count" class="meta" data-i18n-skip></span></div>
+            <div id="results" class="results" data-i18n-skip></div>
           </div>
+        </div>
 
-          <div>
-            <div class="panel" style="margin-bottom:16px">
-              <div class="panel-h">
-                <span id="player-title" data-i18n-skip>Касса 2 · вид на кассира и руки</span>
-                <div class="row">
-                  <span id="player-source" class="source src-pos" data-i18n-skip>Кассовое ПО</span>
-                  <button type="button" class="btn btn-sm" onclick="reportFromSearch()">⤓ Отчёт PDF</button>
-                </div>
-              </div>
-              <div class="video">
-                <div id="pl-scene" class="video-scene cashier"></div>
-                <div id="pl-cam" class="cam-tag" data-i18n-skip>CAM-142-09 · КАССИР / РУКИ</div>
-                <div id="pl-xy" class="xy-overlay hidden" data-i18n-skip></div>
-                <div id="pl-caption" class="caption" data-i18n-skip></div>
-              </div>
-              <div class="player-bar">
-                <button type="button" class="play-btn" id="pl-play" aria-label="Воспроизвести">▶</button>
-                <input type="range" id="pl-range" min="-30" max="30" value="0" aria-label="Позиция в архиве">
-                <span id="pl-time" class="player-time"></span>
-                <button type="button" class="btn btn-sm btn-ghost" id="pl-back">↺ К моменту</button>
-              </div>
-            </div>
-            <div class="panel">
-              <div class="panel-h" id="detail-h" data-i18n-skip>Разбор чека</div>
-              <div id="receipt-view" data-i18n-skip></div>
-            </div>
+        <!-- MY SCENARIOS -->
+        <div class="section" id="sec-scenarios">
+          <header class="panel-h">
+            <h2>Мои сценарии</h2>
+            <span class="meta">События системы, их состояния и сравнения, связанные логикой И / ИЛИ / НЕ и таймерами</span>
+          </header>
+          <div class="section-b">
+            <div id="scenario-editor"></div>
+          </div>
+        </div>
+
+        <!-- CONFIGURATION: everything that lives on the server -->
+        <div class="section" id="sec-config">
+          <div class="msgbar band" id="cfgBanner" data-i18n-skip></div>
+          <div class="cfg">
+            <nav class="cfg-nav" id="cfgNav" aria-label="Разделы конфигурации" data-i18n-skip></nav>
+            <div class="cfg-body" id="cfgBody" data-i18n-skip></div>
           </div>
         </div>
       </section>
 
-      <!-- SCENARIOS -->
-      <section id="screen-scenarios" class="screen">
-        <h1>Мои сценарии</h1>
-        <p class="subtitle">Сценарий — это события системы (кассовые события, сработки объектов, строки титров), их состояния и сравнения, связанные логикой И / ИЛИ / НЕ и таймерами</p>
-        <div id="scenario-editor"></div>
-      </section>
-    </div>
+      <div class="splitter" id="splitMedia" role="separator" tabindex="0" aria-orientation="vertical" aria-label="Ширина видео и чека" data-tip="Потяните, чтобы изменить ширину. Двойной щелчок — по умолчанию"></div>
+
+      <aside class="panel media-stack" id="panelMedia" aria-label="Видео и чек">
+        <div class="panel nested" id="panelVideo">
+          <header class="panel-h">
+            <h2>Видеомонитор</h2>
+            <div class="panel-h-actions">
+              <div class="seg" id="videoMode" role="group" aria-label="Режим видео">
+                <button type="button" data-mode="archive" aria-pressed="true">Архив</button>
+                <button type="button" data-mode="live" aria-pressed="false">Online</button>
+              </div>
+              <button type="button" class="btn compact outline" id="reportBtn" data-tip="Отчёт PDF по выбранной тревоге или результату поиска">
+                <svg class="ic"><use href="#i-file-down"/></svg><span>Отчёт PDF</span>
+              </button>
+            </div>
+          </header>
+          <div class="video-body">
+            <div class="video" id="video">
+              <div id="v-scene" class="video-scene cashier"></div>
+              <div id="v-cam" class="ov cam-tag" data-i18n-skip>КАМЕРА</div>
+              <div id="v-mode" class="ov mode-tag" data-i18n-skip>АРХИВ</div>
+              <div id="v-xy" class="ov xy-overlay hidden" data-i18n-skip></div>
+              <div id="v-caption" class="caption" data-i18n-skip></div>
+              <div id="v-none" class="no-video hidden" data-i18n-skip></div>
+            </div>
+            <div class="player-bar">
+              <button type="button" class="icon-btn" id="v-play" aria-label="Воспроизвести" data-tip="Воспроизвести / пауза"><svg class="ic"><use href="#i-play"/></svg></button>
+              <input type="range" id="v-range" min="-30" max="30" value="0" aria-label="Позиция в архиве">
+              <span id="v-time" class="player-time" data-i18n-skip></span>
+              <button type="button" class="icon-btn" id="v-back" aria-label="К моменту срабатывания" data-tip="К моменту срабатывания"><svg class="ic"><use href="#i-rotate"/></svg></button>
+              <button type="button" class="icon-btn" id="v-captions" aria-pressed="true" aria-label="Титры" data-tip="Показать или скрыть титры, не останавливая видео"><svg class="ic"><use href="#i-type"/></svg></button>
+            </div>
+            <div class="cam-strip" id="camStrip" data-i18n-skip></div>
+          </div>
+        </div>
+        <div class="panel nested" id="panelReceipt">
+          <header class="panel-h">
+            <h2 id="receiptTitle" data-i18n-skip>Чек</h2>
+            <div class="panel-h-actions"><span class="meta" id="receiptMeta" data-i18n-skip></span></div>
+          </header>
+          <div class="panel-b" id="receiptView" data-i18n-skip></div>
+        </div>
+      </aside>
+
+      <div class="scrim" id="scrim"></div>
+    </main>
+
+    <footer class="statusbar" data-i18n-skip>
+      <span id="stStore"></span>
+      <span id="stSel"></span>
+      <span id="stQueue"></span>
+      <span id="stDevices"></span>
+    </footer>
   </div>
 
-  <!-- PDF REPORT -->
+  <!-- PDF report (UI-9) -->
   <div id="pdf-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="pdf-h" data-i18n-skip>
     <div class="pdf-dialog">
       <div class="pdf-side">
@@ -589,547 +379,31 @@
         <div class="grow"></div>
         <div class="meta" id="pdf-audit"></div>
         <div class="row">
-          <button type="button" class="btn btn-ghost" onclick="closeReport()" id="pdf-close"></button>
-          <button type="button" class="btn btn-primary" onclick="printReport()" id="pdf-print"></button>
+          <button type="button" class="btn outline" id="pdf-close"></button>
+          <button type="button" class="btn primary" id="pdf-print"></button>
         </div>
       </div>
       <div class="pdf-preview"><div id="pdf-sheet" class="pdf-sheet"></div></div>
     </div>
   </div>
 
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <!-- One dialog for small forms: hand-off to Incident Manager, about -->
+  <div id="dlg" class="modal" role="dialog" aria-modal="true" aria-labelledby="dlg-h" data-i18n-skip>
+    <div class="modal-card">
+      <h3 id="dlg-h"></h3>
+      <div id="dlg-body"></div>
+      <div class="modal-actions" id="dlg-actions"></div>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts" role="status" aria-live="polite" data-i18n-skip></div>
 
   <script src="i18n.js"></script>
   <script src="retail-common.js"></script>
+  <script src="data.js"></script>
+  <script src="config-data.js"></script>
   <script src="scenario-editor.js"></script>
-  <script>
-    const OPERATOR = "Иванова А.С.";
-    const STORE = "Магазин №142 — ТЦ «Авиапарк»";
-    const DATE = "14.09.2026";
-    const sourceById = (id) => Retail.deviceById(id);
-    const esc = Retail.esc;
-
-    /* ---------- receipts (demo archive, 14.09.2026) ---------- */
-    const receipts = [
-      { id: "48293", time: "15:02:11", source: "pos-2", cashier: "Иванова Е.", total: "0,00", status: "Аннуляция", sev: "high", text: "КАССИР ИВАНОВА Е.\nВОДКА ПУТИНКА 0,5Л\nАННУЛЯЦИЯ ЧЕКА\nИТОГО 0,00", parsed: [["Водка «Путинка» 0,5 л ×1", "389,00"], ["АННУЛЯЦИЯ", "15:02:11"], ["ИТОГО", "0,00 ₽"]] },
-      { id: "48291", time: "14:12:41", source: "kso-2", cashier: "—", total: "259,90", status: "Тревога", sev: "high", text: "МОЛОКО 3.2%\nРАСХОЖДЕНИЕ X=5 / Y=1\nИТОГО 259,90", parsed: [["Хлеб белый ×1", "74,00"], ["Молоко 3.2% ×1", "89,90"], ["Расхождение X=5 / Y=1", "14:12:05"], ["ИТОГО", "259,90 ₽"]] },
-      { id: "48290", time: "14:09:18", source: "pos-2", cashier: "Петров С.", total: "1 842,50", status: "Закрыт", text: "СКАНИРОВАНИЕ СЫР 45%\nОПЛАТА КАРТА\nИТОГО 1842,50", parsed: [["Сыр 45% ×1", "420,00"], ["Кофе зерно ×1", "890,00"], ["Оплата карта", "1 842,50"], ["ИТОГО", "1 842,50 ₽"]] },
-      { id: "48288", time: "14:03:02", source: "fr-5", cashier: "Сидорова М.", total: "435,00", status: "Аннуляция", sev: "mid", text: "ВОЗВРАТ ХЛЕБ\nАННУЛЯЦИЯ ЧЕКА\nИТОГО 0,00", parsed: [["Хлеб белый", "74,00"], ["АННУЛЯЦИЯ", "14:03:08"], ["ИТОГО", "0,00 ₽"]] },
-      { id: "48285", time: "13:48:10", source: "file-1c", cashier: "Петров С.", total: "719,30", status: "Импорт 1С", sev: "low", text: "ЧЕК ИЗ ВЫГРУЗКИ 1С\nВОЗВРАТ МОЛОКО\nИТОГО 719,30", parsed: [["Молоко 1л ×2", "178,00"], ["Возврат", "13:48:10"], ["ИТОГО", "719,30 ₽"]] },
-      { id: "48280", time: "13:21:44", source: "ofd", cashier: "Козлов А.", total: "3 105,20", status: "ОФД", text: "ФД 118204  ФН 9999\nОПЛАТА НАЛ\nИТОГО 3105,20", parsed: [["Позиции из ОФД", "12"], ["Оплата наличными", "3 105,20"], ["ИТОГО", "3 105,20 ₽"]] },
-      { id: "W-104", time: "13:10:05", source: "scale-veg", cashier: "Сидорова М.", total: "186,40", status: "Вес", text: "ВЕС 1.240 КГ\nБАНАНЫ\nСУММА 186,40", parsed: [["Бананы", "1,240 кг"], ["Сумма", "186,40 ₽"]] },
-      { id: "W-201", time: "12:44:10", source: "scale-fish", cashier: "—", total: "0,00", status: "Штрихкод без оплаты", sev: "high", text: "ВЕС 1.240 КГ\nСЁМГА ОХЛ.\nШТРИХКОД ВЫДАН\nОПЛАТЫ НЕТ", parsed: [["Сёмга охл.", "1,240 кг"], ["Штрихкод", "2900123004512"], ["Оплата", "нет"]] }
-    ];
-
-    /* ---------- alarm journal: queue of the shift + history for "search by scenario" ---------- */
-    const journal = [
-      { id: "a1", date: DATE, time: "14:26:00", sc: "t-pos-05", sev: "high", source: "fr-5", caption: "14:26  ПОКУПАТЕЛЬ И КАССИР\nНАЛИЧНЫЕ В ЗОНЕ\nPOS МОЛЧИТ 30 СЕК", why: "3.2.5. Детекторы покупателя и кассира сработали, наличные на столе есть, оплаты в POS нет 30 сек. Подозрение на обслуживание посетителя без чека." },
-      { id: "a2", date: DATE, time: "14:12:41", sc: "t-pos-07", sev: "high", source: "kso-2", receipt: "48291", xy: { x: 5, y: 1 }, caption: "14:12  КСО-2: НА ПЛОЩАДКЕ 5\nВ ЧЕКЕ 1 ПОЗИЦИЯ\nX − Y = 4", why: "3.2.10. Перед закрытием чека на площадке КСО 5 товаров, в чеке 1 позиция. Расхождение 4 ≥ порога 2." },
-      { id: "a3", date: DATE, time: "14:15:00", sc: "t-pos-02", sev: "high", source: "file-1c", caption: "14:15  ВОЗВРАТ ТОВАРА\nПОКУПАТЕЛЬ ЕСТЬ\nX=0 НА КАССЕ", why: "3.2.2. POS: возврат. Покупатель в зоне есть, детектор подсчёта показывает 0 товаров. Возврат без товара на кассе.", viewed: { by: "Петров С. (старший смены)", at: "14:15:40" } },
-      { id: "a4", date: DATE, time: "14:08:00", sc: "t-pos-06", sev: "high", source: "pos-2", caption: "14:08  ЛЕНТА → СКАНЕР → УКЛАДКА\nДОБАВЛЕНИЯ ТОВАРА НЕТ\nЧЕСТНЫЙ ЗНАК НЕТ", why: "3.2.6. Рука прошла зону ленты и сканера, в POS нет добавления товара и нет «Честного знака», затем рука в зоне укладки." },
-      { id: "a5", date: DATE, time: "14:03:08", sc: "t-pos-01", sev: "high", source: "fr-5", receipt: "48288", caption: "14:03  АННУЛЯЦИЯ ЧЕКА\nПОКУПАТЕЛЯ НЕТ\nИТОГО 0,00", why: "С шины ФР пришла аннуляция. Детектор присутствия в зоне покупателя не сработал ±10 сек. Камера смотрит на кассира и руки — покупателя в кадре нет.", viewed: { by: "Петров С. (старший смены)", at: "14:04:02" } },
-      { id: "a6", date: DATE, time: "12:56:10", sc: "t-pos-10", sev: "high", source: "scale-fish", receipt: "W-201", caption: "12:56  ВЕС 1.240 КГ\nШТРИХКОД ВЫДАН\nОПЛАТЫ НЕТ 12 МИН", why: "3.2.17. Весы «рыба» выдали штрихкод 2900123004512 в 12:44. За 12 минут он не пробит ни на кассе, ни на КСО." },
-      { id: "a7", date: DATE, time: "13:56:00", sc: "t-pos-11", sev: "mid", source: "scale-veg", caption: "13:56  ВЕС 1.240 КГ\nШТРИХКОД 1 И ШТРИХКОД 2\nНАИМЕНОВАНИЯ РАЗНЫЕ", why: "3.2.18. Весы «овощи-фрукты» выдали штрихкод на бананы с тем же весом 1,240 кг (± 20 г), что и сёмга на весах «рыба» 12 минут назад." },
-      { id: "a8", date: DATE, time: "13:50:00", sc: "t-pos-09", sev: "mid", source: "kso-2", caption: "13:50  ЧЕК НЕ ЗАКРЫТ\nУХОД С ЗОНЫ КСО\nX=3 ОСТАЛОСЬ", why: "3.2.13. Чек открыт, покупатель ушёл, на площадке по-прежнему 3 товара (было 3, допуск −2). Не путать с уносом (3.2.12), где после ухода X=0.", viewed: { by: OPERATOR, at: "13:51:12" } },
-      { id: "a9", date: DATE, time: "13:41:00", sc: "t-retail-01b", sev: "mid", source: null, cam: "CAM-142-01 · ВХОД / ВЫХОД", scene: "gate", view: "Вход / выход", why: "Корзина оставлена у выхода в 13:38. За 3 минуты владелец (трек 1041) её не забрал. Кассового потока нет, титры не накладываются." },
-      { id: "a10", date: DATE, time: "12:58:00", sc: "t-retail-02", sev: "low", source: null, cam: "CAM-142-12 · ЗАЛ", scene: "pair", view: "Стеллаж молочной зоны", why: "Только аналитика зала: 4 движения руки к полке за 5 сек. Чека нет — событие готовит кражу до кассы.", viewed: { by: "Петров С. (старший смены)", at: "13:00:21" } },
-      // earlier days — visible only in "search by scenario"
-      { id: "h1", date: "13.09.2026", time: "19:44:05", sc: "t-pos-06", sev: "high", source: "pos-2", caption: "19:44  ЛЕНТА → СКАНЕР → УКЛАДКА\nДОБАВЛЕНИЯ ТОВАРА НЕТ", why: "3.2.6. Три зоны пройдены, добавления товара в POS нет.", viewed: { by: "Петров С. (старший смены)", at: "19:45:00" }, incident: "Подтверждён" },
-      { id: "h2", date: "13.09.2026", time: "11:02:30", sc: "t-pos-06", sev: "high", source: "pos-2", caption: "11:02  ЛЕНТА → СКАНЕР → УКЛАДКА\nДОБАВЛЕНИЯ ТОВАРА НЕТ", why: "3.2.6. Три зоны пройдены, добавления товара в POS нет.", viewed: { by: OPERATOR, at: "11:03:10" }, incident: "Ложное срабатывание" },
-      { id: "h3", date: "12.09.2026", time: "16:20:00", sc: "t-pos-01", sev: "high", source: "fr-5", caption: "16:20  ВОЗВРАТ\nПОКУПАТЕЛЯ НЕТ", why: "Возврат при пустой зоне покупателя.", viewed: { by: OPERATOR, at: "16:21:00" }, incident: "Принят в работу" },
-      { id: "h4", date: "12.09.2026", time: "10:15:00", sc: 1, sev: "high", source: "fr-5", caption: "10:15  АННУЛЯЦИЯ\nПОКУПАТЕЛЯ НЕТ", why: "Мой сценарий: аннуляция без покупателя.", viewed: { by: OPERATOR, at: "10:16:00" }, incident: "Закрыт" },
-      { id: "h5", date: "11.09.2026", time: "18:30:00", sc: "old-7", scName: "Возвраты после 22:00 (удалён)", sev: "mid", source: "pos-2", caption: "18:30  ВОЗВРАТ", why: "Сценарий удалён 12.09; тревоги остались в журнале.", viewed: { by: OPERATOR, at: "18:31:00" }, incident: "Закрыт" }
-    ];
-    journal.forEach(j => { if (!j.incident) j.incident = "Новый"; });
-
-    function toast(text) {
-      const el = document.getElementById("toast");
-      el.textContent = text;
-      el.classList.add("show");
-      clearTimeout(window.toastTimer);
-      window.toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
-    }
-    function prioLabel(sev) { return sev === "high" ? t("высокая") : sev === "mid" ? t("средняя") : t("низкая"); }
-    const prioClass = (sev) => (sev ? "prio-" + sev : "");
-    const scenarioOf = (j) => ScenarioEditor.byId(j.sc);
-    const scenarioName = (j) => { const s = scenarioOf(j); return s ? t(s.name) : t(j.scName || "Сценарий удалён"); };
-    const nowClock = () => { const d = new Date(); return [d.getHours(), d.getMinutes(), d.getSeconds()].map(v => String(v).padStart(2, "0")).join(":"); };
-    const toSec = (hms) => { const [h, m, s] = hms.split(":").map(Number); return h * 3600 + m * 60 + (s || 0); };
-    const fromSec = (n) => [Math.floor(n / 3600), Math.floor(n % 3600 / 60), n % 60].map(v => String(v).padStart(2, "0")).join(":");
-    const dateOf = (s) => { const [d, m, y] = s.split(".").map(Number); return new Date(y, m - 1, d); };
-    const stampOf = (date, time) => { const d = dateOf(date); const sec = toSec(time); d.setHours(Math.floor(sec / 3600), Math.floor(sec % 3600 / 60), sec % 60); return d; };
-    function viewedBadge(j) {
-      return j.viewed
-        ? `<span class="rc-badge viewed" title="${esc(t("Просмотрел: {by}, {at}", { by: t(j.viewed.by), at: j.viewed.at }))}">✓ ${esc(t("Просмотрена"))}</span>`
-        : `<span class="rc-badge unviewed" title="${esc(t("Ещё никто не открывал"))}">● ${esc(t("Не просмотрена"))}</span>`;
-    }
-
-    /* ---------- player (archive around a moment) ---------- */
-    function makePlayer(p) {
-      const st = { base: 0, pos: 0, playing: false, timer: null };
-      const $ = (s) => document.getElementById(p + "-" + s);
-      const show = () => { $("time").textContent = fromSec(st.base + st.pos); $("range").value = st.pos; $("play").textContent = st.playing ? "⏸" : "▶"; $("play").setAttribute("aria-label", t(st.playing ? "Пауза" : "Воспроизвести")); };
-      const stop = () => { st.playing = false; clearInterval(st.timer); show(); };
-      $("play").addEventListener("click", () => {
-        if (st.playing) return stop();
-        st.playing = true; show();
-        st.timer = setInterval(() => { if (st.pos >= 30) return stop(); st.pos += 1; show(); }, 1000);
-      });
-      $("range").addEventListener("input", () => { st.pos = Number($("range").value); show(); });
-      $("back").addEventListener("click", () => { stop(); st.pos = 0; show(); });
-      return {
-        load(o) {
-          stop(); st.base = toSec(o.time); st.pos = 0;
-          $("scene").className = "video-scene " + o.scene;
-          $("cam").textContent = t(o.cam);
-          $("caption").innerHTML = o.caption;
-          const xy = $("xy");
-          if (o.xy) { xy.innerHTML = `${esc(t("На площадке: {x} · в чеке: {y}", { x: o.xy.x, y: o.xy.y }))}<b>${o.xy.x}:${o.xy.y}</b>`; xy.classList.remove("hidden"); }
-          else xy.classList.add("hidden");
-          show();
-        },
-        moment: () => fromSec(st.base), current: () => fromSec(st.base + st.pos), moved: () => st.pos !== 0
-      };
-    }
-    const alPlayer = makePlayer("al");
-    const plPlayer = makePlayer("pl");
-
-    /* ---------- ALERTS (UI-1, UI-2, СЦ-9) ---------- */
-    const queue = journal.filter(j => j.date === DATE).sort((a, b) => b.time.localeCompare(a.time));
-    let selectedAlertId = queue[0].id, viewTimer = null;
-
-    function updateCounter() {
-      const n = queue.filter(j => !j.viewed).length;
-      const el = document.getElementById("nav-alerts-count");
-      el.textContent = n || "";
-      el.classList.toggle("hidden", !n);
-      el.title = t("Непросмотренных: {n}", { n });
-      document.getElementById("queue-meta").textContent = t("не просмотрено {n} из {all}", { n, all: queue.length });
-    }
-    function renderAlerts() {
-      const only = document.getElementById("only-unviewed").checked;
-      const list = queue.filter(j => !only || !j.viewed || j.id === selectedAlertId);
-      document.getElementById("alert-list").innerHTML = list.map(j => `
-        <div class="alert-item ${prioClass(j.sev)} ${j.viewed ? "" : "unviewed"} ${j.id === selectedAlertId ? "active" : ""}" onclick="openAlert('${j.id}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openAlert('${j.id}')">
-          <div class="alert-row">
-            <div class="severity sev-${j.sev}"></div>
-            <div>
-              <div class="alert-title">${esc(scenarioName(j))}</div>
-              <div class="meta">${j.time.slice(0, 5)} · ${j.source ? esc(t(sourceById(j.source).name)) : esc(t("только видеоаналитика"))}</div>
-            </div>
-            <div class="alert-side"><span class="chip ${prioClass(j.sev)}">${prioLabel(j.sev)}</span>${viewedBadge(j)}</div>
-          </div>
-        </div>`).join("") || `<div class="empty">${esc(t("Все тревоги смены просмотрены"))}</div>`;
-      updateCounter();
-    }
-    function describe(j, el) {
-      const s = scenarioOf(j);
-      el.innerHTML = s
-        ? `<b>${esc(t(s.name))}</b>${s.code ? ` <span class="meta" style="display:inline">${esc(s.code)}</span>` : ""}<div>${esc(t(s.desc || ""))}</div>`
-        : `<b>${esc(scenarioName(j))}</b><div class="meta">${esc(t("Сценарий удалён — описания нет"))}</div>`;
-    }
-    function openAlert(id) {
-      selectedAlertId = id;
-      const j = journal.find(x => x.id === id);
-      const src = j.source ? sourceById(j.source) : null;
-      document.getElementById("alert-title").innerHTML = `${esc(scenarioName(j))} <span class="chip ${prioClass(j.sev)}">${prioLabel(j.sev)}</span> ${viewedBadge(j)}`;
-      const badge = document.getElementById("alert-source");
-      badge.className = "source " + (src ? src.cls : "src-video");
-      badge.textContent = src ? t(src.badge) : t("Только видео");
-      document.getElementById("al-caption").style.borderLeftColor = `var(--prio-${j.sev}-border)`;
-      alPlayer.load({
-        time: j.time, scene: src ? src.scene : j.scene, cam: src ? src.cam : j.cam, xy: j.xy,
-        caption: j.caption ? tx(j.caption).replace(/\n/g, "<br>") : esc(t("Кассового потока нет · титры не пишутся"))
-      });
-      describe(j, document.getElementById("alert-desc"));
-      document.getElementById("alert-why").textContent = t(j.why);
-      renderAlerts();
-      clearTimeout(viewTimer);
-      if (!j.viewed) viewTimer = setTimeout(() => {
-        if (selectedAlertId !== id) return;
-        j.viewed = { by: OPERATOR, at: nowClock() };
-        renderAlerts();
-        document.getElementById("alert-title").innerHTML = `${esc(scenarioName(j))} <span class="chip ${prioClass(j.sev)}">${prioLabel(j.sev)}</span> ${viewedBadge(j)}`;
-      }, 1000);
-    }
-    document.getElementById("only-unviewed").addEventListener("change", renderAlerts);
-
-    /* ---------- SEARCH: shared controls (UI-5, UI-6) ---------- */
-    let mode = "scenarios";
-    const picker = Retail.mountPicker(document.getElementById("src-picker"), { value: ["*"] });
-    const period = Retail.mountPeriod(document.getElementById("period"), { from: Retail.at(Retail.TODAY, 8, 0, 0), to: Retail.at(Retail.TODAY, 20, 0, 0) });
-    const inPeriod = (date, time) => { const p = period.get(); const d = stampOf(date, time); return d >= p.from && d <= p.to; };
-
-    /* ---------- search by scenario (UI-3, UI-4) ---------- */
-    function fillScenarioSelect() {
-      const sel = document.getElementById("sc-select");
-      const cur = sel.value || "all";
-      const { base, mine } = ScenarioEditor.list();
-      sel.innerHTML = `<option value="all">${esc(t("Все сценарии"))}</option>
-        <optgroup label="${esc(t("Базовые"))}">${base.map(s => `<option value="${s.id}">${esc((s.code ? s.code + " · " : "") + t(s.name))}</option>`).join("")}</optgroup>
-        <optgroup label="${esc(t("Мои"))}">${mine.map(s => `<option value="${s.id}">${esc(t(s.name))}${s.on ? "" : " · " + esc(t("выключен"))}</option>`).join("")}</optgroup>
-        <optgroup label="${esc(t("Удалённые, есть тревоги"))}"><option value="old-7">${esc(t("Возвраты после 22:00 (удалён)"))}</option></optgroup>`;
-      sel.value = Array.from(sel.options).some(o => o.value === cur) ? cur : "all";
-    }
-    let selectedJournalId = null;
-    function runScenarioSearch(quiet) {
-      const sc = document.getElementById("sc-select").value;
-      const all = picker.get().includes("*");
-      const ids = picker.ids();
-      const list = journal.filter(j => (sc === "all" || String(j.sc) === sc)
-        && (j.source ? ids.includes(j.source) : all) && inPeriod(j.date, j.time))
-        .sort((a, b) => stampOf(b.date, b.time) - stampOf(a.date, a.time));
-      document.getElementById("result-count").textContent = t("найдено: {n}", { n: list.length });
-      if (!list.length) {
-        document.getElementById("results").innerHTML = `<div class="empty">${esc(t("За выбранный период тревог этого сценария нет. Расширьте период (например, «7 дней») или проверьте сценарий на архиве в Моих сценариях."))}</div>`;
-        if (!quiet) toast(t("Тревог не найдено"));
-        return;
-      }
-      document.getElementById("results").innerHTML = list.map(j => `
-        <div class="result-item ${prioClass(j.sev)} ${j.id === selectedJournalId ? "active" : ""}" data-jid="${j.id}" onclick="openJournal('${j.id}')">
-          <div class="res-row">
-            <div><div>${j.date.slice(0, 5)} ${j.time.slice(0, 5)} · ${esc(scenarioName(j))}</div>
-              <div class="meta">${j.source ? esc(t(sourceById(j.source).name)) : esc(t("только видеоаналитика"))} · ${esc(t("инцидент: {s}", { s: t(j.incident) }))}</div></div>
-            <div class="alert-side"><span class="chip ${prioClass(j.sev)}">${prioLabel(j.sev)}</span>${viewedBadge(j)}</div>
-          </div>
-        </div>`).join("");
-      openJournal(list.some(j => j.id === selectedJournalId) ? selectedJournalId : list[0].id);
-      if (!quiet) toast(t("Найдено тревог: {n}", { n: list.length }));
-    }
-    function openJournal(id) {
-      selectedJournalId = id;
-      const j = journal.find(x => x.id === id);
-      const src = j.source ? sourceById(j.source) : null;
-      document.getElementById("player-title").textContent = `${j.date} ${j.time} · ${src ? t(src.view) : t(j.view)}`;
-      const badge = document.getElementById("player-source");
-      badge.className = "source " + (src ? src.cls : "src-video");
-      badge.textContent = src ? t(src.badge) : t("Только видео");
-      plPlayer.load({ time: j.time, scene: src ? src.scene : j.scene, cam: src ? src.cam : j.cam, xy: j.xy,
-        caption: j.caption ? tx(j.caption).replace(/\n/g, "<br>") : esc(t("Кассового потока нет · титры не пишутся")) });
-      document.getElementById("detail-h").textContent = t("Тревога и сценарий");
-      const box = document.createElement("div"); box.className = "desc-box"; describe(j, box);
-      const rec = j.receipt ? receipts.find(r => r.id === j.receipt) : null;
-      document.getElementById("receipt-view").innerHTML = box.outerHTML
-        + `<div class="desc-box" style="color:var(--muted);border-top:1px solid var(--border)">${esc(t(j.why))}</div>`
-        + (rec ? receiptHtml(rec, []) : "");
-      document.querySelectorAll("#results [data-jid]").forEach(el => el.classList.toggle("active", el.dataset.jid === id));
-    }
-
-    /* ---------- search by captions: words with AND / OR (UI-7) ---------- */
-    let terms = [{ text: "АННУЛЯЦИЯ", op: null }];
-    const norm = (s) => String(s).toUpperCase().replace(/Ё/g, "Е");
-    function groups() {
-      const out = [[]];
-      terms.forEach((x, i) => { if (i && x.op === "ИЛИ") out.push([]); out[out.length - 1].push(x.text); });
-      return out.filter(g => g.length);
-    }
-    function renderQB() {
-      const qb = document.getElementById("qb");
-      qb.innerHTML = terms.map((x, i) => `${i ? `<button type="button" class="qb-op ${x.op === "ИЛИ" ? "or" : ""}" onclick="toggleOp(${i})" title="${esc(t("Переключить И / ИЛИ"))}">${esc(t(x.op))}</button>` : ""}<span class="qb-chip">${/\s/.test(x.text) ? "«" + esc(x.text) + "»" : esc(x.text)}<button type="button" aria-label="${esc(t("Убрать"))}" onclick="removeTerm(${i})">×</button></span>`).join("")
-        + `<input id="qb-input" placeholder="${esc(t(terms.length ? "ещё слово…" : "слово или \"фраза в кавычках\", Enter"))}" aria-label="${esc(t("Текст в титрах"))}">`;
-      const input = document.getElementById("qb-input");
-      input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") { e.preventDefault(); addTerms(input.value); }
-        if (e.key === "Backspace" && !input.value && terms.length) { terms.pop(); renderQB(); document.getElementById("qb-input").focus(); }
-      });
-      input.addEventListener("blur", () => { if (input.value.trim()) addTerms(input.value, true); });
-      qb.onclick = (e) => { if (e.target === qb) input.focus(); };
-      const g = groups();
-      const line = document.getElementById("out-mode").value === "line";
-      document.getElementById("qb-preview").textContent = !g.length ? t("Добавьте слово или фразу и нажмите Enter. Между словами — «И» или «ИЛИ» (по клику).")
-        : t(line ? "Найдёт строки титров, где есть: " : "Найдёт чеки, где есть: ") + g.map(x => x.map(w => /\s/.test(w) ? "«" + w + "»" : w).join(" " + t("и") + " ")).join("; " + t("или") + ": ") + ". " + t("«И» связывает сильнее «ИЛИ»; регистр и ё/е не важны.");
-    }
-    function addTerms(raw, noFocus) {
-      let next = "И";
-      (raw.match(/"[^"]+"|«[^»]+»|\S+/g) || []).forEach(tok => {
-        const up = norm(tok);
-        if (up === "И" || up === "AND") { next = "И"; return; }
-        if (up === "ИЛИ" || up === "OR") { next = "ИЛИ"; return; }
-        terms.push({ text: tok.replace(/^["«]|["»]$/g, ""), op: terms.length ? next : null });
-        next = "И";
-      });
-      renderQB();
-      if (!noFocus) document.getElementById("qb-input").focus();
-    }
-    function toggleOp(i) { terms[i].op = terms[i].op === "И" ? "ИЛИ" : "И"; renderQB(); }
-    function removeTerm(i) { terms.splice(i, 1); if (terms[0]) terms[0].op = null; renderQB(); }
-
-    function receiptLines(r) { return [t("Кассир") + ": " + r.cashier].concat(r.text.split("\n")).concat(r.parsed.map(p => p[0])); }
-    function matchReceipt(r) {
-      if (document.getElementById("re-toggle").checked) {
-        let re; try { re = new RegExp(document.getElementById("re-input").value, "i"); } catch (e) { return null; }
-        const lines = receiptLines(r).concat(tx(r.text).split("\n"));
-        const hit = lines.filter(l => re.test(l));
-        return hit.length ? { lines: hit } : null;
-      }
-      const g = groups();
-      if (!g.length) return null;
-      const lines = receiptLines(r).map(l => [l, tx(l)]);
-      const has = (line, w) => norm(line[0]).includes(norm(w)) || norm(line[1]).includes(norm(t(w)));
-      const byLine = document.getElementById("out-mode").value === "line";
-      for (const grp of g) {
-        if (byLine) { const hit = lines.filter(l => grp.every(w => has(l, w))); if (hit.length) return { lines: hit.map(l => l[0]), words: grp }; }
-        else if (grp.every(w => lines.some(l => has(l, w)))) return { lines: lines.filter(l => grp.some(w => has(l, w))).map(l => l[0]), words: grp };
-      }
-      return null;
-    }
-    function markWords(text, words) {
-      let out = esc(text);
-      (words || []).forEach(w => {
-        [w, t(w)].forEach(x => {
-          if (!x) return;
-          const re = new RegExp(x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/[ЕЁ]/gi, "[ЕЁеё]"), "gi");
-          out = out.replace(re, m => `<span class="hit">${m}</span>`);
-        });
-      });
-      return out;
-    }
-    let selectedReceipt = receipts[0], selectedWords = [];
-    function receiptHtml(rec, words) {
-      const src = sourceById(rec.source);
-      return `<div class="receipt">
-          <div class="receipt-line"><span>${esc(t("Чек №{id}", { id: rec.id }))}</span><span>${rec.time}</span></div>
-          <div class="receipt-line"><span>${esc(t("Кассир"))}</span><span>${markWords(t(rec.cashier), words)}</span></div>
-          <div class="receipt-line"><span>${esc(t("Источник"))}</span><span class="source ${src.cls}">${esc(t(src.name))}</span></div>
-          ${rec.parsed.map(([a, b]) => `<div class="receipt-line"><span>${markWords(t(a), words)}</span><span>${esc(t(b))}</span></div>`).join("")}
-        </div>`;
-    }
-    function renderPlayer(id, words) {
-      const rec = receipts.find(r => r.id === id) || selectedReceipt;
-      selectedReceipt = rec; selectedWords = words || [];
-      const src = sourceById(rec.source);
-      document.getElementById("player-title").textContent = `${DATE} ${rec.time} · ${t(src.view)}`;
-      const badge = document.getElementById("player-source");
-      badge.className = "source " + src.cls; badge.textContent = t(src.badge);
-      plPlayer.load({ time: rec.time, scene: src.scene, cam: src.cam, caption: markWords(tx(rec.text), selectedWords).replace(/\n/g, "<br>") });
-      document.getElementById("detail-h").textContent = t("Разбор чека");
-      document.getElementById("receipt-view").innerHTML = receiptHtml(rec, selectedWords);
-    }
-    function runCaptionSearch(quiet) {
-      const ids = picker.ids();
-      if (document.getElementById("re-toggle").checked) {
-        try { new RegExp(document.getElementById("re-input").value); } catch (e) { toast(t("Ошибка в регулярном выражении")); return; }
-      }
-      const found = receipts.map(r => ({ r, m: ids.includes(r.source) && inPeriod(DATE, r.time) ? matchReceipt(r) : null })).filter(x => x.m);
-      document.getElementById("result-count").textContent = t("найдено: {n}", { n: found.length });
-      document.getElementById("results").innerHTML = found.map(({ r, m }) => {
-        const src = sourceById(r.source);
-        return `<div class="result-item ${prioClass(r.sev)} ${r.id === selectedReceipt.id ? "active" : ""}" onclick='renderPlayer("${r.id}", ${JSON.stringify(m.words || [])}); markResult(this)'>
-          <div>${r.time} · ${esc(t("чек №{id}", { id: r.id }))} · ${esc(t(r.status))}${r.sev ? ` <span class="chip ${prioClass(r.sev)}">${prioLabel(r.sev)}</span>` : ""}</div>
-          <div class="meta">${esc(t(src.name))} · ${esc(t(r.cashier))}</div>
-          <div class="snippet">${m.lines.slice(0, 3).map(l => markWords(t(l), m.words)).join(" · ")}</div>
-        </div>`;
-      }).join("") || `<div class="empty">${esc(t("Совпадений нет. Проверьте устройства и период или замените «И» на «ИЛИ»."))}</div>`;
-      if (found[0]) renderPlayer(found[0].r.id, found[0].m.words);
-      if (!quiet) toast(t("Найдено в титрах: {n}", { n: found.length }));
-    }
-    function markResult(el) {
-      el.parentElement.querySelectorAll(".result-item").forEach(i => i.classList.remove("active"));
-      el.classList.add("active");
-      toast(t("Архив перемотан к титру"));
-    }
-
-    /* ---------- search by receipts (UI-8) ---------- */
-    function reportParams() {
-      const type = document.getElementById("report-type").value;
-      const map = {
-        all: "", returns: "", scale: "",
-        number: `<div class="form-group"><label>${t("Номер чека")}</label><input class="field" value="48288"></div>`,
-        cashier: `<div class="form-group"><label>${t("Кассир")}</label><input class="field" value="Сидорова М."></div>`,
-        sku: `<div class="form-group"><label>${t("Артикул / товар")}</label><input class="field" value="${t("МОЛОКО")}"></div>`,
-        and: `<div class="form-group"><label>${t("Товар 1")}</label><input class="field" value="${t("Хлеб")}"></div><div class="form-group"><label>${t("Товар 2")}</label><input class="field" value="${t("Молоко")}"></div>`,
-        amount: `<div class="form-group"><label>${t("Сумма от")}</label><input class="field" value="400"></div>`
-      };
-      document.getElementById("report-params").innerHTML = map[type];
-    }
-    const blob = (r) => receiptLines(r).concat(tx(r.text)).join("\n").toUpperCase();
-    function runReceiptSearch(quiet) {
-      const type = document.getElementById("report-type").value;
-      const ids = picker.ids();
-      let list = receipts.filter(r => ids.includes(r.source) && inPeriod(DATE, r.time));
-      if (type === "number") list = list.filter(r => r.id === "48288");
-      if (type === "cashier") list = list.filter(r => r.cashier.includes("Сидорова"));
-      if (type === "sku") list = list.filter(r => /МОЛОКО|MILK/.test(blob(r)));
-      if (type === "returns") list = list.filter(r => /АННУЛЯЦИЯ|ВОЗВРАТ|VOID|RETURN/.test(blob(r)));
-      if (type === "scale") list = list.filter(r => sourceById(r.source).group === "scale");
-      if (type === "and") list = list.filter(r => /ХЛЕБ|BREAD/.test(blob(r)) && /МОЛОКО|MILK/.test(blob(r)));
-      if (type === "amount") list = list.filter(r => parseFloat(r.total.replace(/\s/g, "").replace(",", ".")) >= 400);
-      document.getElementById("result-count").textContent = t("найдено: {n}", { n: list.length });
-      document.getElementById("results").innerHTML = list.length ? `
-        <table>
-          <thead><tr><th>${t("Время")}</th><th>${t("Чек")}</th><th>${t("Кассир")}</th><th>${t("Сумма")}</th><th>${t("Источник")}</th></tr></thead>
-          <tbody>${list.map(r => {
-            const src = sourceById(r.source);
-            return `<tr class="clickable ${prioClass(r.sev)} ${r.id === selectedReceipt.id ? "active" : ""}" onclick="renderPlayer('${r.id}')">
-              <td>${r.time}</td><td>№${r.id}</td><td>${esc(t(r.cashier))}</td><td>${r.total}</td>
-              <td><span class="source ${src.cls}">${esc(t(src.name))}</span>${r.sev ? ` <span class="chip ${prioClass(r.sev)}">${prioLabel(r.sev)}</span>` : ""}</td></tr>`;
-          }).join("")}</tbody>
-        </table>` : `<div class="empty">${esc(t("Чеков не найдено. Проверьте устройства и период."))}</div>`;
-      if (list[0]) renderPlayer(list[0].id);
-      if (!quiet) toast(t("Отчёт построен: {n} чек.", { n: list.length }));
-    }
-
-    function runSearch(quiet) {
-      if (!picker.ids().length) { toast(t("Выберите хотя бы одно устройство")); return; }
-      if (mode === "scenarios") runScenarioSearch(quiet);
-      else if (mode === "captions") runCaptionSearch(quiet);
-      else runReceiptSearch(quiet);
-    }
-    function setMode(m, quiet) {
-      mode = m;
-      document.querySelectorAll(".mode-btn").forEach(b => b.classList.toggle("active", b.dataset.mode === m));
-      ["scenarios", "captions", "receipts"].forEach(k => document.getElementById(k + "-query").classList.toggle("hidden", k !== m));
-      renderTemplates();
-      runSearch(quiet);
-    }
-    document.querySelectorAll(".mode-btn").forEach(btn => btn.addEventListener("click", () => setMode(btn.dataset.mode)));
-    document.getElementById("run-search").addEventListener("click", () => runSearch());
-    document.getElementById("report-type").addEventListener("change", reportParams);
-    document.getElementById("out-mode").addEventListener("change", renderQB);
-    document.getElementById("re-toggle").addEventListener("change", (e) => {
-      document.getElementById("qb").classList.toggle("hidden", e.target.checked);
-      document.getElementById("qb-preview").classList.toggle("hidden", e.target.checked);
-      document.getElementById("re-input").classList.toggle("hidden", !e.target.checked);
-    });
-
-    /* ---------- saved search templates (UI-11) ---------- */
-    const searchTemplates = [
-      { id: "st1", name: "Аннуляции Ивановой с водкой", mode: "captions", shared: false, p: { terms: [{ text: "Иванова", op: null }, { text: "Аннуляция", op: "И" }, { text: "водка Путинка", op: "И" }] } },
-      { id: "st2", name: "Весы: штрихкод без оплаты", mode: "receipts", shared: true, p: { report: "scale", srcs: ["scale-veg", "scale-fish", "scale-meat", "scale-saus", "scale-cheese"] } },
-      { id: "st3", name: "Пронос мимо сканера за 7 дней", mode: "scenarios", shared: true, p: { sc: "t-pos-06", week: true } }
-    ];
-    const MODE_ICON = { scenarios: "⚙", captions: "T", receipts: "₽" };
-    function renderTemplates() {
-      document.getElementById("tpl-row").innerHTML = `<span class="meta">${esc(t("Шаблоны:"))}</span>` + searchTemplates.map(s =>
-        `<button type="button" class="tpl-chip" onclick="applyTemplate('${s.id}')" title="${esc(t(s.shared ? "Общий шаблон" : "Мой шаблон"))}">${MODE_ICON[s.mode]} ${esc(t(s.name))}${s.shared ? `<span class="meta">· ${esc(t("общий"))}</span>` : ""}</button>`).join("");
-    }
-    function applyTemplate(id) {
-      const s = searchTemplates.find(x => x.id === id);
-      picker.set(s.p.srcs || ["*"]);
-      if (s.p.week) period.set(Retail.at(Retail.TODAY, 0, 0, 0, -6), Retail.at(Retail.TODAY, 23, 59, 59));
-      else if (s.p.from) period.set(new Date(s.p.from), new Date(s.p.to));
-      if (s.p.terms) { terms = JSON.parse(JSON.stringify(s.p.terms)); document.getElementById("re-toggle").checked = false; document.getElementById("re-toggle").dispatchEvent(new Event("change")); renderQB(); }
-      if (s.p.report) { document.getElementById("report-type").value = s.p.report; reportParams(); }
-      if (s.p.sc) document.getElementById("sc-select").value = s.p.sc;
-      setMode(s.mode, true);
-      toast(t("Применён шаблон «{n}»", { n: t(s.name) }));
-    }
-    document.getElementById("save-tpl-btn").addEventListener("click", () => {
-      document.getElementById("save-tpl").classList.remove("hidden");
-      document.getElementById("tpl-name").focus();
-    });
-    document.getElementById("tpl-cancel").addEventListener("click", () => document.getElementById("save-tpl").classList.add("hidden"));
-    document.getElementById("tpl-ok").addEventListener("click", () => {
-      const name = document.getElementById("tpl-name").value.trim();
-      if (!name) { document.getElementById("tpl-name").classList.add("rc-invalid"); toast(t("Укажите название шаблона")); return; }
-      const p = period.get();
-      searchTemplates.push({ id: "st" + Date.now(), name, mode, shared: document.getElementById("tpl-shared").checked,
-        p: { srcs: picker.get(), from: +p.from, to: +p.to, terms: JSON.parse(JSON.stringify(terms)), report: document.getElementById("report-type").value, sc: document.getElementById("sc-select").value } });
-      document.getElementById("save-tpl").classList.add("hidden");
-      document.getElementById("tpl-name").value = "";
-      renderTemplates();
-      toast(t("Шаблон «{n}» сохранён", { n: name }));
-    });
-
-    /* ---------- PDF report (UI-9) ---------- */
-    let report = null;
-    function reportFromAlert() {
-      const j = journal.find(x => x.id === selectedAlertId);
-      openReport(reportCtx(j, alPlayer, "alert"));
-    }
-    function reportFromSearch() {
-      if (mode === "scenarios") {
-        const j = journal.find(x => x.id === selectedJournalId);
-        if (!j) return toast(t("Сначала выберите тревогу в результатах"));
-        return openReport(reportCtx(j, plPlayer, "scenario"));
-      }
-      const rec = selectedReceipt, src = sourceById(rec.source);
-      const title = mode === "captions"
-        ? (document.getElementById("re-toggle").checked ? document.getElementById("re-input").value : groups().map(g => g.join(" " + t("И") + " ")).join(" " + t("ИЛИ") + " "))
-        : document.getElementById("report-type").selectedOptions[0].textContent;
-      openReport({
-        kind: mode, title, desc: "", player: plPlayer, scene: src.scene, cam: src.cam, date: DATE, receipt: rec, words: selectedWords,
-        rows: [["Магазин", t(STORE)], ["Касса / камера", `${t(src.name)} · ${t(src.cam)}`], ["Чек", "№" + rec.id], ["Кассир", t(rec.cashier)], ["Режим поиска", mode === "captions" ? t("По титрам") : t("По чекам")]]
-      });
-    }
-    function reportCtx(j, player, kind) {
-      const src = j.source ? sourceById(j.source) : null, s = scenarioOf(j);
-      const rec = j.receipt ? receipts.find(r => r.id === j.receipt) : null;
-      return {
-        kind, title: scenarioName(j), desc: s ? t(s.desc || "") : "", player, scene: src ? src.scene : j.scene, cam: src ? src.cam : j.cam, date: j.date, receipt: rec, words: [], xy: j.xy,
-        rows: [["Магазин", t(STORE)], ["Касса / камера", src ? `${t(src.name)} · ${t(src.cam)}` : t(j.cam)], ["Тревога №", j.id.toUpperCase()], ["Приоритет", prioLabel(j.sev)],
-          ["Сценарий", (s && s.code ? s.code + " · " : "") + scenarioName(j)], ["Кассир", rec ? t(rec.cashier) : "—"], ["Просмотр", j.viewed ? t("Просмотрел: {by}, {at}", { by: t(j.viewed.by), at: j.viewed.at }) : t("Не просмотрена")], ["Инцидент", t(j.incident)]]
-      };
-    }
-    function openReport(ctx) {
-      report = Object.assign(ctx, { frame: "moment", withReceipt: !!ctx.receipt });
-      const moved = ctx.player.moved();
-      document.getElementById("pdf-h").textContent = t("Отчёт PDF");
-      document.getElementById("pdf-opts").innerHTML = `
-        <div class="meta" style="margin:0 0 6px">${esc(t("Кадр с камеры"))}</div>
-        <label class="opt"><input type="radio" name="frame" value="moment" checked><span>${esc(t("Момент срабатывания"))} · ${ctx.player.moment()}</span></label>
-        <label class="opt"><input type="radio" name="frame" value="current" ${moved ? "" : "disabled"}><span>${esc(t("Текущий кадр на паузе"))} · ${ctx.player.current()}${moved ? "" : `<br><span class="meta">${esc(t("Остановите видео на нужном кадре — и выберите этот пункт"))}</span>`}</span></label>
-        <div class="meta" style="margin:10px 0 6px">${esc(t("Состав"))}</div>
-        <label class="opt"><input type="checkbox" id="pdf-receipt" ${ctx.receipt ? "checked" : "disabled"}><span>${esc(t("Текст чека"))}${ctx.receipt ? "" : ` · ${esc(t("чека нет"))}`}</span></label>`;
-      document.getElementById("pdf-audit").textContent = t("Формирование отчёта записывается в журнал аудита. Платёжные реквизиты в отчёт не попадают.");
-      document.getElementById("pdf-close").textContent = t("Закрыть");
-      document.getElementById("pdf-print").textContent = t("Сохранить PDF");
-      document.querySelectorAll('#pdf-opts input[name="frame"]').forEach(r => r.addEventListener("change", () => { report.frame = r.value; renderSheet(); }));
-      document.getElementById("pdf-receipt").addEventListener("change", (e) => { report.withReceipt = e.target.checked; renderSheet(); });
-      renderSheet();
-      document.getElementById("pdf-modal").classList.add("open");
-      document.getElementById("pdf-print").focus();
-    }
-    function renderSheet() {
-      const r = report;
-      const time = r.frame === "current" ? r.player.current() : r.player.moment();
-      const rec = r.withReceipt ? r.receipt : null;
-      const recText = rec ? (tx(rec.text).split("\n").map(l => l.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]))).join("\n")) : "";
-      let marked = recText;
-      (r.words || []).forEach(w => { const re = new RegExp(w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/[ЕЁ]/gi, "[ЕЁеё]"), "gi"); marked = marked.replace(re, m => `<mark>${m}</mark>`); });
-      const kindTitle = { alert: "Отчёт по тревоге", scenario: "Отчёт · поиск по сценариям", captions: "Отчёт · поиск по титрам", receipts: "Отчёт · поиск по чекам" }[r.kind];
-      document.getElementById("pdf-sheet").innerHTML = `
-        <div class="pdf-brand"><span>${esc(t("Интеллект X · Ритейл"))}</span><span>${esc(t(kindTitle))}</span></div>
-        <h1>${esc(r.title)}</h1>
-        ${r.desc ? `<p class="pdf-desc">${esc(r.desc)}</p>` : ""}
-        <div class="pdf-frame"><div class="video-scene ${r.scene}"></div><div class="cam-tag">${esc(t(r.cam))}</div>
-          ${r.xy ? `<div class="xy-overlay">${esc(t("На площадке: {x} · в чеке: {y}", { x: r.xy.x, y: r.xy.y }))}<b>${r.xy.x}:${r.xy.y}</b></div>` : ""}
-          <div class="stamp">${r.date} ${time}</div></div>
-        <div class="pdf-cap">${esc(r.frame === "current" ? t("Кадр выбран оператором на паузе") : t("Кадр в момент срабатывания"))}</div>
-        ${rec ? `<h3>${esc(t("Чек №{id}", { id: rec.id }))}</h3><div class="pdf-receipt">${marked}</div>` : ""}
-        <h3>${esc(t("Сведения"))}</h3>
-        <table>${r.rows.concat([["Дата и время кадра", `${r.date} ${time}`]]).map(([k, v]) => `<tr><td>${esc(t(k))}</td><td>${esc(v)}</td></tr>`).join("")}</table>
-        <div class="pdf-foot">${esc(t("Сформировал: {who}, {when}", { who: t(OPERATOR), when: "09.11.2026 " + nowClock() }))}</div>`;
-    }
-    function closeReport() { document.getElementById("pdf-modal").classList.remove("open"); }
-    function printReport() { toast(t("Откроется печать — выберите «Сохранить как PDF»")); setTimeout(() => window.print(), 50); }
-    document.getElementById("pdf-modal").addEventListener("click", (e) => { if (e.target.id === "pdf-modal") closeReport(); });
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeReport(); });
-
-    /* ---------- navigation ---------- */
-    function showScreen(id) {
-      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-      document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
-      document.getElementById("screen-" + id).classList.add("active");
-      document.querySelector(`[data-screen="${id}"]`).classList.add("active");
-      Retail.closePopovers();
-    }
-    document.querySelectorAll(".nav-item").forEach(btn => btn.addEventListener("click", () => showScreen(btn.dataset.screen)));
-
-    window.onRetailLang = function () {
-      picker.refresh(); period.refresh();
-      reportParams();
-      fillScenarioSelect();
-      renderQB();
-      renderTemplates();
-      ScenarioEditor.refresh();
-      openAlert(selectedAlertId);
-      runSearch(true);
-    };
-
-    RetailI18n.bindChrome();
-    ScenarioEditor.mount(document.getElementById("scenario-editor"), { toast, onChange: () => { fillScenarioSelect(); renderAlerts(); } });
-    window.onRetailLang();
-  </script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
